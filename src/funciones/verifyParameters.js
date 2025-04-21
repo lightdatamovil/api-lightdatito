@@ -1,16 +1,15 @@
+export function verifyParameters(data, requiredParams) {
+    const missing = [];
+    requiredParams.forEach(param => {
+        if (!data.hasOwnProperty(param) || data[param] === undefined || data[param] === null) {
+            missing.push(param);
+        }
+    });
+    return missing;
+}
 
-export function verifyParamaters(body, parametrosRequeridos, userData = false) {
-    const param = ['deviceId', 'appVersion', 'brand', 'model', 'androidVersion', ...parametrosRequeridos];
-
-    if (userData) {
-        param.push('companyId', 'userId', 'profile');
-    }
-
-    const faltantes = param.filter(p => !(p in body))
-
-    if (faltantes.length > 0) {
-        return `Faltan los siguientes parámetros: ${faltantes.join(', ')}`;
-    }
-
-    return null;
-};
+export function verifyAll(req, requiredParams = [], requiredBody = []) {
+    const missingParams = verifyParameters(req.params, requiredParams);
+    const missingBody = verifyParameters(req.body, requiredBody);
+    return [...missingParams, ...missingBody];
+}

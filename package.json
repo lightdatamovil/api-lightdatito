@@ -10,10 +10,14 @@
     "type": "git",
     "url": "git+https://github.com/lightdatamovil/api-lightdatito.git"
   },
+  "type": "module",
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/lightdatamovil/api-lightdatito/issues"
   },
-  "homepage": "https://github.com/lightdatamovil/api-lightdatito#readme"
+  "homepage": "https://github.com/lightdatamovil/api-lightdatito#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
