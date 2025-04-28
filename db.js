@@ -6,11 +6,10 @@ dotenv.config({ path: process.env.ENV_FILE || ".env" });
 export function getDbConfig(companyId) {
     return {
         // host: "localhost",
-        host: "149.56.182.49",
-        user: "ue" + companyId,
+        user: "root",
         password: "78451296",
-        database: "e" + companyId,
-        port: 44339
+        database: "mydb",
+        port: 3306
     };
 }
 
