@@ -1,12 +1,12 @@
-export default class EstadoEmpresa {
-    constructor({ id, nombre, color, eliminado }) {
+export default class TipoReporte {
+    constructor({ id, nombre, color }) {
         this.id = id;
         this.nombre = nombre;
         this.color = color;
     }
 
     static fromJson(row) {
-        return new EstadoEmpresa({
+        return new TipoReporte({
             id: row.id,
             nombre: row.nombre,
             color: row.color
