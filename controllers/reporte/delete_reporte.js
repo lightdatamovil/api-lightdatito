@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Reporte from '../../models/Reporte.js';
+import { logCyan } from '../../src/funciones/logsCustom.js';
 
 export async function deleteReporte(id) {
     try {
