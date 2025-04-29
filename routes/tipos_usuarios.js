@@ -2,6 +2,10 @@ import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logRed, logPurple, logGreen } from '../src/funciones/logsCustom.js';
 import { verifyAll } from '../src/funciones/verifyParameters.js';
+import { getAllTipoUsuario } from '../controllers/tipo_usuario/get_all_tipo_usuario.js';
+import { getTipoUsuarioById } from '../controllers/tipo_usuario/get_tipo_usuario_by_id.js';
+import { createTipoUsuario } from '../controllers/tipo_usuario/create_tipo_usuario.js';
+import { updateTipoUsuario } from '../controllers/tipo_usuario/edit_tipo_usuario.js';
 
 const router = Router();
 
