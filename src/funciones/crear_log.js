@@ -1,7 +1,7 @@
 import mysql2 from 'mysql';
 
-export async function crearLog(idEmpresa, operador, endpoint, result, quien, idDispositivo, modelo, marca, versionAndroid, versionApp) {
-    const dbConfig = getDbConfig(company.did);
+export async function crearLog(idLogistica, operador, endpoint, result, quien, idDispositivo, modelo, marca, versionAndroid, versionApp) {
+    const dbConfig = getDbConfig(logistica.did);
     const dbConnection = mysql2.createConnection(dbConfig);
 
     return new Promise((resolve, reject) => {
@@ -11,12 +11,12 @@ export async function crearLog(idEmpresa, operador, endpoint, result, quien, idD
             }
 
             const sql = `
-                INSERT INTO logs (company, operador, request, response, quien, dispositivo, uid, appversion)
+                INSERT INTO logs (logistica, operador, request, response, quien, dispositivo, uid, appversion)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
             const values = [
-                idEmpresa,
+                idLogistica,
                 operador,
                 endpoint,
                 JSON.stringify(result),

@@ -1,4 +1,4 @@
-export default class EstadoEmpresa {
+export default class EstadoLogistica {
     constructor({ id, nombre, color, eliminado }) {
         this.id = id;
         this.nombre = nombre;
@@ -6,7 +6,7 @@ export default class EstadoEmpresa {
     }
 
     static fromJson(row) {
-        return new EstadoEmpresa({
+        return new EstadoLogistica({
             id: row.id,
             nombre: row.nombre,
             color: row.color

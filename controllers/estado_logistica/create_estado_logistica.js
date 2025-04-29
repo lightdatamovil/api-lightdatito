@@ -1,16 +1,16 @@
 import { executeQuery } from '../../db.js';
-import EstadoEmpresa from '../../models/estado_empresa.js';
+import EstadoLogistica from '../../models/estado_logistica.js';
 
 /**
- * Create a new estado_empresa and return the inserted record.
+ * Create a new estado_logistica and return the inserted record.
  * @param {Object} data - Fields and values for the new estado.
- * @returns {EstadoEmpresa} The created EstadoEmpresa instance.
+ * @returns {EstadoLogistica} The created EstadoLogistica instance.
  */
-export async function createEstadoEmpresa(data) {
+export async function createEstadoLogistica(data) {
     const fields = Object.keys(data);
-    if (!fields.length) throw new Error('No data provided for createEstadoEmpresa');
+    if (!fields.length) throw new Error('No data provided for createEstadoLogistica');
     const placeholders = fields.map(() => '?').join(', ');
     const query = `INSERT INTO estados_logistica (${fields.join(', ')}) VALUES (${placeholders}) RETURNING *`;
     const rows = await executeQuery(query, Object.values(data));
-    return EstadoEmpresa.fromJson(rows[0]);
+    return EstadoLogistica.fromJson(rows[0]);
 }

@@ -1,4 +1,4 @@
-export default class ObservacionEmpresa {
+export default class ObservacionLogistica {
     constructor({ id, nombre, eliminado }) {
         this.id = id;
         this.nombre = nombre;
@@ -6,7 +6,7 @@ export default class ObservacionEmpresa {
     }
 
     static fromJson(row) {
-        return new ObservacionEmpresa({
+        return new ObservacionLogistica({
             id: row.id,
             nombre: row.nombre,
             eliminado: row.eliminado

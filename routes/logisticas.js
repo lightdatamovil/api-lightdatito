@@ -12,14 +12,14 @@ router.post('/', async (req, res) => {
     if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
 
     try {
-        const newItem = await createEmpresa(req.body);
+        const newItem = await createLogistica(req.body);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
-        logGreen(`POST /api/empresas: éxito al crear empresa con ID ${newItem.id}`);
+        logGreen(`POST /api/logisticas: éxito al crear logistica con ID ${newItem.id}`);
     } catch (error) {
-        logRed(`Error POST /api/empresas: ${error.stack}`);
+        logRed(`Error POST /api/logisticas: ${error.stack}`);
         res.status(500).json({ message: 'Error interno' });
     } finally {
-        logPurple(`POST /api/empresas ejecutado en ${performance.now() - start} ms`);
+        logPurple(`POST /api/logisticas ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -29,14 +29,14 @@ router.delete('/:id', async (req, res) => {
     if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
 
     try {
-        await deleteEmpresa(req.params.id);
+        await deleteLogistica(req.params.id);
         res.status(200).json({ message: 'Eliminado correctamente' });
-        logGreen(`DELETE /api/empresas/${req.params.id}: éxito al eliminar empresa`);
+        logGreen(`DELETE /api/logisticas/${req.params.id}: éxito al eliminar logistica`);
     } catch (error) {
-        logRed(`Error DELETE /api/empresas/:id: ${error.stack}`);
+        logRed(`Error DELETE /api/logisticas/:id: ${error.stack}`);
         res.status(500).json({ message: 'Error interno' });
     } finally {
-        logPurple(`DELETE /api/empresas/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(`DELETE /api/logisticas/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -47,14 +47,14 @@ router.put('/:id', async (req, res) => {
     if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
 
     try {
-        const updated = await updateEmpresa(req.params.id, req.body);
+        const updated = await updateLogistica(req.params.id, req.body);
         res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
-        logGreen(`PUT /api/empresas/${req.params.id}: éxito al actualizar empresa`);
+        logGreen(`PUT /api/logisticas/${req.params.id}: éxito al actualizar logistica`);
     } catch (error) {
-        logRed(`Error PUT /api/empresas/:id: ${error.stack}`);
+        logRed(`Error PUT /api/logisticas/:id: ${error.stack}`);
         res.status(500).json({ message: 'Error interno' });
     } finally {
-        logPurple(`PUT /api/empresas/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(`PUT /api/logisticas/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -64,14 +64,14 @@ router.get('/:id', async (req, res) => {
     if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
 
     try {
-        const item = await getEmpresaById(req.params.id);
+        const item = await getLogisticaById(req.params.id);
         res.status(200).json({ body: item, message: 'Registro obtenido' });
-        logGreen(`GET /api/empresas/${req.params.id}: éxito al obtener empresa`);
+        logGreen(`GET /api/logisticas/${req.params.id}: éxito al obtener logistica`);
     } catch (error) {
-        logRed(`Error GET /api/empresas/:id: ${error.stack}`);
+        logRed(`Error GET /api/logisticas/:id: ${error.stack}`);
         res.status(500).json({ message: 'Error interno' });
     } finally {
-        logPurple(`GET /api/empresas/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(`GET /api/logisticas/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -80,14 +80,14 @@ router.get('/', async (req, res) => {
     const missing = verifyAll(req, [], []);
     if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
     try {
-        const list = await getAllEmpresas();
+        const list = await getAllLogisticas();
         res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
-        logGreen('GET /api/empresas: éxito al listar empresas');
+        logGreen('GET /api/logisticas: éxito al listar logisticas');
     } catch (error) {
-        logRed(`Error GET /api/empresas: ${error.stack}`);
+        logRed(`Error GET /api/logisticas: ${error.stack}`);
         res.status(500).json({ message: 'Error interno' });
     } finally {
-        logPurple(`GET /api/empresas ejecutado en ${performance.now() - start} ms`);
+        logPurple(`GET /api/logisticas ejecutado en ${performance.now() - start} ms`);
     }
 });
 

@@ -1,5 +1,5 @@
-import { executeQuery } from '../db.js';
-import Reporte from '../models/Reporte.js';
+import { executeQuery } from '../../db.js';
+import Reporte from '../../models/Reporte.js';
 
 export async function getAllReportes() {
     const rows = await executeQuery(

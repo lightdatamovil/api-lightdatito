@@ -1,11 +1,11 @@
-export default class Empresa {
+export default class Logistica {
     constructor({
         id,
         nombre,
         urlImagen,
         plan_id,
-        estados_empresas_id,
-        observaciones_empresa_id,
+        estados_logisticas_id,
+        observaciones_logistica_id,
         pais_id,
         contraseña,
         cuit,
@@ -18,8 +18,8 @@ export default class Empresa {
         this.nombre = nombre;
         this.urlImagen = urlImagen;
         this.plan_id = plan_id;
-        this.estados_empresas_id = estados_empresas_id;
-        this.observaciones_empresa_id = observaciones_empresa_id;
+        this.estados_logisticas_id = estados_logisticas_id;
+        this.observaciones_logistica_id = observaciones_logistica_id;
         this.pais_id = pais_id;
         this.contraseña = contraseña;
         this.cuit = cuit;
@@ -30,13 +30,13 @@ export default class Empresa {
     }
 
     static fromJson(row) {
-        return new Empresa({
+        return new Logistica({
             id: row.id,
             nombre: row.nombre,
             urlImagen: row.urlImagen,
             plan_id: row.plan_id,
-            estados_empresas_id: row.estados_empresas_id,
-            observaciones_empresa_id: row.observaciones_empresa_id,
+            estados_logisticas_id: row.estados_logisticas_id,
+            observaciones_logistica_id: row.observaciones_logistica_id,
             pais_id: row.pais_id,
             contraseña: row.contraseña,
             cuit: row.cuit,
@@ -53,8 +53,8 @@ export default class Empresa {
             nombre: this.nombre,
             urlImagen: this.urlImagen,
             plan_id: this.plan_id,
-            estados_empresas_id: this.estados_empresas_id,
-            observaciones_empresa_id: this.observaciones_empresa_id,
+            estados_logisticas_id: this.estados_logisticas_id,
+            observaciones_logistica_id: this.observaciones_logistica_id,
             pais_id: this.pais_id,
             contraseña: this.contraseña,
             cuit: this.cuit,
