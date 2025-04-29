@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Proyecto from '../../models/proyecto.js';
+
 export async function updateProyecto(id, data) {
     const fields = Object.keys(data);
     if (!fields.length) throw new Error('No data provided for updateProyecto');

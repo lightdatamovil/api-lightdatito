@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Empresa from '../../models/empresa.js';
+
 /**
  * Retrieve all empresas (logisticas) that are not deleted.
  * @returns {Array<Empresa>} List of Empresa instances.

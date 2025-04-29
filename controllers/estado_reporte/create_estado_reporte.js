@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import EstadoReporte from '../../models/estado_reporte.js';
+
 export async function createEstadoReporte(data) {
     const fields = Object.keys(data);
     if (!fields.length) throw new Error('No data provided for createEstadoReporte');

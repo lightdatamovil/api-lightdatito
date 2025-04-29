@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Empresa from '../../models/empresa.js';
+
 /**
  * Soft-delete an empresa by ID (mark as eliminado).
  * @param {number|string} id - The ID of the empresa to delete.

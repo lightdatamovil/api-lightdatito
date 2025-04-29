@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Plan from '../../models/plan.js';
+
 export async function updatePlan(id, data) {
     const fields = Object.keys(data);
     if (!fields.length) throw new Error('No data provided for updatePlan');

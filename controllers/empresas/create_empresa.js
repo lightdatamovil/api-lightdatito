@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Empresa from '../../models/empresa.js';
+
 /**
  * Create a new empresa (logistica) and return the full inserted record.
  * Uses RETURNING * to fetch the inserted row in one statement.

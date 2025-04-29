@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import EstadoEmpresa from '../../models/estado_empresa.js';
+
 /**
  * Create a new estado_empresa and return the inserted record.
  * @param {Object} data - Fields and values for the new estado.

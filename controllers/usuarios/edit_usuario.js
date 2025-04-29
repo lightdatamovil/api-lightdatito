@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Usuario from '../../models/usuario.js';
+
 /**
  * Update an existing usuario by ID.
  * @param {number|string} id

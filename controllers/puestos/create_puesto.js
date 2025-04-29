@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import PuestoUsuario from '../../models/puesto_usuario.js';
+
 export async function createPuesto(data) {
     const fields = Object.keys(data);
     if (!fields.length) throw new Error('No data provided for createPuesto');

@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import EstadoEmpresa from '../../models/estado_empresa.js';
+
 /**
  * Retrieve all estados_empresas.
  * @returns {Array<EstadoEmpresa>} List of EstadoEmpresa instances.

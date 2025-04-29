@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Empresa from '../../models/empresa.js';
+
 /**
  * Retrieve a single empresa by ID.
  * @param {number|string} id - The ID of the empresa to fetch.

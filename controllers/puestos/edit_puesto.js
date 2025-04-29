@@ -1,3 +1,5 @@
+import { executeQuery } from '../../db.js';
+import PuestoUsuario from '../../models/puesto_usuario.js';
 
 export async function updatePuesto(id, data) {
     const fields = Object.keys(data);

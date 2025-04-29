@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import EstadoEmpresa from '../../models/estado_empresa.js';
+
 /**
  * Retrieve a single estado_empresa by ID.
  * @param {number|string} id - The ID of the estado to fetch.

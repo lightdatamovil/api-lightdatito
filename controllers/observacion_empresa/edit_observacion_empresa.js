@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import ObservacionEmpresa from '../../models/observacion_empresa.js';
+
 export async function updateObservacionEmpresa(id, data) {
     const fields = Object.keys(data);
     if (!fields.length) throw new Error('No data provided for updateObservacionEmpresa');

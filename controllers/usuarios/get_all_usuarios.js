@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Usuario from '../../models/usuario.js';
+
 /**
  * Retrieve all usuarios (not deleted).
  * @returns {Usuario[]}

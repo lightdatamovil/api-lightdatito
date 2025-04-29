@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import Usuario from '../../models/usuario.js';
+
 /**
  * Create a new usuario and return the full inserted record.
  * @param {Object} data - nombre, url_imagen, tipo_usuario_id, email, etc.

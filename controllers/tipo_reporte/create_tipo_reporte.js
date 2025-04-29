@@ -1,3 +1,6 @@
+import { executeQuery } from '../../db.js';
+import TipoReporte from '../../models/tipo_reporte.js';
+
 export async function createTipoReporte(data) {
     const fields = Object.keys(data);
     if (!fields.length) throw new Error('No data provided for createTipoReporte');
