@@ -1,15 +1,28 @@
-export function verifyParameters(data, requiredParams) {
+// src/funciones/verifyParameters.js
+
+/**
+ * Verifica que existan parámetros URL y campos en el body.
+ * @param {import('express').Request} req
+ * @param {string[]} requiredParams – Lista de keys que deben estar en req.params
+ * @param {string[]} requiredBodyFields – Lista de keys que deben estar en req.body
+ * @returns {string[]} – Array con los nombres de parámetros faltantes
+ */
+export function verifyAll(req, requiredParams = [], requiredBodyFields = []) {
     const missing = [];
-    requiredParams.forEach(param => {
-        if (!data.hasOwnProperty(param) || data[param] === undefined || data[param] === null) {
+
+    // Parámetros en la URL
+    requiredParams.forEach((param) => {
+        if (!req.params || !(param in req.params)) {
             missing.push(param);
         }
     });
-    return missing;
-}
 
-export function verifyAll(req, requiredParams = [], requiredBody = []) {
-    const missingParams = verifyParameters(req.params, requiredParams);
-    const missingBody = verifyParameters(req.body, requiredBody);
-    return [...missingParams, ...missingBody];
+    // Campos en el body
+    requiredBodyFields.forEach((field) => {
+        if (!req.body || !(field in req.body)) {
+            missing.push(field);
+        }
+    });
+
+    return missing;
 }

@@ -79,7 +79,7 @@ reportesRouter.delete('/:id', async (req, res) => {
     if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
     try {
         await deleteReporte(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(200).json({ message: 'Eliminado correctamente ' });
         logGreen(`DELETE /api/reportes/${req.params.id}: éxito al eliminar reporte`);
     } catch (error) {
         logRed(`Error DELETE /api/reportes/:id: ${error.stack}`);

@@ -1,4 +1,5 @@
 import { executeQuery } from '../../db.js';
+import CustomException from '../../models/custom_exception.js';
 import Logistica from '../../models/logistica.js';
 
 /**
@@ -7,7 +8,15 @@ import Logistica from '../../models/logistica.js';
  * @returns {Object} The ID of the deleted logistica.
  */
 export async function deleteLogistica(id) {
-    const query = 'UPDATE logisticas SET eliminado = 1 WHERE id = ?';
-    await executeQuery(query, [id]);
-    return { id };
+    try {
+        const query = 'UPDATE logisticas SET eliminado = 1 WHERE id = ?';
+        await executeQuery(query, [id]);
+        return { id };
+    } catch (error) {
+        throw new CustomException(
+            'Error deleting logistica',
+            error.message,
+            error.stack
+        );
+    }
 }

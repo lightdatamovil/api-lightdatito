@@ -1,4 +1,5 @@
 import { executeQuery } from '../../db.js';
+import CustomException from '../../models/custom_exception.js';
 import EstadoLogistica from '../../models/estado_logistica.js';
 
 /**
@@ -7,6 +8,15 @@ import EstadoLogistica from '../../models/estado_logistica.js';
  * @returns {{id: number|string}} The ID of the deleted estado.
  */
 export async function deleteEstadoLogistica(id) {
-    await executeQuery('DELETE FROM estados_logistica WHERE id = ?', [id]);
-    return { id };
+    try {
+        await executeQuery('DELETE FROM estados_logistica WHERE id = ?', [id]);
+        return { id };
+    } catch (error) {
+        throw new CustomException(
+            'Error deleting estado_logistica',
+            error.message,
+            error.stack
+        );
+    }
+
 }
