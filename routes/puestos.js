@@ -14,10 +14,17 @@ const router = Router();
 // Crear un nuevo puesto
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, [], ['nombre']);
-    if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
     try {
-        const newItem = await createPuesto(req.body);
+        const errorMessage = verifyAll(req, [], ['nombre']);
+        if (errorMessage.length) {
+            logRed(`Error en create-puesto: ${errorMessage}`);
+            throw new CustomException({
+                title: 'Error en creación de puesto',
+                message: errorMessage
+            });
+        }
+        const { nombre } = req.body;
+        const newItem = await createPuesto(nombre);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/puestos: éxito al crear puesto con ID ${newItem.id}`);
     } catch (error) {

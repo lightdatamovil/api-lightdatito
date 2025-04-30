@@ -2,13 +2,10 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import PuestoUsuario from '../../models/puesto_usuario.js';
 
-export async function createPuesto(data) {
+export async function createPuesto(nombre) {
     try {
-        const fields = Object.keys(data);
-        if (!fields.length) throw new CustomException('No data provided for createPuesto');
-        const placeholders = fields.map(() => '?').join(', ');
-        const query = `INSERT INTO puestos (${fields.join(', ')}) VALUES (${placeholders}) RETURNING *`;
-        const rows = await executeQuery(query, Object.values(data));
+        const query = `INSERT INTO puestos (nombre) VALUES (?) RETURNING *`;
+        const rows = await executeQuery(query, [nombre]);
         return PuestoUsuario.fromJson(rows[0]);
     } catch (error) {
         throw new CustomException(

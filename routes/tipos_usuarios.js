@@ -15,13 +15,23 @@ const router = Router();
 // Crear un nuevo tipo de usuario
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, [], ['nombre']);
-    if (missing.length) {
-        return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
-    }
     try {
-        const newItem = await createTipoUsuario(req.body);
+        const errorMessage = verifyAll(req, [], ['nombre']);
+
+        if (errorMessage.length) {
+            logRed(`Error en create-tipo-usuario: ${errorMessage}`);
+            throw new CustomException({
+                title: 'Error en creación de tipo de usuario',
+                message: errorMessage
+            });
+        }
+
+        const { nombre } = req.body;
+
+        const newItem = await createTipoUsuario(nombre);
+
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
+
         logGreen(`POST /api/tipo-usuario: éxito al crear tipo con ID ${newItem.id}`);
     } catch (error) {
         if (error instanceof CustomException) {
