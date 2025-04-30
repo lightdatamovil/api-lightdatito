@@ -14,10 +14,19 @@ const router = Router();
 // Crear un nuevo proyecto
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, [], ['nombre']);
-    if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
     try {
-        const newItem = await createProyecto(req.body);
+        const errorMessage = verifyAll(req, [], ['nombre']);
+
+        if (errorMessage.length) {
+            logRed(`Error en create-estado-logistica: ${errorMessage}`);
+            throw new CustomException({
+                title: 'Error en create-estado-logistica',
+                message: errorMessage
+            });
+        }
+
+        const { nombre } = req.body;
+        const newItem = await createProyecto(nombre);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/proyectos: éxito al crear proyecto con ID ${newItem.id}`);
     } catch (error) {

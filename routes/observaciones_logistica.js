@@ -14,10 +14,19 @@ const observacionesLogisticaRouter = Router();
 // Crear observación de logística
 observacionesLogisticaRouter.post('/', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, [], []);
-    if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
     try {
-        const newItem = await createObservacionLogistica(req.body);
+        const errorMessage = verifyAll(req, [], ['nombre']);
+
+        if (errorMessage.length) {
+            logRed(`Error en create-observacion-logistica: ${errorMessage}`);
+            throw new CustomException({
+                title: 'Error en create-observacion-logistica',
+                message: errorMessage
+            });
+        }
+
+        const { nombre } = req.body;
+        const newItem = await createObservacionLogistica(nombre);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/observaciones-logistica: éxito al crear observación con ID ${newItem.id}`);
     } catch (error) {

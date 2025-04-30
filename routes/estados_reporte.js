@@ -56,10 +56,19 @@ router.get('/:id', async (req, res) => {
 // Crear un nuevo estado de reporte
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, [], ['nombre', 'color']);
-    if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
     try {
-        const newItem = await createEstadoReporte(req.body);
+        const errorMessage = verifyAll(req, [], ['nombre', 'color']);
+
+        if (errorMessage.length) {
+            logRed(`Error en create-estado-reporte: ${errorMessage}`);
+            throw new CustomException({
+                title: 'Error en create-estado-reporte',
+                message: errorMessage
+            });
+        }
+
+        const { nombre, color } = req.body;
+        const newItem = await createEstadoReporte(nombre, color);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/estados-reporte: éxito al crear estado de reporte con ID ${newItem.id}`);
     } catch (error) {

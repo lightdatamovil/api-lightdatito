@@ -7,13 +7,10 @@ import EstadoLogistica from '../../models/estado_logistica.js';
  * @param {Object} data - Fields and values for the new estado.
  * @returns {EstadoLogistica} The created EstadoLogistica instance.
  */
-export async function createEstadoLogistica(data) {
+export async function createEstadoLogistica(nombre, color) {
     try {
-        const fields = Object.keys(data);
-        if (!fields.length) throw new CustomException('No data provided for createEstadoLogistica');
-        const placeholders = fields.map(() => '?').join(', ');
-        const query = `INSERT INTO estados_logistica (${fields.join(', ')}) VALUES (${placeholders}) RETURNING *`;
-        const rows = await executeQuery(query, Object.values(data));
+        const query = `INSERT INTO estados_logistica (nombre, color) VALUES (?, ?) RETURNING *`;
+        const rows = await executeQuery(query, [nombre, color]);
         return EstadoLogistica.fromJson(rows[0]);
     } catch (error) {
         throw new CustomException(

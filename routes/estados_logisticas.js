@@ -14,10 +14,19 @@ const router = Router();
 // Crear estado de logística
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, [], []);
-    if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
     try {
-        const newItem = await createEstadoLogistica(req.body);
+        const errorMessage = verifyAll(req, [], ['nombre', 'color']);
+
+        if (errorMessage.length) {
+            logRed(`Error en create-estado-logistica: ${errorMessage}`);
+            throw new CustomException({
+                title: 'Error en create-estado-logistica',
+                message: errorMessage
+            });
+        }
+
+        const { nombre, color } = req.body;
+        const newItem = await createEstadoLogistica(nombre, color);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/estados-logisticas: éxito al crear estado con ID ${newItem.id}`);
     } catch (error) {
