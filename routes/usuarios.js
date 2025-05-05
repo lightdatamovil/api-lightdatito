@@ -9,6 +9,8 @@ import { getAllUsuarios } from '../controllers/usuarios/get_all_usuarios.js';
 import { getUsuarioById } from '../controllers/usuarios/get_user_by_id.js';
 import { updateUsuario } from '../controllers/usuarios/edit_usuario.js';
 import { deleteUsuario } from '../controllers/usuarios/delete_usuario.js';
+import { getInformeDashboard } from '../controllers/usuarios/get_informe_dashboard.js';
+import { getReportesUltimaSemana } from '../controllers/usuarios/get_reportes_dashboard.js';
 
 const router = Router();
 
@@ -79,7 +81,66 @@ router.get('/:id', async (req, res) => {
         logPurple(`GET /api/usuarios/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
+// Obtener un usuario por ID
+router.get('/:id/informe-dashboard', async (req, res) => {
+    const start = performance.now();
+    const missing = verifyAll(req, ['id'], []);
+    if (missing.length) {
+        return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
+    }
+    try {
+        const item = await getInformeDashboard(req.params.id);
+        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        logGreen(`GET /api/usuarios/${req.params.id}/informe-dashboard: éxito al obtener informe`);
+    } catch (error) {
+        if (error instanceof CustomException) {
+            logRed(`Error 400 en usuarios GET/:id/informe-dashboard: ${error}`);
+            return res.status(400).json(error);
+        }
+        const customError = new CustomException('Internal Error', error.message, error.stack);
+        logRed(`Error 500 en usuarios GET/:id/informe-dashboard: ${error}`);
+        return res.status(500).json(customError);
+    } finally {
+        logPurple(`GET /api/usuarios/:id ejecutado en ${performance.now() - start} ms`);
+    }
+});
+router.get("/:userId/ultima-semana", async (req, res) => {
+    const start = performance.now();
+    const userId = Number(req.params.userId);
 
+    try {
+        const rows = await getReportesUltimaSemana(userId);
+        res
+            .status(200)
+            .json({ body: rows, message: "Reportes última semana obtenidos" });
+        logGreen(
+            `GET /api/reportes/ultima-semana/${userId}: éxito al listar reportes`
+        );
+    } catch (err) {
+        if (err instanceof CustomException) {
+            logRed(
+                `Error 400 GET /api/reportes/ultima-semana/${userId}:`,
+                err.toJSON()
+            );
+            return res.status(400).json(err.toJSON());
+        }
+        const fatal = new CustomException({
+            title: "Internal Server Error",
+            message: err.message,
+            stack: err.stack
+        });
+        logRed(
+            `Error 500 GET /api/reportes/ultima-semana/${userId}:`,
+            fatal.toJSON()
+        );
+        res.status(500).json(fatal.toJSON());
+    } finally {
+        logPurple(
+            `GET /api/reportes/ultima-semana/:userId ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
 // Actualizar un usuario
 router.put('/:id', async (req, res) => {
     const start = performance.now();
