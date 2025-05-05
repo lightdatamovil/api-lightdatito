@@ -8,14 +8,16 @@ import Logistica from '../../models/logistica.js';
  */
 export async function getAllLogisticas() {
     try {
-        const query = 'SELECT * FROM logisticas WHERE eliminado = 0';
-        const rows = await executeQuery(query);
-        return rows.map(row => Logistica.fromJson(row));
-    } catch (error) {
-        throw new CustomException(
-            'Error retrieving logisticas',
-            error.message,
-            error.stack
+        const rows = await executeQuery(
+            'SELECT * FROM logisticas WHERE eliminado = 0'
         );
+        return rows.map(row => Logistica.fromJson(row));
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al obtener logísticas',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

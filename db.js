@@ -1,4 +1,3 @@
-// db.js
 import dotenv from 'dotenv';
 import mysql2 from 'mysql2/promise';
 import { logRed, logYellow } from './src/funciones/logsCustom.js';

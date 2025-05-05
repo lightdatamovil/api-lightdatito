@@ -9,14 +9,31 @@ import Logistica from '../../models/logistica.js';
  */
 export async function deleteLogistica(id) {
     try {
-        const query = 'UPDATE logisticas SET eliminado = 1 WHERE id = ?';
-        await executeQuery(query, [id]);
-        return { id };
-    } catch (error) {
-        throw new CustomException(
-            'Error deleting logistica',
-            error.message,
-            error.stack
+        // 1) Verificar que la logística exista y no esté ya eliminada
+        const [row] = await executeQuery(
+            'SELECT * FROM logisticas WHERE id = ? AND eliminado = 0',
+            [id]
         );
+        if (!row) {
+            throw new CustomException({
+                title: 'Logística no encontrada',
+                message: `No existe una logística activa con id=${id}`
+            });
+        }
+
+        // 2) Marcarla como eliminada
+        await executeQuery(
+            'UPDATE logisticas SET eliminado = 1 WHERE id = ?',
+            [id]
+        );
+
+        return { id };
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al eliminar logística',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

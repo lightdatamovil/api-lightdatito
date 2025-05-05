@@ -9,15 +9,26 @@ import Logistica from '../../models/logistica.js';
  */
 export async function getLogisticaById(id) {
     try {
-        const query = 'SELECT * FROM logisticas WHERE id = ? AND eliminado = 0';
-        const rows = await executeQuery(query, [id]);
-        if (!rows.length) return null;
-        return Logistica.fromJson(rows[0]);
-    } catch (error) {
-        throw new CustomException(
-            'Error retrieving logistica',
-            error.message,
-            error.stack
+        const rows = await executeQuery(
+            'SELECT * FROM logisticas WHERE id = ? AND eliminado = 0',
+            [id]
         );
+        logCyan(`Logistica: ${JSON.stringify(rows)}`);
+
+        if (rows.length === 0) {
+            throw new CustomException({
+                title: 'Logística no encontrada',
+                message: `No existe una logística con id=${id}`
+            });
+        }
+
+        return Logistica.fromJson(rows[0]);
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al obtener logística',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }
