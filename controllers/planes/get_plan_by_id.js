@@ -4,13 +4,25 @@ import Plan from '../../models/plan.js';
 
 export async function getPlanById(id) {
     try {
-        const rows = await executeQuery('SELECT * FROM plan WHERE id = ? AND eliminado = 0', [id]);
-        return rows.length ? Plan.fromJson(rows[0]) : null;
-    } catch (error) {
-        throw new CustomException(
-            'Error creating estado_logistica',
-            error.message,
-            error.stack
+        const rows = await executeQuery(
+            'SELECT * FROM plan WHERE id = ? AND eliminado = 0',
+            [id]
         );
+
+        if (rows.length === 0) {
+            throw new CustomException({
+                title: 'Plan no encontrado',
+                message: `No existe un plan con id=${id}`
+            });
+        }
+
+        return Plan.fromJson(rows[0]);
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al obtener plan',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

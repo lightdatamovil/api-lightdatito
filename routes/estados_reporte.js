@@ -11,120 +11,169 @@ import { deleteEstadoReporte } from '../controllers/estado_reporte/delete_estado
 
 const router = Router();
 
-// Listar todos los estados de reporte
 router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllEstadosReporte();
         res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/estados-reporte: éxito al listar estados de reporte');
-    } catch (error) {
-        if (error instanceof CustomException) {
-            logRed(`Error 400 en estados-reporte GET: ${error}`);
-            return res.status(400).json(error);
+    } catch (err) {
+        if (err instanceof CustomException) {
+            logRed(`Error 400 GET estados-reporte:`, err.toJSON());
+            return res.status(400).json(err.toJSON());
         }
-        const customError = new CustomException('Internal Error', error.message, error.stack);
-        logRed(`Error 500 en estados-reporte GET: ${error}`);
-        res.status(500).json(customError);
+        const fatal = new CustomException({
+            title: 'Internal Server Error',
+            message: err.message,
+            stack: err.stack
+        });
+        logRed('Error 500 GET estados-reporte:', fatal.toJSON());
+        res.status(500).json(fatal.toJSON());
     } finally {
         logPurple(`GET /api/estados-reporte ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Obtener un estado de reporte por ID
+// Obtener por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
     const missing = verifyAll(req, ['id'], []);
-    if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
+    if (missing.length) {
+        const ex = new CustomException({
+            title: 'Faltan parámetros',
+            message: `Faltan parámetros: ${missing.join(',')}`,
+        });
+        logRed(`Error 400 GET estados-reporte/:id:`, ex.toJSON());
+        return res.status(400).json(ex.toJSON());
+    }
+
     try {
         const item = await getEstadoReporteById(req.params.id);
         res.status(200).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/estados-reporte/${req.params.id}: éxito al obtener estado de reporte`);
-    } catch (error) {
-        if (error instanceof CustomException) {
-            logRed(`Error 400 en estados-reporte GET/:id: ${error}`);
-            return res.status(400).json(error);
+    } catch (err) {
+        if (err instanceof CustomException) {
+            logRed(`Error ${400} GET estados-reporte/:id:`, err.toJSON());
+            return res.status(400).json(err.toJSON());
         }
-        const customError = new CustomException('Internal Error', error.message, error.stack);
-        logRed(`Error 500 en estados-reporte GET/:id: ${error}`);
-        res.status(500).json(customError);
+        const fatal = new CustomException({
+            title: 'Internal Server Error',
+            message: err.message,
+            stack: err.stack
+        });
+        logRed('Error 500 GET estados-reporte/:id:', fatal.toJSON());
+        res.status(500).json(fatal.toJSON());
     } finally {
-        logPurple(`GET /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(
+            `GET /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`
+        );
     }
 });
 
-// Crear un nuevo estado de reporte
+// Crear (POST)
 router.post('/', async (req, res) => {
     const start = performance.now();
+    const missing = verifyAll(req, [], ['nombre', 'color']);
+    if (missing.length) {
+        const ex = new CustomException({
+            title: 'Error en create-estado-reporte',
+            message: `Faltan campos: ${missing.join(',')}`,
+        });
+        logRed(`Error 400 POST estados-reporte:`, ex.toJSON());
+        return res.status(400).json(ex.toJSON());
+    }
+
     try {
-        const errorMessage = verifyAll(req, [], ['nombre', 'color']);
-
-        if (errorMessage.length) {
-            logRed(`Error en create-estado-reporte: ${errorMessage}`);
-            throw new CustomException({
-                title: 'Error en create-estado-reporte',
-                message: errorMessage
-            });
-        }
-
         const { nombre, color } = req.body;
-        const newItem = await createEstadoReporte(nombre, color);
+        const newItem = await createEstadoReporte({ nombre, color });
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
-        logGreen(`POST /api/estados-reporte: éxito al crear estado de reporte con ID ${newItem.id}`);
-    } catch (error) {
-        if (error instanceof CustomException) {
-            logRed(`Error 400 en estados-reporte POST: ${error}`);
-            return res.status(400).json(error);
+        logGreen(
+            `POST /api/estados-reporte: éxito al crear estado de reporte con ID ${newItem.id}`
+        );
+    } catch (err) {
+        if (err instanceof CustomException) {
+            logRed(`Error ${400} POST estados-reporte:`, err.toJSON());
+            return res.status(400).json(err.toJSON());
         }
-        const customError = new CustomException('Internal Error', error.message, error.stack);
-        logRed(`Error 500 en estados-reporte POST: ${error}`);
-        res.status(500).json(customError);
+        const fatal = new CustomException({
+            title: 'Internal Server Error',
+            message: err.message,
+            stack: err.stack
+        });
+        logRed('Error 500 POST estados-reporte:', fatal.toJSON());
+        res.status(500).json(fatal.toJSON());
     } finally {
         logPurple(`POST /api/estados-reporte ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Actualizar un estado de reporte
+// Actualizar (PUT)
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, ['id'], []);
-    if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
+    const missingParams = verifyAll(req, ['id'], []);
+    if (missingParams.length) {
+        const ex = new CustomException({
+            title: 'Faltan parámetros',
+            message: `Faltan parámetros: ${missingParams.join(',')}`,
+        });
+        logRed(`Error 400 PUT estados-reporte/:id:`, ex.toJSON());
+        return res.status(400).json(ex.toJSON());
+    }
+
     try {
-        const updated = await updateEstadoReporte(req.params.id, req.body);
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
-        logGreen(`PUT /api/estados-reporte/${req.params.id}: éxito al actualizar estado de reporte`);
-    } catch (error) {
-        if (error instanceof CustomException) {
-            logRed(`Error 400 en estados-reporte PUT: ${error}`);
-            return res.status(400).json(error);
+        const updatedItem = await updateEstadoReporte(req.params.id, req.body);
+        res.status(200).json({ body: updatedItem, message: 'Actualizado correctamente' });
+        logGreen(`PUT /api/estados-reporte/${req.params.id}: éxito al actualizar`);
+    } catch (err) {
+        if (err instanceof CustomException) {
+            logRed(`Error ${400} PUT estados-reporte/:id:`, err.toJSON());
+            return res.status(400).json(err.toJSON());
         }
-        const customError = new CustomException('Internal Error', error.message, error.stack);
-        logRed(`Error 500 en estados-reporte PUT: ${error}`);
-        res.status(500).json(customError);
+        const fatal = new CustomException({
+            title: 'Internal Server Error',
+            message: err.message,
+            stack: err.stack
+        });
+        logRed('Error 500 PUT estados-reporte/:id:', fatal.toJSON());
+        res.status(500).json(fatal.toJSON());
     } finally {
         logPurple(`PUT /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Eliminar un estado de reporte
+// Eliminar (DELETE)
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, ['id'], []);
-    if (missing.length) return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
+    const missingParams = verifyAll(req, ['id'], []);
+    if (missingParams.length) {
+        const ex = new CustomException({
+            title: 'Faltan parámetros',
+            message: `Faltan parámetros: ${missingParams.join(',')}`,
+        });
+        logRed(`Error 400 DELETE estados-reporte/:id:`, ex.toJSON());
+        return res.status(400).json(ex.toJSON());
+    }
+
     try {
         await deleteEstadoReporte(req.params.id);
         res.status(200).json({ message: 'Eliminado correctamente' });
-        logGreen(`DELETE /api/estados-reporte/${req.params.id}: éxito al eliminar estado de reporte`);
-    } catch (error) {
-        if (error instanceof CustomException) {
-            logRed(`Error 400 en estados-reporte DELETE: ${error}`);
-            return res.status(400).json(error);
+        logGreen(`DELETE /api/estados-reporte/${req.params.id}: éxito al eliminar`);
+    } catch (err) {
+        if (err instanceof CustomException) {
+            logRed(`Error ${400} DELETE estados-reporte/:id:`, err.toJSON());
+            return res.status(400).json(err.toJSON());
         }
-        const customError = new CustomException('Internal Error', error.message, error.stack);
-        logRed(`Error 500 en estados-reporte DELETE: ${error}`);
-        res.status(500).json(customError);
+        const fatal = new CustomException({
+            title: 'Internal Server Error',
+            message: err.message,
+            stack: err.stack
+        });
+        logRed('Error 500 DELETE estados-reporte/:id:', fatal.toJSON());
+        res.status(500).json(fatal.toJSON());
     } finally {
-        logPurple(`DELETE /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(
+            `DELETE /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`
+        );
     }
 });
 

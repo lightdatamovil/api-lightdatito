@@ -9,14 +9,31 @@ import EstadoLogistica from '../../models/estado_logistica.js';
  */
 export async function deleteEstadoLogistica(id) {
     try {
-        await executeQuery('DELETE FROM estados_logistica WHERE id = ?', [id]);
-        return { id };
-    } catch (error) {
-        throw new CustomException(
-            'Error deleting estado_logistica',
-            error.message,
-            error.stack
+        // 1) Verificar que exista el registro
+        const [row] = await executeQuery(
+            `SELECT * FROM estados_logistica WHERE id = ?`,
+            [id]
         );
-    }
+        if (!row) {
+            throw new CustomException({
+                title: 'EstadoLogistica no encontrado',
+                message: `No existe un estado_logistica con id=${id}`
+            });
+        }
 
+        // 2) Eliminarlo
+        await executeQuery(
+            `DELETE FROM estados_logistica WHERE id = ?`,
+            [id]
+        );
+
+        return { id };
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al eliminar estado_logistica',
+            message: err.message,
+            stack: err.stack
+        });
+    }
 }

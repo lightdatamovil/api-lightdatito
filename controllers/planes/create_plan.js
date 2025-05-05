@@ -4,14 +4,40 @@ import Plan from '../../models/plan.js';
 
 export async function createPlan(nombre, color) {
     try {
-        const query = `INSERT INTO plan (nombre, color) VALUES (?, ?) RETURNING *`;
-        const rows = await executeQuery(query, [nombre, color]);
-        return Plan.fromJson(rows[0]);
-    } catch (error) {
-        throw new CustomException(
-            'Error creating plan',
-            error.message,
-            error.stack
+        // 1) Insertar sin RETURNING
+        const result = await executeQuery(
+            `INSERT INTO plan (nombre, color) VALUES (?, ?)`,
+            [nombre, color]
         );
+
+        // 2) Obtener el ID recién insertado
+        const newId = result.insertId;
+        if (!newId) {
+            throw new CustomException({
+                title: 'Error al crear plan',
+                message: 'No se obtuvo el ID del registro insertado'
+            });
+        }
+
+        // 3) Recuperar el registro completo
+        const [row] = await executeQuery(
+            `SELECT * FROM plan WHERE id = ?`,
+            [newId]
+        );
+        if (!row) {
+            throw new CustomException({
+                title: 'Error al crear plan',
+                message: `No se pudo recuperar el registro con id=${newId}`
+            });
+        }
+
+        return Plan.fromJson(row);
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al crear plan',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

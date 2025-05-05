@@ -1,5 +1,7 @@
 // src/funciones/verifyParameters.js
 
+import { logRed } from './logsCustom.js';
+
 /**
  * Verifica que existan parámetros URL y campos en el body.
  * @param {import('express').Request} req
@@ -10,19 +12,22 @@
 export function verifyAll(req, requiredParams = [], requiredBodyFields = []) {
     const missing = [];
 
-    // Parámetros en la URL
-    requiredParams.forEach((param) => {
-        if (!req.params || !(param in req.params)) {
+    requiredParams.forEach(param => {
+        if (!req.params || req.params[param] === undefined) {
             missing.push(param);
         }
     });
 
-    // Campos en el body
-    requiredBodyFields.forEach((field) => {
-        if (!req.body || !(field in req.body)) {
+    requiredBodyFields.forEach(field => {
+        if (!req.body || req.body[field] === undefined) {
             missing.push(field);
         }
+
     });
+
+    if (missing.length) {
+        logRed(`Faltan los siguientes parámetros: ${missing.join(', ')}`);
+    }
 
     return missing;
 }

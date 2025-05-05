@@ -10,10 +10,11 @@ export async function updateEstadoReporte(id, data) {
         await executeQuery(`UPDATE estados_reporte SET ${setClause} WHERE id = ?`, [...Object.values(data), id]);
         return getEstadoReporteById(id);
     } catch (error) {
-        throw new CustomException(
-            'Error creating estado_logistica',
-            error.message,
-            error.stack
-        );
+        if (error instanceof CustomException) throw error;
+        throw new CustomException({
+            title: 'Error al eliminar estado_reporte',
+            message: error.message,
+            stack: error.stack
+        });
     }
 }

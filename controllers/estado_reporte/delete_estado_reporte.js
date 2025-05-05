@@ -1,16 +1,29 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import EstadoReporte from '../../models/estado_reporte.js';
 
 export async function deleteEstadoReporte(id) {
     try {
+        const [row] = await executeQuery(
+            `SELECT * FROM estados_reporte WHERE id = ?`,
+            [id]
+        );
+
+        if (!row) {
+            throw new CustomException({
+                title: 'EstadoReporte no encontrado',
+                message: `No existe un estado_reporte con id=${id}`
+            });
+        }
+
         await executeQuery('DELETE FROM estados_reporte WHERE id = ?', [id]);
+
         return { id };
     } catch (error) {
-        throw new CustomException(
-            'Error creating estado_logistica',
-            error.message,
-            error.stack
-        );
+        if (error instanceof CustomException) throw error;
+        throw new CustomException({
+            title: 'Error al eliminar estado_reporte',
+            message: error.message,
+            stack: error.stack
+        });
     }
 }
