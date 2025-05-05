@@ -8,7 +8,6 @@ export async function getObservacionLogisticaById(id) {
             'SELECT * FROM observaciones_logistica WHERE id = ?',
             [id]
         );
-        logCyan(`ObservacionLogistica: ${JSON.stringify(rows)}`);
 
         if (rows.length === 0) {
             throw new CustomException({

@@ -4,13 +4,25 @@ import Proyecto from '../../models/proyecto.js';
 
 export async function getProyectoById(id) {
     try {
-        const rows = await executeQuery('SELECT * FROM proyectos WHERE id = ?', [id]);
-        return rows.length ? Proyecto.fromJson(rows[0]) : null;
-    } catch (error) {
-        throw new CustomException(
-            'Error creating estado_logistica',
-            error.message,
-            error.stack
+        const rows = await executeQuery(
+            'SELECT * FROM proyectos WHERE id = ?',
+            [id]
         );
+
+        if (rows.length === 0) {
+            throw new CustomException({
+                title: 'Proyecto no encontrado',
+                message: `No existe un proyecto con id=${id}`
+            });
+        }
+
+        return Proyecto.fromJson(rows[0]);
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al obtener proyecto',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

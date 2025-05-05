@@ -2,19 +2,42 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import TipoReporte from '../../models/tipo_reporte.js';
 
-export async function createTipoReporte(data) {
+export async function createTipoReporte(nombre, color) {
     try {
-        const fields = Object.keys(data);
-        if (!fields.length) throw new CustomException('No data provided for createTipoReporte');
-        const placeholders = fields.map(() => '?').join(', ');
-        const query = `INSERT INTO tipo_reporte (${fields.join(', ')}) VALUES (${placeholders}) RETURNING *`;
-        const rows = await executeQuery(query, Object.values(data));
-        return TipoReporte.fromJson(rows[0]);
-    } catch (error) {
-        throw new CustomException(
-            'Error creating tipo_reporte',
-            error.message,
-            error.stack
+        // 1) Insertar sin RETURNING
+        const result = await executeQuery(
+            `INSERT INTO tipo_reporte (nombre, color) VALUES (?, ?)`,
+            [nombre, color]
         );
+
+        // 2) Obtener el ID recién insertado
+        const newId = result.insertId;
+        if (!newId) {
+            throw new CustomException({
+                title: 'Error al crear tipo_reporte',
+                message: 'No se obtuvo el ID del registro insertado'
+            });
+        }
+
+        // 3) Recuperar el registro completo
+        const [row] = await executeQuery(
+            `SELECT * FROM tipo_reporte WHERE id = ?`,
+            [newId]
+        );
+        if (!row) {
+            throw new CustomException({
+                title: 'Error al crear tipo_reporte',
+                message: `No se pudo recuperar el registro con id=${newId}`
+            });
+        }
+
+        return TipoReporte.fromJson(row);
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al crear tipo_reporte',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

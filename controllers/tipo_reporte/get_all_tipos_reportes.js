@@ -6,11 +6,12 @@ export async function getAllTipoReporte() {
     try {
         const rows = await executeQuery('SELECT * FROM tipo_reporte');
         return rows.map(r => TipoReporte.fromJson(r));
-    } catch (error) {
-        throw new CustomException(
-            'Error creating estado_logistica',
-            error.message,
-            error.stack
-        );
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al obtener tipos de reporte',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

@@ -1,7 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import EstadoReporte from '../../models/estado_reporte.js';
-import { logCyan } from '../../src/funciones/logsCustom.js';
 
 // services/estado_reporte.js
 export async function getEstadoReporteById(id) {

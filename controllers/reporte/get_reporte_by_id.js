@@ -8,12 +8,21 @@ export async function getReporteById(id) {
             'SELECT * FROM reportes WHERE id = ? AND eliminado = 0',
             [id]
         );
-        return rows.length ? Reporte.fromJson(rows[0]) : null;
-    } catch (error) {
-        throw new CustomException(
-            'Error creating estado_logistica',
-            error.message,
-            error.stack
-        );
+
+        if (rows.length === 0) {
+            throw new CustomException({
+                title: 'Reporte no encontrado',
+                message: `No existe un reporte con id=${id}`
+            });
+        }
+
+        return Reporte.fromJson(rows[0]);
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al obtener reporte',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

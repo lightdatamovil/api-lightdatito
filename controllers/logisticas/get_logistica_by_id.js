@@ -13,7 +13,6 @@ export async function getLogisticaById(id) {
             'SELECT * FROM logisticas WHERE id = ? AND eliminado = 0',
             [id]
         );
-        logCyan(`Logistica: ${JSON.stringify(rows)}`);
 
         if (rows.length === 0) {
             throw new CustomException({

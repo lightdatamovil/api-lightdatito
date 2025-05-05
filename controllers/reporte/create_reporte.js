@@ -2,19 +2,58 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Reporte from '../../models/Reporte.js';
 
-export async function createReporte(data) {
+export async function createReporte(
+    titulo,
+    descripcion,
+    tipo_reporte_id,
+    observador,
+    proyecto_id,
+    logistica_id
+) {
     try {
-        const fields = Object.keys(data);
-        if (!fields.length) throw new CustomException('No data provided for createReporte');
-        const placeholders = fields.map(() => '?').join(', ');
-        const query = `INSERT INTO reportes (${fields.join(', ')}) VALUES (${placeholders}) RETURNING *`;
-        const rows = await executeQuery(query, Object.values(data));
-        return Reporte.fromJson(rows[0]);
-    } catch (error) {
-        throw new CustomException(
-            'Error creating reporte',
-            error.message,
-            error.stack
+        // 1) Insertar sin RETURNING
+        const result = await executeQuery(
+            `INSERT INTO reportes
+          (titulo, descripcion, tipo_reporte_id, observador, proyecto_id, logistica_id)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                titulo,
+                descripcion,
+                tipo_reporte_id,
+                observador,
+                proyecto_id,
+                logistica_id
+            ]
         );
+
+        // 2) Obtener el ID recién insertado
+        const newId = result.insertId;
+        if (!newId) {
+            throw new CustomException({
+                title: 'Error al crear reporte',
+                message: 'No se obtuvo el ID del registro insertado'
+            });
+        }
+
+        // 3) Recuperar el registro completo
+        const [row] = await executeQuery(
+            `SELECT * FROM reportes WHERE id = ?`,
+            [newId]
+        );
+        if (!row) {
+            throw new CustomException({
+                title: 'Error al crear reporte',
+                message: `No se pudo recuperar el reporte con id=${newId}`
+            });
+        }
+
+        return Reporte.fromJson(row);
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al crear reporte',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

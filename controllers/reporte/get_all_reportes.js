@@ -8,11 +8,12 @@ export async function getAllReportes() {
             'SELECT * FROM reportes WHERE eliminado = 0'
         );
         return rows.map(r => Reporte.fromJson(r));
-    } catch (error) {
-        throw new CustomException(
-            'Error creating estado_logistica',
-            error.message,
-            error.stack
-        );
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al obtener reportes',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }
