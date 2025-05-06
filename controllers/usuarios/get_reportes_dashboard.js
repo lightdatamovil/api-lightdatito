@@ -24,40 +24,40 @@ import CustomException from "../../models/custom_exception.js";
  * }>>}
  */
 export async function getReportesUltimaSemana(userId) {
-    try {
-        // 1) Leer el tipo de usuario
-        const [userRow] = await executeQuery(
-            `SELECT tipo_usuario_id 
+  try {
+    // 1) Leer el tipo de usuario
+    const [userRow] = await executeQuery(
+      `SELECT tipo_usuario_id 
          FROM usuarios 
         WHERE id = ?`,
-            [userId]
-        );
-        if (!userRow) {
-            throw new CustomException({
-                title: "Usuario no encontrado",
-                message: `No existe un usuario con id=${userId}`,
-            });
-        }
-        const isAdmin = userRow.tipo_usuario_id === 1;
+      [userId]
+    );
+    if (!userRow) {
+      throw new CustomException({
+        title: "Usuario no encontrado",
+        message: `No existe un usuario con id=${userId}`,
+      });
+    }
+    const isAdmin = userRow.tipo_usuario_id === 1;
 
-        // 2) Filtrar últimos 7 días, no eliminados
-        let where = `
+    // 2) Filtrar últimos 7 días, no eliminados
+    let where = `
       r.eliminado = 0
       AND r.fecha_creacion >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     `;
-        const params = [];
+    const params = [];
 
-        // 3) Si no es admin, limitar a sus propios reportes
-        if (!isAdmin) {
-            where += ` AND r.observador = ?`;
-            params.push(userId);
-        }
+    // 3) Si no es admin, limitar a sus propios reportes
+    if (!isAdmin) {
+      where += ` AND r.observador = ?`;
+      params.push(userId);
+    }
 
-        // 4) Consulta principal usando subconsultas para asignación y estado
-        const sql = `
+    // 4) Consulta principal usando subconsultas para asignación y estado
+    const sql = `
       SELECT
         r.id,
-        tr.nombre          AS tipo_reporte,
+        tr.nombre AS tipo_reporte,
         r.descripcion,
         r.fecha_creacion,
         (
@@ -85,13 +85,13 @@ export async function getReportesUltimaSemana(userId) {
       ORDER BY r.fecha_creacion DESC;
     `;
 
-        return await executeQuery(sql, params);
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
-        throw new CustomException({
-            title: "Error al obtener reportes de la última semana",
-            message: err.message,
-            stack: err.stack,
-        });
-    }
+    return await executeQuery(sql, params);
+  } catch (err) {
+    if (err instanceof CustomException) throw err;
+    throw new CustomException({
+      title: "Error al obtener reportes de la última semana",
+      message: err.message,
+      stack: err.stack,
+    });
+  }
 }

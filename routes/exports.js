@@ -11,6 +11,7 @@ import tipoUsuarioRouter from './tipos_usuarios.js';
 import puestosRouter from './puestos.js';
 import proyectosRouter from './proyectos.js';
 import reportesRouter from './reportes.js';
+import comentariosRouter from './comentarios.js';
 
 const router = express.Router();
 
@@ -25,5 +26,6 @@ router.use('/tipo-usuario', tipoUsuarioRouter);
 router.use('/puestos', puestosRouter);
 router.use('/proyectos', proyectosRouter);
 router.use('/reportes', reportesRouter);
+router.use('/comentarios', comentariosRouter);
 
 export default router;
