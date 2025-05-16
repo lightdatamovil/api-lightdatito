@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { performance } from "perf_hooks";
-import { logRed, logPurple, logGreen } from "../src/funciones/logsCustom.js";
+import { logRed, logPurple, logGreen, logYellow } from "../src/funciones/logsCustom.js";
 
 import CustomException from "../models/custom_exception.js";
 
@@ -11,10 +11,15 @@ const router = Router();
 // Crear un nuevo puesto
 
 // Listar todos los puestos
-router.get("/", async (req, res) => {
+router.get("/:tipoQr", async (req, res) => {
   const start = performance.now();
   try {
-    const grafico = await getHourlyByCompany();
+    const { tipoQr } = req.params;
+
+    logYellow(
+      `GET /api/puestos: Listando puestos de tipo ${tipoQr}...`
+    );
+    const grafico = await getHourlyByCompany(tipoQr);
     res
       .status(200)
       .json({ body: grafico, message: "Datos obtenidos correctamente" });

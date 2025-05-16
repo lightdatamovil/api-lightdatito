@@ -1,6 +1,6 @@
 import { executeQuery } from "../../db.js";
 
-export async function getHourlyByCompany() {
+export async function getHourlyByCompany(tipoQr) {
   // Consulta para obtener la cantidad de registros por empresa y hora
   const query = `
         SELECT 
@@ -11,7 +11,7 @@ export async function getHourlyByCompany() {
         GROUP BY empresa, HOUR(autofecha)
     `;
 
-  const rows = await executeQuery(query);
+  const rows = await executeQuery(query, [], true, tipoQr);
 
   // Obtener todas las empresas únicas
   const empresasSet = new Set(rows.map((row) => row.empresa));

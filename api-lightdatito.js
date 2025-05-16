@@ -1,7 +1,7 @@
 import express, { json, urlencoded } from 'express';
 import cluster from 'cluster';
 import { logBlue, logPurple, logRed } from './src/funciones/logsCustom.js';
-
+import cors from 'cors';
 import allRoutes from './routes/exports.js';
 
 const numCPUs = 2;
@@ -23,7 +23,13 @@ if (cluster.isPrimary) {
     app.use(json({ limit: '50mb' }));
     app.use(urlencoded({ limit: '50mb', extended: true }));
     app.use(json());
-
+    app.use(
+        cors({
+            origin: "*",
+            methods: ["GET", "POST"],
+            allowedHeaders: ["Content-Type", "Authorization"],
+        })
+    );
     app.post('/api/testapi', async (req, res) => {
         const startTime = performance.now();
         const endTime = performance.now();
