@@ -47,7 +47,6 @@ const poolAsignaciones = mysql2.createPool({
     connectionLimit: 10,
     queueLimit: 0
 });
-
 /**
  * Ejecuta una query usando un pool específico o el por defecto.
  *
@@ -82,6 +81,10 @@ export async function executeQuery(
         case 3:
             logYellow('Usando poolAsignaciones');
             executor = poolAsignaciones;
+            break;
+        case 4:
+            logYellow('Usando poolAsignaciones');
+            executor = poolAplanta;
             break;
         default:
             logYellow('Usando pool por defecto');
