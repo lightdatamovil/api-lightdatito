@@ -1,16 +1,26 @@
 import { executeQuery } from "../../db.js";
 
-export async function getHourlyByCompany(tipoQr) {
+export async function getHourlyByCompany(tipoQr, start, end) {
   const query = `
-    SELECT 
-        empresa, 
-        HOUR(autofecha) AS hour, 
-        COUNT(*) AS cantidad
-    FROM logs_v2
-    GROUP BY empresa, HOUR(autofecha)
-  `;
+  SELECT 
+    empresa, 
+    HOUR(autofecha) AS hour, 
+    COUNT(*) AS cantidad
+  FROM logs_v2
+  WHERE autofecha >= ? 
+    AND autofecha <  ?  /* o <= ? si preferís inclusive */
+  GROUP BY empresa, HOUR(autofecha)
+`;
 
-  const rows = await executeQuery(query, [], true, tipoQr);
+  const startDateTime = `${start} 00:00:00`;
+  const endDateTime = `${end}   23:59:59`;
+
+  const rows = await executeQuery(
+    query,
+    [startDateTime, endDateTime],
+    true,
+    tipoQr
+  );
   // Obtener todas las empresas únicas
   const empresasSet = new Set(rows.map((row) => row.empresa));
   const empresas = [...empresasSet].sort(); // ordena para que el resultado sea consistente

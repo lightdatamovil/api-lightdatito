@@ -12,14 +12,16 @@ const router = Router();
 
 // Listar todos los puestos
 router.get("/:tipoQr", async (req, res) => {
-  const start = performance.now();
+  const startTime = performance.now();
   try {
     const { tipoQr } = req.params;
+    const { start, end } = req.query;                // ← Acá tomás los searchParams
 
-    logYellow(
-      `GET /api/puestos: Listando puestos de tipo ${tipoQr}...`
-    );
-    const grafico = await getHourlyByCompany(tipoQr);
+    logYellow(`GET /api/puestos: Listando puestos de tipo ${tipoQr} desde ${start} hasta ${end}...`);
+
+    // Asegurate de que tu función acepte esos dos argumentos:
+    const grafico = await getHourlyByCompany(tipoQr, start, end);
+
     res
       .status(200)
       .json({ body: grafico, message: "Datos obtenidos correctamente" });
@@ -37,9 +39,10 @@ router.get("/:tipoQr", async (req, res) => {
     logRed(`Error 500 en puestos GET: ${error}`);
     res.status(500).json(customError);
   } finally {
-    logPurple(`GET /api/puestos ejecutado en ${performance.now() - start} ms`);
+    logPurple(`GET /api/puestos ejecutado en ${performance.now() - startTime} ms`);
   }
 });
+
 
 // Obtener un puesto por ID
 
