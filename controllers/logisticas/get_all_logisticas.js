@@ -9,7 +9,7 @@ import Logistica from '../../models/logistica.js';
 export async function getAllLogisticas() {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM logisticas WHERE eliminado = 0'
+            'SELECT * FROM logisticas'
         );
         return rows.map(row => Logistica.fromJson(row));
     } catch (err) {
