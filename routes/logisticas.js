@@ -63,7 +63,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllLogisticas();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente', success: true });
         logGreen('GET /api/logisticas: éxito al listar logísticas');
     } catch (err) {
         if (err instanceof CustomException) {

@@ -1,19 +1,5 @@
 import { executeQuery } from "../../db.js";
 import CustomException from "../../models/custom_exception.js";
-import EstadoReporte from "../../models/estado_reporte.js";
-
-import { executeQuery } from "../../db.js";
-import CustomException from "../../models/custom_exception.js";
-
-const diasSemana = [
-  "domingo",
-  "lunes",
-  "martes",
-  "miércoles",
-  "jueves",
-  "viernes",
-  "sábado",
-];
 
 // 1. Conteo por fecha
 export async function graficosPorFecha(desde, hasta) {
@@ -31,7 +17,6 @@ export async function graficosPorFecha(desde, hasta) {
       [desde, hasta]
     );
 
-    // Crear respuesta con todas las fechas entre desde y hasta
     const resultado = {};
     const fechaInicio = new Date(desde);
     const fechaFin = new Date(hasta);
@@ -41,7 +26,7 @@ export async function graficosPorFecha(desde, hasta) {
       f <= fechaFin;
       f.setDate(f.getDate() + 1)
     ) {
-      const clave = f.toISOString().slice(0, 10); // yyyy-mm-dd
+      const clave = f.toISOString().slice(0, 10);
       resultado[clave] = 0;
     }
 
