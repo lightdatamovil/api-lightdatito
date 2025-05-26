@@ -13,6 +13,7 @@ import proyectosRouter from "./proyectos.js";
 import reportesRouter from "./reportes.js";
 import comentariosRouter from "./comentarios.js";
 import graficosRouter from "./graficos.js";
+import paisesRouter from "./paises.js";
 
 const router = express.Router();
 
@@ -28,6 +29,7 @@ router.use("/puestos", puestosRouter);
 router.use("/proyectos", proyectosRouter);
 router.use("/reportes", reportesRouter);
 router.use("/comentarios", comentariosRouter);
+router.use("/paises", paisesRouter);
 router.use("/graficos", graficosRouter);
 
 export default router;

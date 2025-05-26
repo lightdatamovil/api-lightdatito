@@ -67,7 +67,7 @@ router.get('/', async (req, res) => {
         logGreen('GET /api/logisticas: éxito al listar logísticas');
     } catch (err) {
         if (err instanceof CustomException) {
-            logRed('Error 400 GET /api/logisticas:', err.toJSON());
+            logRed(`Error 400 GET /api/logisticas: ${JSON.stringify(err.toJSON())}`);
             return res.status(400).json(err.toJSON());
         }
         const fatal = new CustomException({
