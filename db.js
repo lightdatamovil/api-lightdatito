@@ -82,10 +82,6 @@ export async function executeQuery(
             logYellow('Usando poolAsignaciones');
             executor = poolAsignaciones;
             break;
-        case 4:
-            logYellow('Usando poolAsignaciones');
-            executor = poolAplanta;
-            break;
         default:
             logYellow('Usando pool por defecto');
             executor = pool;
