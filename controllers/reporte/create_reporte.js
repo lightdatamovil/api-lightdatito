@@ -20,7 +20,7 @@ export async function createReporte(
         if (count > 0) {
             throw new CustomException({
             title:   'reporte duplicado',
-            message: `Ya existe un reporte con nombre "${nombre}"`,
+            message: `Ya existe un reporte con nombre "${titulo}"`,
             status:  400
         });
         }
