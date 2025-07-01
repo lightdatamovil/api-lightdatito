@@ -5,8 +5,11 @@ import Plan from '../../models/plan.js';
 export async function createPlan(nombre, color) {
 
         //verificar si ya existe plan
+        const cleanedName  = nombre.trim().toLowerCase();
+        const cleanedColor = color.trim().toLowerCase();
+
         const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM plan WHERE nombre = ? and color = '`,
+            `SELECT COUNT(*) AS count FROM plan WHERE nombre = ? and color = ?`,
             [nombre].trim().toLowerCase(), [nombre].trim().toLowerCase(),
             true, 0
         );

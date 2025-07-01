@@ -17,8 +17,8 @@ export async function createObservacionLogistica(logisticaId, nombre) {
             );
             if (count > 0) {
                 throw new CustomException({
-                title:   'observacion duplicada',
-                message: `Ya existe una observacion con nombre "${nombre}"`,
+                title:   'Observacion duplicada',
+                message: `Ya existe una observacion logistica: "${nombre}" en la epresa "${logisticaId}"`,
                 status:  400
                 });
             }

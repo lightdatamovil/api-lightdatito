@@ -13,8 +13,8 @@ export async function createReporte(
     try {
         //verificar si ya existe reportes -- amerita este caso la verificacion' reguntar
         const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM reportes WHERE nombre = ?`,
-            [titulo],
+            `SELECT COUNT(*) AS count FROM reportes WHERE nombre = ? and logistica = ? and proyecto_id = ?`,
+            [titulo,proyecto_id,logistica_id],
             true, 0
         );
         if (count > 0) {

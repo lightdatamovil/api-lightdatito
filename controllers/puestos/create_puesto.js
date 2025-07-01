@@ -13,7 +13,7 @@ export async function createPuesto(nombre) {
         if (count > 0) {
             throw new CustomException({
             title:   'Puesto duplicado',
-            message: `Ya existe un tipo_usuario con nombre "${nombre}"`,
+            message: `Ya existe un puesto con nombre "${nombre}"`,
             status:  400
         });
         }
