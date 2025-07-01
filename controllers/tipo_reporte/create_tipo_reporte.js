@@ -4,6 +4,20 @@ import TipoReporte from '../../models/tipo_reporte.js';
 
 export async function createTipoReporte(nombre, color) {
     try {
+        //verificar si ya existe tipo_reporte
+            const [{ count }] = await executeQuery(
+                `SELECT COUNT(*) AS count FROM tipo_reporte WHERE nombre = ?`,
+                [nombre],
+                true, 0
+            );
+            if (count > 0) {
+                throw new CustomException({
+                title:   'Tipo de tipo_reporte duplicado',
+                message: `Ya existe un tipo_reporte con nombre "${nombre}"`,
+                status:  400
+            });
+            }
+
         // 1) Insertar sin RETURNING
         const result = await executeQuery(
             `INSERT INTO tipo_reporte (nombre, color) VALUES (?, ?)`,

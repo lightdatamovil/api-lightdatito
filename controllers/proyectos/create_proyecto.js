@@ -4,6 +4,20 @@ import Proyecto from '../../models/proyecto.js';
 
 export async function createProyecto(nombre) {
     try {
+        //verificar si ya existe proyecto
+            const [{ count }] = await executeQuery(
+                `SELECT COUNT(*) AS count FROM proyectos WHERE nombre = ?`,
+                [nombre],
+                true, 0
+            );
+            if (count > 0) {
+                throw new CustomException({
+                title:   'Proyecto duplicado',
+                message: `Ya existe un proyecto con nombre "${nombre}"`,
+                status:  400
+            });
+            }
+
         // 1) Insertar sin RETURNING
         const result = await executeQuery(
             `INSERT INTO proyectos (nombre) VALUES (?)`,
