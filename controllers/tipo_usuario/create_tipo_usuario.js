@@ -9,7 +9,7 @@ export async function createTipoUsuario(nombre) {
     //verificar s ya existe usuario
     const [{ count }] = await executeQuery(
         `SELECT COUNT(*) AS count FROM tipo_usuario WHERE nombre = ?`,
-        [nombre],
+        [nombre].trim().toLowerCase(),
         true, 0
     );
     if (count > 0) {

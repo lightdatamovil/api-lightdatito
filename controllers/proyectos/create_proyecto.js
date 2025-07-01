@@ -7,7 +7,7 @@ export async function createProyecto(nombre) {
         //verificar si ya existe proyecto
             const [{ count }] = await executeQuery(
                 `SELECT COUNT(*) AS count FROM proyectos WHERE nombre = ?`,
-                [nombre],
+                [nombre].trim().toLowerCase(),
                 true, 0
             );
             if (count > 0) {
