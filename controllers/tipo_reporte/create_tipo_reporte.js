@@ -7,7 +7,7 @@ export async function createTipoReporte(nombre, color) {
         //verificar si ya existe tipo_reporte
             const [{ count }] = await executeQuery(
                 `SELECT COUNT(*) AS count FROM tipo_reporte WHERE nombre = ?`,
-                [nombre],
+                [nombre].trim().toLowerCase(),
                 true, 0
             );
             if (count > 0) {

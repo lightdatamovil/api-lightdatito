@@ -11,8 +11,10 @@ import { hash256 } from '../../src/funciones/hash.js';
  */
 export async function createUsuario(nombre,email,password,urlImagen,tipoUsuarioId) {
     try {
+        const cleanedName  = nombre.trim();
+        const cleanedEmail = email.trim();
         const [{ count }] = await executeQuery(
-                `SELECT COUNT(*) AS count FROM usuarios WHERE nombre = ? OR email = ?`, [nombre, email],
+                `SELECT COUNT(*) AS count FROM usuarios WHERE nombre = ? OR email = ?`, [ cleanedName, cleanedEmail ],
                 true, 0
             );
             if (count > 0) {
@@ -25,7 +27,7 @@ export async function createUsuario(nombre,email,password,urlImagen,tipoUsuarioI
         
         const contra_hash = hash256(password);
         const query = `INSERT INTO usuarios (nombre, email, password, url_imagen, tipo_usuario_id) VALUES (?,?,?,?,?)`;
-        const result = await executeQuery(query, [nombre,email,contra_hash,urlImagen,tipoUsuarioId],true);
+        const result = await executeQuery(query, [ cleanedName, cleanedEmail, contra_hash, urlImagen, tipoUsuarioId ],true);
         //select de la fila recien creada
         const idNuevo = result.insertId;
         const rows = await executeQuery(

@@ -11,6 +11,22 @@ export async function createReporte(
     logistica_id
 ) {
     try {
+        //verificar si ya existe reportes -- amerita este caso la verificacion' reguntar
+        const [{ count }] = await executeQuery(
+            `SELECT COUNT(*) AS count FROM reportes WHERE nombre = ?`,
+            [titulo],
+            true, 0
+        );
+        if (count > 0) {
+            throw new CustomException({
+            title:   'reporte duplicado',
+            message: `Ya existe un reporte con nombre "${nombre}"`,
+            status:  400
+        });
+        }
+
+
+
         // 1) Insertar sin RETURNING
         const result = await executeQuery(
             `INSERT INTO reportes

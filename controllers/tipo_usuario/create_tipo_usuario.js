@@ -6,7 +6,7 @@ import TipoUsuario         from '../../models/tipo_usuario.js';
 export async function createTipoUsuario(nombre) {
   try {
 
-    //verificar s ya existe usuario
+    //verificar si ya existe tipo_usuario
     const [{ count }] = await executeQuery(
         `SELECT COUNT(*) AS count FROM tipo_usuario WHERE nombre = ?`,
         [nombre].trim().toLowerCase(),
@@ -22,7 +22,7 @@ export async function createTipoUsuario(nombre) {
     // 1) Inserto y cojo insertId:
     const result = await executeQuery(
       `INSERT INTO tipo_usuario (nombre) VALUES (?)`,
-      [nombre],
+      [nombre].trim().toLowerCase(),
       true,      // logs
       0          // pool por defecto
 
