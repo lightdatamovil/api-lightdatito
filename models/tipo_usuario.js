@@ -1,3 +1,5 @@
+import { logYellow } from "../src/funciones/logsCustom.js";
+
 export default class TipoUsuario {
     constructor({ id, nombre, fecha_creacion, eliminado }) {
         this.id = id;
@@ -7,6 +9,7 @@ export default class TipoUsuario {
     }
 
     static fromJson(row) {
+        logYellow(`${JSON.stringify(row)}`)
         return new TipoUsuario({
             id: row.id,
             nombre: row.nombre,

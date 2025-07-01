@@ -17,17 +17,18 @@ const router = Router();
 // Crear un nuevo usuario
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, [], ['nombre', 'tipo_usuario_id']);
+    const missing = verifyAll(req, [], ['nombre','email','password','urlImagen', 'tipoUsuarioId']);
     if (missing.length) {
         return res.status(400).json({ message: `Faltan parámetros: ${missing.join(', ')}` });
     }
     try {
-        const newItem = await createUsuario(req.body);
+        const {nombre, email, password,urlImagen, tipoUsuarioId} = req.body;
+        const newItem = await createUsuario(nombre, email, password,urlImagen, tipoUsuarioId);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/usuarios: éxito al crear usuario con ID ${newItem.id}`);
     } catch (error) {
         if (error instanceof CustomException) {
-            logRed(`Error 400 en usuarios POST: ${error}`);
+            logRed(`Error 400 en usuarios POST: ${error.toJsonString()}`);
             return res.status(400).json(error);
         }
         const customError = new CustomException('Internal Error', error.message, error.stack);

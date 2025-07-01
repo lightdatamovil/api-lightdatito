@@ -3,7 +3,6 @@ import CustomException from '../../models/custom_exception.js';
 import Plan from '../../models/plan.js';
 
 export async function createPlan(nombre, color) {
-    try {
         // 1) Insertar sin RETURNING
         const result = await executeQuery(
             `INSERT INTO plan (nombre, color) VALUES (?, ?)`,
@@ -32,12 +31,5 @@ export async function createPlan(nombre, color) {
         }
 
         return Plan.fromJson(row);
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
-        throw new CustomException({
-            title: 'Error al crear plan',
-            message: err.message,
-            stack: err.stack
-        });
-    }
+   
 }

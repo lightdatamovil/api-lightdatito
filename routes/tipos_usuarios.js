@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
         logGreen(`POST /api/tipo-usuario: éxito al crear tipo con ID ${newItem.id}`);
     } catch (error) {
         if (error instanceof CustomException) {
-            logRed(`Error 400 en tipo-usuario POST: ${error}`);
+            logRed(`Error 400 en tipo-usuario POST: ${error.toJsonString()}`);
             return res.status(400).json(error);
         }
         const customError = new CustomException('Internal Error', error.message, error.stack);

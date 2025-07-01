@@ -17,4 +17,11 @@ export default class CustomException extends Error {
       stack: this.stack
     };
   }
+  toJsonString() {
+    return JSON.stringify({
+      title: this.title,
+      message: this.message,
+      stack: this.stack
+    });
+  }
 }

@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import mysql2 from 'mysql2/promise';
+import mysql2 from 'mysql2';
 import { logRed, logYellow } from './src/funciones/logsCustom.js';
 
 dotenv.config({ path: process.env.ENV_FILE || '.env' });
@@ -48,52 +48,52 @@ const poolAsignaciones = mysql2.createPool({
     queueLimit: 0
 });
 /**
- * Ejecuta una query usando un pool específico o el por defecto.
+ * Ejecuta una query usando un pool específico (o el por defecto).
  *
- * @param {string} query              SQL con placeholders `?`
- * @param {any[]} [values=[]]         Valores para placeholders
- * @param {boolean} [log=false]       Activa logs si es true
- * @param {0|1|2|3} [whichPool=0]     0=default,1=aplanta,2=colecta,3=asignaciones
+ * @param {string}   query     SQL con placeholders `?`
+ * @param {any[]}    values    Valores para placeholders
+ * @param {boolean}  log       Si true, imprime logs
+ * @param {0|1|2|3}  whichPool 0=default,1=aplanta,2=colecta,3=asignaciones
  */
 export async function executeQuery(
-    query,
-    values = [],
-    log = false,
-    whichPool = 0
+  query,
+  values = [],
+  log = false,
+  whichPool = 0
 ) {
-    const formatted = mysql2.format(query, values);
-    // coerce a número en caso de venir como string:
-    const poolId = Number(whichPool);
+  // 1) Elige el pool
+  const poolId = Number(whichPool);
+  let executor;
+  switch (poolId) {
+    case 1:
+      logYellow("Usando poolAplanta");
+      executor = poolAplanta;
+      break;
+    case 2:
+      logYellow("Usando poolColecta");
+      executor = poolColecta;
+      break;
+    case 3:
+      logYellow("Usando poolAsignaciones");
+      executor = poolAsignaciones;
+      break;
+    default:
+      logYellow("Usando pool por defecto");
+      executor = pool;
+  }
 
-    // DEBUG
-    logYellow(`Ejecutando con whichPool = ${whichPool} (poolId = ${poolId})`);
+    const formattedQuery = mysql2.format(query, values);
 
-    let executor;
-    switch (poolId) {
-        case 1:
-            logYellow('Usando poolAplanta');
-            executor = poolAplanta;
-            break;
-        case 2:
-            logYellow('Usando poolColecta');
-            executor = poolColecta;
-            break;
-        case 3:
-            logYellow('Usando poolAsignaciones');
-            executor = poolAsignaciones;
-            break;
-        default:
-            logYellow('Usando pool por defecto');
-            executor = pool;
-    }
+    return new Promise((resolve, reject) => {
+        if (log) logYellow(`Ejecutando query: ${formattedQuery}`);
 
-    try {
-        if (log) logYellow(`Query → ${formatted}`);
-        const [rows] = await executor.execute(query, values);
-        if (log) logYellow(`OK → ${rows.length} filas`);
-        return rows;
-    } catch (err) {
-        if (log) logRed(`Error → ${err.message}`);
-        throw err;
-    }
+        executor.query(formattedQuery, (err, results) => {
+            if (err) {
+                if (log) logRed(`Error en executeQuery: ${err.message} - ${formattedQuery}`);
+                return reject(err);
+            }
+            if (log) logYellow(`Query ejecutada con éxito: ${formattedQuery} - Resultados: ${JSON.stringify(results)}`);
+            resolve(results);
+        });
+    });
 }
