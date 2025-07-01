@@ -6,7 +6,6 @@ import allRoutes from './routes/exports.js';
 
 const numCPUs = 2;
 const PORT = 13000;
-
 if (cluster.isPrimary) {
     logBlue(`Proceso master ${process.pid} ejecutándose...`);
 
