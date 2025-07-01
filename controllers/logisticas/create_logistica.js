@@ -24,10 +24,12 @@ export async function createLogistica(
 ) {
     try {
 
+        const clean_nombre = nombre.trim().toLowerCase();
+
         //verificar si ya existe logistica -- porqe parametro verificaria logistica did?
         const [{ count }] = await executeQuery(
             `SELECT COUNT(*) AS count FROM tipo_usuario WHERE nombre = ?`,
-            [nombre].trim().toLowerCase(),
+            [clean_nombre],
             true, 0
         );
         if (count > 0) {

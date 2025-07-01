@@ -11,17 +11,17 @@ export async function createObservacionLogistica(logisticaId, nombre) {
     try {
 
         //amerita una verificacion que ya existe?
-        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM observaciones_logistica WHERE nombre = ? and logistcaId = ?`,
-            [nombre, logisticaId],
-            true, 0
-            );
-            if (count > 0) {
-                throw new CustomException({
-                title:   'Observacion duplicada',
-                message: `Ya existe una observacion logistica: "${nombre}" en la epresa "${logisticaId}"`,
-                status:  400
-                });
-            }
+        // const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM observaciones_logistica WHERE nombre = ? and logistcaId = ?`,
+        //     [nombre, logisticaId],
+        //     true, 0
+        //     );
+        //     if (count > 0) {
+        //         throw new CustomException({
+        //         title:   'Observacion duplicada',
+        //         message: `Ya existe una observacion logistica: "${nombre}" en la epresa "${logisticaId}"`,
+        //         status:  400
+        //         });
+        //     }
 
 
         // 1) Insertar en la tabla de observaciones
