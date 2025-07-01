@@ -23,6 +23,22 @@ export async function createLogistica(
     pais_id
 ) {
     try {
+
+        //verificar si ya existe logistica -- porqe parametro verificaria logistica did?
+        const [{ count }] = await executeQuery(
+            `SELECT COUNT(*) AS count FROM tipo_usuario WHERE nombre = ?`,
+            [nombre].trim().toLowerCase(),
+            true, 0
+        );
+        if (count > 0) {
+            throw new CustomException({
+            title:   'Loistica duplicada',
+            message: `Ya existe una logistica con nombre "${nombre}"`,
+            status:  400
+        });
+        }
+
+
         // 1) Validar claves foráneas
         const [plan] = await executeQuery(
             'SELECT id FROM plan WHERE id = ?',

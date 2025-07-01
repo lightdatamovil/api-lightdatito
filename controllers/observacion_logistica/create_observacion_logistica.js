@@ -9,6 +9,21 @@ import ObservacionLogistica from '../../models/observacion_logistica.js';
  */
 export async function createObservacionLogistica(logisticaId, nombre) {
     try {
+
+        //amerita una verificacion que ya existe?
+        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM tipo_usuario WHERE nombre = ? and logistcaId = ?`,
+            [nombre, logisticaId],
+            true, 0
+            );
+            if (count > 0) {
+                throw new CustomException({
+                title:   'observacion duplicada',
+                message: `Ya existe una observacion con nombre "${nombre}"`,
+                status:  400
+                });
+            }
+
+
         // 1) Insertar en la tabla de observaciones
         const result = await executeQuery(
             `INSERT INTO observaciones_logistica (nombre)

@@ -3,6 +3,21 @@ import CustomException from '../../models/custom_exception.js';
 import Plan from '../../models/plan.js';
 
 export async function createPlan(nombre, color) {
+
+        //verificar si ya existe plan
+        const [{ count }] = await executeQuery(
+            `SELECT COUNT(*) AS count FROM plan WHERE nombre = ? and color = '`,
+            [nombre].trim().toLowerCase(), [nombre].trim().toLowerCase(),
+            true, 0
+        );
+        if (count > 0) {
+            throw new CustomException({
+            title:   'Plan duplicado',
+            message: `Ya existe un plan con nombre "${nombre}"`,
+            status:  400
+        });
+        }
+
         // 1) Insertar sin RETURNING
         const result = await executeQuery(
             `INSERT INTO plan (nombre, color) VALUES (?, ?)`,
