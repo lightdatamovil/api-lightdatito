@@ -5,8 +5,7 @@ import Comentario from "../../models/comentario.js";
 export async function createComentario(reporteId, texto) {
     try {
         const result = await executeQuery(
-            `INSERT INTO comentarios (reporte_id, comentario)
-       VALUES (?, ?)`,
+            `INSERT INTO comentarios (reporte_id, comentario) VALUES (?, ?)`,
             [reporteId, texto]
         );
         const newId = result.insertId;
