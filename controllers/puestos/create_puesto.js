@@ -4,10 +4,11 @@ import PuestoUsuario from '../../models/puesto_usuario.js';
 
 export async function createPuesto(nombre) {
     try {
+        const clean_name = nombre.trim().toLowerCase();
         //verificar si ya existe puestos
         const [{ count }] = await executeQuery(
             `SELECT COUNT(*) AS count FROM puestos WHERE nombre = ?`,
-            [nombre].trim().toLowerCase(),
+            [clean_name],
             true, 0
             );
         if (count > 0) {
@@ -19,7 +20,7 @@ export async function createPuesto(nombre) {
         }
 
         const query = `INSERT INTO puestos (nombre) VALUES (?) RETURNING *`;
-        const rows = await executeQuery(query, [nombre]);
+        const rows = await executeQuery(query, [clean_name]);
         return PuestoUsuario.fromJson(rows[0]);
     } catch (error) {
         throw new CustomException(

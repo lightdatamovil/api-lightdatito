@@ -5,9 +5,10 @@ import Proyecto from '../../models/proyecto.js';
 export async function createProyecto(nombre) {
     try {
         //verificar si ya existe proyecto
+        const cleanName = nombre.trim().toLowerCase();
             const [{ count }] = await executeQuery(
                 `SELECT COUNT(*) AS count FROM proyectos WHERE nombre = ?`,
-                [nombre].trim().toLowerCase(),
+                [clean_name],
                 true, 0
             );
             if (count > 0) {

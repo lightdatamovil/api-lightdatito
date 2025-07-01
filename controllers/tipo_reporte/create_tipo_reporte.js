@@ -4,10 +4,11 @@ import TipoReporte from '../../models/tipo_reporte.js';
 
 export async function createTipoReporte(nombre, color) {
     try {
+        const clean_name = nombre.trim().toLowerCase();
         //verificar si ya existe tipo_reporte
             const [{ count }] = await executeQuery(
                 `SELECT COUNT(*) AS count FROM tipo_reporte WHERE nombre = ?`,
-                [nombre].trim().toLowerCase(),
+                [clean_name],
                 true, 0
             );
             if (count > 0) {

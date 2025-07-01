@@ -10,7 +10,7 @@ export async function createPlan(nombre, color) {
 
         const [{ count }] = await executeQuery(
             `SELECT COUNT(*) AS count FROM plan WHERE nombre = ? and color = ?`,
-            [nombre].trim().toLowerCase(), [nombre].trim().toLowerCase(),
+            [cleanedName, cleanedColor],
             true, 0
         );
         if (count > 0) {
