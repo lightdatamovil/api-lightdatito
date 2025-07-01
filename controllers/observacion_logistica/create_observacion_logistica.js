@@ -11,7 +11,7 @@ export async function createObservacionLogistica(logisticaId, nombre) {
     try {
 
         //amerita una verificacion que ya existe?
-        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM tipo_usuario WHERE nombre = ? and logistcaId = ?`,
+        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM observaciones_logistica WHERE nombre = ? and logistcaId = ?`,
             [nombre, logisticaId],
             true, 0
             );

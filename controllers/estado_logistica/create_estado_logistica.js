@@ -9,6 +9,21 @@ import EstadoLogistica from '../../models/estado_logistica.js';
  */
 export async function createEstadoLogistica(nombre, color) {
     try {
+        const nombre_limpio = nombre.trim().toLowerCase()
+        const color_limpio = color.trim().toLowerCase()
+        //verificar si ya existe estadoLogistica
+        const [{ count }] = await executeQuery( `SELECT COUNT(*) AS count FROM estado_logistica WHERE nombre = ? and color= ?`,
+            [nombre_limpio, color_limpio],
+            true, 0
+            );
+        if (count > 0) {
+            throw new CustomException({
+                title:   'Estado logistica duplicado',
+                message: `Ya existe un estado logistica con nombre "${nombre_limpio}" y  color "${color_limpio}`,
+                status:  400
+            });
+            }
+
         // 1) Inserción sin RETURNING
         const result = await executeQuery(
             `INSERT INTO estados_logistica (nombre, color)
