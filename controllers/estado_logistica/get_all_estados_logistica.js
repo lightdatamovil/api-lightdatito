@@ -11,10 +11,11 @@ export async function getAllEstadosLogisticas() {
         const rows = await executeQuery('SELECT * FROM estados_logistica');
         return rows.map(r => EstadoLogistica.fromJson(r));
     } catch (error) {
-        throw new CustomException(
-            'Error retrieving estados_logistica',
-            error.message,
-            error.stack
-        );
+        if (error instanceof CustomException) throw error;
+        throw new CustomException({
+            title: 'Error al listar estados_logistica',
+            message: error.message,
+            stack: error.stack
+        });
     }
 }

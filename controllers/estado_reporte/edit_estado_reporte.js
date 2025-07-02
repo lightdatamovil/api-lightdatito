@@ -12,7 +12,7 @@ export async function updateEstadoReporte(id, data) {
     } catch (error) {
         if (error instanceof CustomException) throw error;
         throw new CustomException({
-            title: 'Error al eliminar estado_reporte',
+            title: 'Error al updatear estado_reporte',
             message: error.message,
             stack: error.stack
         });

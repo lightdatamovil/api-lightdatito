@@ -134,7 +134,8 @@ router.put("/:id", async (req, res) => {
     logGreen(`PUT /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
     if (err instanceof CustomException) {
-      logRed(`Error 400 PUT /api/comentarios/${req.params.id}:`, err.toJSON());
+      //error dentro del json
+      logRed(`Error 400 PUT /api/comentarios/${req.params.id}: ${err.toJsonString()}`);
       return res.status(400).json(err.toJSON());
     }
     const fatal = new CustomException({

@@ -2,12 +2,14 @@ import { executeQuery } from "../../db.js";
 import CustomException from "../../models/custom_exception.js";
 import Comentario from "../../models/comentario.js";
 
-export async function createComentario(reporteId, texto) {
+export async function createComentario(reporte_id, texto) {
     try {
+        //insertar en comentario
         const result = await executeQuery(
-            `INSERT INTO comentarios (reporte_id, comentario) VALUES (?, ?)`,
-            [reporteId, texto]
+            `INSERT INTO comentarios (contenido) VALUES (?)`,
+            [texto]
         );
+       
         const newId = result.insertId;
         if (!newId) {
             throw new CustomException({
@@ -15,6 +17,12 @@ export async function createComentario(reporteId, texto) {
                 message: "No se obtuvo el ID del comentario insertado"
             });
         }
+         //insertar en tabla itermedia
+        const result2 = await executeQuery(
+            `INSERT INTO comentarios_reportes (reporte_id, comentario_id) VALUES (?, ?)`,
+            [reporte_id, newId]
+        );
+        
 
         const [row] = await executeQuery(
             `SELECT * FROM comentarios WHERE id = ?`,

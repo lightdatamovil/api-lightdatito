@@ -1,4 +1,5 @@
 import { executeQuery } from '../../db.js';
+import EstadoReporte from '../../models/estado_reporte.js';
 import CustomException from '../../models/custom_exception.js';
 
 export async function getAllEstadosReporte() {
@@ -8,7 +9,7 @@ export async function getAllEstadosReporte() {
     } catch (error) {
         if (error instanceof CustomException) throw error;
         throw new CustomException({
-            title: 'Error al eliminar estado_reporte',
+            title: 'Error al listar estado_reporte',
             message: error.message,
             stack: error.stack
         });
