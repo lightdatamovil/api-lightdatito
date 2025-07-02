@@ -11,10 +11,10 @@ import { hash256 } from '../../src/funciones/hash.js';
  */
 export async function createUsuario(nombre,email,password,urlImagen,tipoUsuarioId) {
     try {
-        const cleanedName  = nombre.trim();
+
         const cleanedEmail = email.trim();
         const [{ count }] = await executeQuery(
-                `SELECT COUNT(*) AS count FROM usuarios WHERE nombre = ? OR email = ?`, [ cleanedName, cleanedEmail ],
+                `SELECT COUNT(*) AS count FROM usuarios WHERE email = ?`, [ cleanedEmail ],
                 true, 0
             );
             if (count > 0) {
