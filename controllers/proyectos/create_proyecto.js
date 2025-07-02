@@ -8,7 +8,7 @@ export async function createProyecto(nombre) {
         const cleanName = nombre.trim().toLowerCase();
             const [{ count }] = await executeQuery(
                 `SELECT COUNT(*) AS count FROM proyectos WHERE nombre = ?`,
-                [clean_name],
+                [cleanName],
                 true, 0
             );
             if (count > 0) {

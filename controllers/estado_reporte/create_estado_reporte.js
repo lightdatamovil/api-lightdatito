@@ -4,8 +4,8 @@ import EstadoReporte from '../../models/estado_reporte.js';
 
 export async function createEstadoReporte(nombre, color) {
     try {
-        const nombre_limpio = nombre.trim().toLowerCase()
-        const color_limpio = color.trim().toLowerCase()
+        const nombre_limpio = nombre.trim().toLowerCase();
+        const color_limpio = color.trim().toLowerCase();
         //verificar si ya existe tipo_usuario
         const [{ count }] = await executeQuery( `SELECT COUNT(*) AS count FROM estados_reporte WHERE nombre = ? and color= ?`,
             [nombre_limpio, color_limpio],
@@ -22,7 +22,7 @@ export async function createEstadoReporte(nombre, color) {
 
         const result = await executeQuery(
             `INSERT INTO estados_reporte (nombre, color) VALUES (?, ?)`,
-            [nombre, color]
+            [nombre_limpio, color_limpio]
         );
 
         const newId = result.insertId;

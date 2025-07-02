@@ -85,7 +85,7 @@ router.post('/', async (req, res) => {
 
     try {
         const { nombre, color } = req.body;
-        const newItem = await createEstadoReporte({ nombre, color });
+        const newItem = await createEstadoReporte( nombre, color );
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(
             `POST /api/estados-reporte: éxito al crear estado de reporte con ID ${newItem.id}`

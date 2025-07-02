@@ -12,7 +12,7 @@ import { hash256 } from '../../src/funciones/hash.js';
 export async function createUsuario(nombre,email,password,urlImagen,tipoUsuarioId) {
     try {
 
-        const cleanedEmail = email.trim();
+        const cleanedEmail = email.trim().toLowerCase();
         const [{ count }] = await executeQuery(
                 `SELECT COUNT(*) AS count FROM usuarios WHERE email = ?`, [ cleanedEmail ],
                 true, 0
