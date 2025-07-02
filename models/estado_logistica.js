@@ -1,5 +1,5 @@
 export default class EstadoLogistica {
-    constructor({ id, nombre, color, eliminado }) {
+    constructor({ id, nombre, color }) {
         this.id = id;
         this.nombre = nombre;
         this.color = color;

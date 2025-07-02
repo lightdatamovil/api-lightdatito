@@ -123,25 +123,26 @@ router.put('/:id', async (req, res) => {
             title: 'Faltan parámetros',
             message: `Faltan parámetros: ${missing.join(', ')}`
         });
-        logRed(`Error 400 PUT /api/estados-logistica/${req.params.id}:`, ex.toJSON());
-        return res.status(400).json(ex.toJSON());
+        logRed(`Error 401 PUT /api/estados-logistica/${req.params.id}: ${ex.toJsonString()}`);
+        return res.status(401).json(ex.toJsonString());
     }
-
+    const idEstadoLogistica = req.params.id;
+    const {nombre, color} = req.body;
     try {
-        const updated = await updateEstadoLogistica(req.params.id, req.body);
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        const updated = await updateEstadoLogistica(idEstadoLogistica,nombre, color);
+        res.status(200).json({ body: updated.toJson(), message: 'Actualizado correctamente' });
         logGreen(`PUT /api/estados-logistica/${req.params.id}: éxito al actualizar estado`);
     } catch (err) {
         if (err instanceof CustomException) {
-            logRed(`Error 400 PUT /api/estados-logistica/${req.params.id}:`, err.toJSON());
-            return res.status(400).json(err.toJSON());
+            logRed(`Error 400 PUT /api/estados-logistica/${req.params.id}: ${err.toJsonString()}`);
+            return res.status(400).json(err.toJsonString());
         }
         const fatal = new CustomException({
             title: 'Internal Server Error',
             message: err.message,
             stack: err.stack
         });
-        logRed(`Error 500 PUT /api/estados-logistica/${req.params.id}:`, fatal.toJSON());
+        logRed(`Error 500 PUT /api/estados-logistica/${req.params.id}: ${fatal.toJsonString()}`);
         res.status(500).json(fatal.toJSON());
     } finally {
         logPurple(

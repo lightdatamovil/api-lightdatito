@@ -2,13 +2,23 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import EstadoReporte from '../../models/estado_reporte.js';
 
-export async function updateEstadoReporte(id, data) {
+export async function updateEstadoReporte(id, nombre, color) {
     try {
-        const fields = Object.keys(data);
-        if (!fields.length) throw new CustomException('No data provided for updateEstadoReporte');
-        const setClause = fields.map(f => `${f} = ?`).join(', ');
-        await executeQuery(`UPDATE estados_reporte SET ${setClause} WHERE id = ?`, [...Object.values(data), id]);
-        return getEstadoReporteById(id);
+        await executeQuery(`UPDATE estados_reporte SET nombre = ?, color = ? WHERE id = ?`, [nombre, color, id], true);
+
+
+        const [row] = await executeQuery(
+            `SELECT * FROM estados_reporte WHERE id = ?`,
+            [id], true
+        );
+        if (!row) {
+            throw new CustomException({
+                title: 'Error al crear estado_logistica',
+                message: `No se pudo recuperar el registro con id=${id}`
+            });
+        }
+
+        return EstadoReporte.fromJson(row);
     } catch (error) {
         if (error instanceof CustomException) throw error;
         throw new CustomException({

@@ -126,15 +126,15 @@ router.put('/:id', async (req, res) => {
         logGreen(`PUT /api/estados-reporte/${req.params.id}: éxito al actualizar`);
     } catch (err) {
         if (err instanceof CustomException) {
-            logRed(`Error ${400} PUT estados-reporte/:id:`, err.toJSON());
-            return res.status(400).json(err.toJSON());
+            logRed(`Error ${400} PUT estados-reporte/:id:${err.toJsonString()}`);
+            return res.status(400).json(err.toJsonString());
         }
         const fatal = new CustomException({
             title: 'Internal Server Error',
             message: err.message,
             stack: err.stack
         });
-        logRed('Error 500 PUT estados-reporte/:id:', fatal.toJSON());
+        logRed(`Error 500 PUT estados-reporte/:id: ${fatal.toJsonString()}` );
         res.status(500).json(fatal.toJSON());
     } finally {
         logPurple(`PUT /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`);
