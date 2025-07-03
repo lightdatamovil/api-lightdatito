@@ -4,11 +4,11 @@ import PuestoUsuario from '../../models/puesto_usuario.js';
 
 export async function createPuesto(nombre) {
     try {
-        const clean_name = nombre.trim().toLowerCase();
+        
         //verificar si ya existe puestos
         const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM puestos WHERE nombre = ?`,
-            [clean_name],
+            `SELECT COUNT(*) AS count FROM puestos WHERE LOWER(nombre) = LOWER(?)`,
+            [nombre],
             true, 0
             );
         if (count > 0) {
@@ -18,15 +18,33 @@ export async function createPuesto(nombre) {
             status:  400
         });
         }
+        const result = await executeQuery(`INSERT INTO puestos (nombre) VALUES (lower(?))`, nombre ,true);
+        const newId = result.insertId;
+        if (!newId) {
+            throw new CustomException({
+                title: 'Error al crear estado_logistica',
+                message: 'No se obtuvo el ID del registro insertado'
+            });
+        }
 
-        const query = `INSERT INTO puestos (nombre) VALUES (?) RETURNING *`;
-        const rows = await executeQuery(query, [clean_name]);
-        return PuestoUsuario.fromJson(rows[0]);
-    } catch (error) {
-        throw new CustomException(
-            'Error creating puesto_usuario',
-            error.message,
-            error.stack
+        const [row] = await executeQuery(
+            `SELECT * FROM puestos WHERE id = ?`,
+            [newId]
         );
+        if (!row) {
+            throw new CustomException({
+                title: 'Error al crear puesto',
+                message: `No se pudo recuperar el registro con id=${newId}`
+            });
+        }
+
+        return PuestoUsuario.fromJson(row);
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
+        throw new CustomException({
+            title: 'Error al crear puesto',
+            message: err.message,
+            stack: err.stack
+        });
     }
 }

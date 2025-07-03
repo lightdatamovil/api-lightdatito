@@ -27,7 +27,7 @@ export async function createUsuario(nombre,email,password,urlImagen,tipoUsuarioI
         
         const contra_hash = hash256(password);
         const query = `INSERT INTO usuarios (nombre, email, password, url_imagen, tipo_usuario_id) VALUES (?,?,?,?,?)`;
-        const result = await executeQuery(query, [ cleanedName, cleanedEmail, contra_hash, urlImagen, tipoUsuarioId ],true);
+        const result = await executeQuery(query, [ nombre, cleanedEmail, contra_hash, urlImagen, tipoUsuarioId ],true);
         //select de la fila recien creada
         const idNuevo = result.insertId;
         const rows = await executeQuery(
