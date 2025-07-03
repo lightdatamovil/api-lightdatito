@@ -130,14 +130,15 @@ router.put('/:id', async (req, res) => {
         logRed(`Error 400 PUT /api/logisticas/${req.params.id}:`, ex.toJSON());
         return res.status(400).json(ex.toJSON());
     }
+    const idLogistica = req.params.id;
 
     try {
-        const updated = await updateLogistica(req.params.id, req.body);
+        const updated = await updateLogistica(idLogistica, req.body);
         res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
-        logGreen(`PUT /api/logisticas/${req.params.id}: éxito al actualizar logística`);
+        logGreen(`PUT /api/logisticas/${idLogistica}: éxito al actualizar logística`);
     } catch (err) {
         if (err instanceof CustomException) {
-            logRed(`Error 400 PUT /api/logisticas/${req.params.id}:`, err.toJSON());
+            logRed(`Error 400 PUT /api/logisticas/${idLogistica}:`, err.toJSON());
             return res.status(400).json(err.toJSON());
         }
         const fatal = new CustomException({
@@ -145,7 +146,7 @@ router.put('/:id', async (req, res) => {
             message: err.message,
             stack: err.stack
         });
-        logRed(`Error 500 PUT /api/logisticas/${req.params.id}:`, fatal.toJSON());
+        logRed(`Error 500 PUT /api/logisticas/${idLogistica}:`, fatal.toJSON());
         res.status(500).json(fatal.toJSON());
     } finally {
         logPurple(
