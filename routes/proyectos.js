@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
-import { logRed, logPurple, logGreen } from '../src/funciones/logsCustom.js';
-import { verifyAll } from '../src/funciones/verifyParameters.js';
-import CustomException from '../models/custom_exception.js';
+import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
 import { createProyecto } from '../controllers/proyectos/create_proyecto.js';
 import { getAllProyectos } from '../controllers/proyectos/get_all_proyectos.js';
 import { getProyectoById } from '../controllers/proyectos/get_proyecto_by_id.js';
@@ -49,15 +47,7 @@ router.get('/', async (req, res) => {
 // Obtener un proyecto por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, ['id'], []);
-    if (missing.length) {
-        const ex = new CustomException({
-            title: 'Faltan parámetros',
-            message: `Faltan parámetros: ${missing.join(', ')}`
-        });
-        logRed(`Error 400 GET /api/proyectos/${req.params.id}:`, ex.toJSON());
-        return res.status(400).json(ex.toJSON());
-    }
+    if (!verificarTodo(req, res, ['id'])) return;
 
     try {
         const item = await getProyectoById(req.params.id);
@@ -73,15 +63,7 @@ router.get('/:id', async (req, res) => {
 // Actualizar un proyecto
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, ['id'], ['nombre']);
-    if (missing.length) {
-        const ex = new CustomException({
-            title: 'Faltan campos',
-            message: `Faltan campos: ${missing.join(', ')}`
-        });
-        logRed(`Error 400 PUT /api/proyectos/${req.params.id}:`, ex.toJSON());
-        return res.status(400).json(ex.toJSON());
-    }
+    if (!verificarTodo(req, res, ['id'])) return;
 
     try {
         const updated = await updateProyecto(req.params.id, req.body);
