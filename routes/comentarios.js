@@ -1,8 +1,6 @@
 import { Router } from "express";
 import { performance } from "perf_hooks";
-import { logRed, logPurple, logGreen } from "../src/funciones/logsCustom.js";
-import { verifyAll } from "../src/funciones/verifyParameters.js";
-import CustomException from "../models/custom_exception.js";
+import { logPurple, logGreen } from "../src/funciones/logsCustom.js";
 import { createComentario } from "../controllers/comentarios/create_comentario.js";
 import { getAllComentarios } from "../controllers/comentarios/get_all_comentarios.js";
 import { getComentarioById } from "../controllers/comentarios/get_comentario_by_id.js";
@@ -16,16 +14,8 @@ const router = Router();
 // Crear comentario
 router.post("/", async (req, res) => {
   const start = performance.now();
-  const missing = verifyAll(req, [], ["reporte_id", "comentario"]);
-  if (missing.length) {
-    const ex = new CustomException({
-      title: "Faltan campos",
-      message: `Faltan campos: ${missing.join(",")}`,
-    });
-    logRed("Error 400 POST /api/comentarios:", ex.toJSON());
-    return res.status(400).json(ex.toJSON());
-  }
-
+  const requiredBodyFields = ["reporte_id", "comentario"];
+  if (!verificarTodo(req, res, requiredBodyFields)) return;
   try {
     const { reporte_id, comentario } = req.body;
     const newItem = await createComentario(reporte_id, comentario);
@@ -34,17 +24,7 @@ router.post("/", async (req, res) => {
       `POST /api/comentarios: éxito al crear comentario ID ${newItem.id}`
     );
   } catch (err) {
-    if (err instanceof CustomException) {
-      logRed("Error 400 POST /api/comentarios:", err.toJSON());
-      return res.status(400).json(err.toJSON());
-    }
-    const fatal = new CustomException({
-      title: "Internal Server Error",
-      message: err.message,
-      stack: err.stack,
-    });
-    logRed("Error 500 POST /api/comentarios:", fatal.toJSON());
-    res.status(500).json(fatal.toJSON());
+    return handleError(req, res, err);
   } finally {
     logPurple(
       `POST /api/comentarios ejecutado en ${performance.now() - start} ms`
@@ -55,22 +35,13 @@ router.post("/", async (req, res) => {
 // Obtener todos
 router.get("/", async (req, res) => {
   const start = performance.now();
+  if (!verificarTodo(req, res, ['id'])) return;
   try {
     const list = await getAllComentarios();
     res.status(200).json({ body: list, message: "Comentarios obtenidos" });
     logGreen("GET /api/comentarios: éxito al listar comentarios");
   } catch (err) {
-    if (err instanceof CustomException) {
-      logRed("Error 400 GET /api/comentarios:", err.toJSON());
-      return res.status(400).json(err.toJSON());
-    }
-    const fatal = new CustomException({
-      title: "Internal Server Error",
-      message: err.message,
-      stack: err.stack,
-    });
-    logRed("Error 500 GET /api/comentarios:", fatal.toJSON());
-    res.status(500).json(fatal.toJSON());
+    return handleError(req, res, err);
   } finally {
     logPurple(
       `GET /api/comentarios ejecutado en ${performance.now() - start} ms`
