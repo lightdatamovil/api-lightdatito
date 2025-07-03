@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
         'plan_id',
         'estado_logistica_id',
         'codigo',
-        'contrasena_soporte',
+        'password_soporte',
         'cuit',
         'email',
         'url_sistema',
@@ -37,8 +37,8 @@ router.post('/', async (req, res) => {
 
     try {
         // createLogistica debe aceptar un objeto con todas las propiedades del body
-        const { did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, contrasena_soporte, cuit, email, url_sistema, pais_id } = req.body;
-        const newItem = await createLogistica(did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, contrasena_soporte, cuit, email, url_sistema, pais_id);
+        const { did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, password_soporte, cuit, email, url_sistema, pais_id } = req.body;
+        const newItem = await createLogistica(did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, password_soporte, cuit, email, url_sistema, pais_id);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/logisticas: éxito al crear logística con ID ${newItem.id}`);
     } catch (err) {
@@ -121,7 +121,7 @@ router.get('/:id', async (req, res) => {
 // Actualizar logística
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    const missingParams = verifyAll(req, ['id'], REQUIRED_FIELDS);
+    const missingParams = verifyAll(req, ['id']);
     if (missingParams.length) {
         const ex = new CustomException({
             title: 'Faltan campos',

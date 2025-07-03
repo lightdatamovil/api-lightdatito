@@ -14,6 +14,7 @@ if (cluster.isPrimary) {
         cluster.fork();
     }
 
+    // eslint-disable-next-line no-unused-vars
     cluster.on('exit', (worker, code, signal) => {
         logBlue(`Worker ${worker.process.pid} murió, reiniciando...`);
         cluster.fork();

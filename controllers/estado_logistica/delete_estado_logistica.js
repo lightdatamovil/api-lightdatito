@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import EstadoLogistica from '../../models/estado_logistica.js';
+
 
 /**
  * Delete an estado_logistica by ID.

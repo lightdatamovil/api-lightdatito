@@ -24,17 +24,16 @@ export async function createLogistica(
 ) {
     try {
 
-        const clean_nombre = nombre.trim().toLowerCase();
 
         //verificar si ya existe logistica -- porqe parametro verificaria logistica did?
         const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM tipo_usuario WHERE nombre = ?`,
-            [clean_nombre],
+            `SELECT COUNT(*) AS count FROM logisticas WHERE nombre = LOWER(?) AND did =? `,
+            [nombre, did],
             true, 0
         );
         if (count > 0) {
             throw new CustomException({
-            title:   'Loistica duplicada',
+            title:   'Logistica duplicada',
             message: `Ya existe una logistica con nombre "${nombre}"`,
             status:  400
         });
@@ -79,7 +78,7 @@ export async function createLogistica(
         const result = await executeQuery(
             `INSERT INTO logisticas
            (did, nombre, url_imagen, plan_id, estado_logistica_id,
-            codigo, contraseña_soporte, cuit, email, url_sistema, pais_id)
+            codigo, password_soporte, cuit, email, url_sistema, pais_id)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 did,
@@ -93,7 +92,7 @@ export async function createLogistica(
                 email,
                 url_sistema,
                 pais_id
-            ]
+            ],true
         );
 
         // 3) Obtener el ID generado
@@ -108,7 +107,7 @@ export async function createLogistica(
         // 4) Recuperar y devolver el registro completo
         const [row] = await executeQuery(
             'SELECT * FROM logisticas WHERE id = ?',
-            [newId]
+            [newId],true
         );
         if (!row) {
             throw new CustomException({

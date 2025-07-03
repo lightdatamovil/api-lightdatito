@@ -10,7 +10,7 @@ export async function deleteEstadoReporte(id) {
 
         if (!row) {
             throw new CustomException({
-                title: 'EstadoReporte no encontrado',
+                title: 'Estado reporte no encontrado',
                 message: `No existe un estado_reporte con id=${id}`
             });
         }
