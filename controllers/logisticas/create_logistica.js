@@ -9,21 +9,9 @@ import Logistica from '../../models/logistica.js';
  * @returns {Logistica} The created Logistica instance.
  */
 
-export async function createLogistica(
-    did,
-    nombre,
-    url_imagen,
-    plan_id,
-    estado_logistica_id,
-    codigo,
-    contrasena_soporte,
-    cuit,
-    email,
-    url_sistema,
-    pais_id
-) {
+export async function createLogistica(body) {
     try {
-
+        const { did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, password_soporte, cuit, email, url_sistema, pais_id } = body;
 
         //verificar si ya existe logistica -- porqe parametro verificaria logistica did?
         const [{ count }] = await executeQuery(
@@ -33,10 +21,10 @@ export async function createLogistica(
         );
         if (count > 0) {
             throw new CustomException({
-            title:   'Logistica duplicada',
-            message: `Ya existe una logistica con nombre "${nombre}"`,
-            status:  400
-        });
+                title: 'Logistica duplicada',
+                message: `Ya existe una logistica con nombre "${nombre}"`,
+                status: 400
+            });
         }
 
 
@@ -87,12 +75,12 @@ export async function createLogistica(
                 plan_id,
                 estado_logistica_id,
                 codigo,
-                contrasena_soporte,
+                password_soporte,
                 cuit,
                 email,
                 url_sistema,
                 pais_id
-            ],true
+            ], true
         );
 
         // 3) Obtener el ID generado
@@ -107,7 +95,7 @@ export async function createLogistica(
         // 4) Recuperar y devolver el registro completo
         const [row] = await executeQuery(
             'SELECT * FROM logisticas WHERE id = ?',
-            [newId],true
+            [newId], true
         );
         if (!row) {
             throw new CustomException({

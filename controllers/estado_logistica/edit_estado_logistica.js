@@ -1,7 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import EstadoLogistica from '../../models/estado_logistica.js';
-import { logYellow } from '../../src/funciones/logsCustom.js';
+//import { logYellow } from '../../src/funciones/logsCustom.js';
 
 /**
  * Update an existing estado_logistica by ID.
@@ -16,7 +16,7 @@ export async function updateEstadoLogistica(id, nombre, color) {
         // 3) Recuperar el registro completo
         const [row] = await executeQuery(
             `SELECT * FROM estados_logistica WHERE id = ?`,
-            [id],true
+            [id], true
         );
 
         if (!row) {

@@ -3,12 +3,13 @@ import { performance } from "perf_hooks";
 import { logRed, logPurple, logGreen } from "../src/funciones/logsCustom.js";
 import { verifyAll } from "../src/funciones/verifyParameters.js";
 import CustomException from "../models/custom_exception.js";
-
 import { createComentario } from "../controllers/comentarios/create_comentario.js";
 import { getAllComentarios } from "../controllers/comentarios/get_all_comentarios.js";
 import { getComentarioById } from "../controllers/comentarios/get_comentario_by_id.js";
 import { updateComentario } from "../controllers/comentarios/edit_comentario.js";
 import { deleteComentario } from "../controllers/comentarios/delete_comentario.js";
+import { handleError } from '../src/funciones/handle_error.js';
+import { verificarTodo } from '../src/funciones/verificarAllt.js';
 
 const router = Router();
 
@@ -80,32 +81,13 @@ router.get("/", async (req, res) => {
 // Obtener por ID
 router.get("/:id", async (req, res) => {
   const start = performance.now();
-  const missing = verifyAll(req, ["id"], []);
-  if (missing.length) {
-    const ex = new CustomException({
-      title: "Faltan parámetros",
-      message: `Faltan parámetros: ${missing.join(",")}`,
-    });
-    logRed(`Error 400 GET /api/comentarios/${req.params.id}:`, ex.toJSON());
-    return res.status(400).json(ex.toJSON());
-  }
-
+  if (!verificarTodo(req, res, ['id'])) return;
   try {
     const item = await getComentarioById(req.params.id);
     res.status(200).json({ body: item, message: "Comentario obtenido" });
     logGreen(`GET /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
-    if (err instanceof CustomException) {
-      logRed(`Error 400 GET /api/comentarios/${req.params.id}:`, err.toJSON());
-      return res.status(400).json(err.toJSON());
-    }
-    const fatal = new CustomException({
-      title: "Internal Server Error",
-      message: err.message,
-      stack: err.stack,
-    });
-    logRed(`Error 500 GET /api/comentarios/${req.params.id}:`, fatal.toJSON());
-    res.status(500).json(fatal.toJSON());
+    return handleError(req, res, err);
   } finally {
     logPurple(
       `GET /api/comentarios/:id ejecutado en ${performance.now() - start} ms`
@@ -116,35 +98,14 @@ router.get("/:id", async (req, res) => {
 // Actualizar comentario
 router.put("/:id", async (req, res) => {
   const start = performance.now();
-  const missing = verifyAll(req, ["id"], ["comentario"]);
-  if (missing.length) {
-    const ex = new CustomException({
-      title: "Faltan campos",
-      message: `Faltan campos: ${missing.join(",")}`,
-    });
-    logRed(`Error 400 PUT /api/comentarios/${req.params.id}:`, ex.toJSON());
-    return res.status(400).json(ex.toJSON());
-  }
+  if (!verificarTodo(req, res, ['id'])) return;
 
   try {
     const updated = await updateComentario(req.params.id, req.body);
-    res
-      .status(200)
-      .json({ body: updated, message: "Actualizado correctamente" });
+    res.status(200).json({ body: updated, message: "Actualizado correctamente" });
     logGreen(`PUT /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
-    if (err instanceof CustomException) {
-      //error dentro del json
-      logRed(`Error 400 PUT /api/comentarios/${req.params.id}: ${err.toJsonString()}`);
-      return res.status(400).json(err.toJSON());
-    }
-    const fatal = new CustomException({
-      title: "Internal Server Error",
-      message: err.message,
-      stack: err.stack,
-    });
-    logRed(`Error 500 PUT /api/comentarios/${req.params.id}:`, fatal.toJSON());
-    res.status(500).json(fatal.toJSON());
+    return handleError(req, res, err);
   } finally {
     logPurple(
       `PUT /api/comentarios/:id ejecutado en ${performance.now() - start} ms`
@@ -155,38 +116,14 @@ router.put("/:id", async (req, res) => {
 // Eliminar comentario
 router.delete("/:id", async (req, res) => {
   const start = performance.now();
-  const missing = verifyAll(req, ["id"], []);
-  if (missing.length) {
-    const ex = new CustomException({
-      title: "Faltan parámetros",
-      message: `Faltan parámetros: ${missing.join(",")}`,
-    });
-    logRed(`Error 400 DELETE /api/comentarios/${req.params.id}:`, ex.toJSON());
-    return res.status(400).json(ex.toJSON());
-  }
+  if (!verificarTodo(req, res, ['id'])) return;
 
   try {
     await deleteComentario(req.params.id);
     res.status(200).json({ message: "Eliminado correctamente" });
     logGreen(`DELETE /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
-    if (err instanceof CustomException) {
-      logRed(
-        `Error 400 DELETE /api/comentarios/${req.params.id}:`,
-        err.toJSON()
-      );
-      return res.status(400).json(err.toJSON());
-    }
-    const fatal = new CustomException({
-      title: "Internal Server Error",
-      message: err.message,
-      stack: err.stack,
-    });
-    logRed(
-      `Error 500 DELETE /api/comentarios/${req.params.id}:`,
-      fatal.toJSON()
-    );
-    res.status(500).json(fatal.toJSON());
+    return handleError(req, res, err);
   } finally {
     logPurple(
       `DELETE /api/comentarios/:id ejecutado en ${performance.now() - start} ms`
