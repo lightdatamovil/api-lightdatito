@@ -119,9 +119,11 @@ router.put('/:id', async (req, res) => {
         logRed(`Error 400 PUT estados-reporte/:id:`, ex.toJSON());
         return res.status(400).json(ex.toJSON());
     }
-
+    const idEstadoReporte =req.params.id;
+    const {nombre, color} = req.body;
     try {
-        const updatedItem = await updateEstadoReporte(req.params.id, req.body);
+        
+        const updatedItem = await updateEstadoReporte(idEstadoReporte, nombre, color);
         res.status(200).json({ body: updatedItem, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/estados-reporte/${req.params.id}: éxito al actualizar`);
     } catch (err) {
