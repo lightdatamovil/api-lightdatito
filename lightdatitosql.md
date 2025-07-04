@@ -261,28 +261,6 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`puestos_usuario` (
 ) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `lightdatito`.`alias_logisticas`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`alias_logisticas` (
-    `id` INT NOT NULL,
-    `alias` VARCHAR(45) NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`logisticas_alias_logisticas`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`logisticas_alias_logisticas` (
-    `logisticas_id` INT(11) NOT NULL,
-    `alias_logisticas_id` INT NOT NULL,
-    PRIMARY KEY (`logisticas_id`, `alias_logisticas_id`),
-    INDEX `fk_logisticas_has_alias_logisticas_alias_logisticas1_idx` (`alias_logisticas_id` ASC),
-    INDEX `fk_logisticas_has_alias_logisticas_logisticas1_idx` (`logisticas_id` ASC),
-    CONSTRAINT `fk_logisticas_has_alias_logisticas_logisticas1` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_logisticas_has_alias_logisticas_alias_logisticas1` FOREIGN KEY (`alias_logisticas_id`) REFERENCES `lightdatito`.`alias_logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
 -- Table `lightdatito`.`fechas_alta`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `lightdatito`.`fechas_alta` (
@@ -3432,6 +3410,10 @@ TRUNCATE TABLE usuarios;
 TRUNCATE TABLE historial_estado_logistica;
 
 TRUNCATE TABLE historial_nombre_logistica;
+
+TRUNCATE TABLE historial_plan_logistica;
+
+
 
 SET
     FOREIGN_KEY_CHECKS = 1;
