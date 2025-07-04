@@ -379,34 +379,27 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`logisticas_has_fecha_baja` (
 -- Table `lightdatito`.`historial_estados_logistica`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estados_logistica` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `logisticas_id`        INT(11)    NOT NULL,
-    `fecha_cambio`         DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `estado_anterior_id`   INT(11)    NULL,
-    `estado_nuevo_id`      INT(11)    NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `fk_hist_logistica_idx`        (`id_logistica` ASC),
-    INDEX `fk_hist_estado_logistica_idx` (`id_estado_logistica` ASC),
-    CONSTRAINT `fk_hist_logistica` FOREIGN KEY (`id_logistica`) REFERENCES `lightdatito`.`logisticas` (`id_logistica`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_hist_estado_logistica` FOREIGN KEY (`id_estado_logistica`) REFERENCES `lightdatito`.`estados_logistica` (`id_estado_logistica`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
+  `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
+  `logisticas_id`        INT(11)      NOT NULL,
+  `fecha_cambio`         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `estado_anterior_id`   INT(11)      NULL,
+  `estado_nuevo_id`      INT(11)      NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_hist_logistica`        (`logisticas_id`),
+  INDEX `idx_hist_estado_anterior`  (`estado_anterior_id`),
+  INDEX `idx_hist_estado_nuevo`     (`estado_nuevo_id`),
+  CONSTRAINT `fk_hist_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hist_estado_anterior` FOREIGN KEY (`estado_anterior_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hist_estado_nuevo` FOREIGN KEY (`estado_nuevo_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
-
-
-
-
-
-
-
-USE `lightdatito`;
+-- USE `lightdatito`;
 
 -- -----------------------------------------------------
 -- procedure poblar_paises
 -- -----------------------------------------------------
 DELIMITER $$
-USE `lightdatito` $$
+--  USE `lightdatito` $$
 DROP PROCEDURE IF EXISTS poblar_paises $$
 CREATE DEFINER = `root`@`localhost` PROCEDURE `poblar_paises`() BEGIN
 INSERT
@@ -609,7 +602,6 @@ VALUES
 END $$
 DROP PROCEDURE IF EXISTS poblar_estados_logistica$$
 
--- 3) Crea el procedimiento, usando SÓLO espacios ASCII normales
 CREATE PROCEDURE poblar_estados_logistica()
 BEGIN
   INSERT INTO estados_logistica (nombre, color) VALUES
@@ -617,7 +609,7 @@ BEGIN
     ('BLOQUEADO',  'C093FF'),
     ('ALTA',       '44A900');
 END$$
--- 3) Crea el procedimiento, usando SÓLO espacios ASCII normales
+
 DROP PROCEDURE IF EXISTS poblar_planes$$
 CREATE PROCEDURE poblar_planes()
 BEGIN
@@ -3269,48 +3261,36 @@ VALUES
 END $$
 -- AGREGAR TRIGGERS DE METADATA
 
-DELIMITER $$
-CREATE TRIGGER trg_logisticas_ai
-AFTER INSERT ON logisticas
+CREATE TRIGGER `trg_logisticas_ai`
+AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
-  INSERT INTO historial_estados_logistic
-    (logisticas_id,
-     estados_logistica_id_anterior,
-     estados_logistica_id_nuevo)
+  INSERT INTO `lightdatito`.`historial_estados_logistica`
+    (`logisticas_id`, `estado_anterior_id`, `estado_nuevo_id`)
   VALUES
     (NEW.id,
      NULL,
      NEW.estado_logistica_id);
 END$$
-DELIMITER ;
 
--- 2) Trigger para UPDATE: sólo si cambia el estado
-DELIMITER $$
-CREATE TRIGGER trg_logisticas_au
-AFTER UPDATE ON logisticas
+CREATE TRIGGER `trg_logisticas_au`
+AFTER UPDATE ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
-  IF NEW.estado_logistica_id <> OLD.estado_logistica_id THEN
-    INSERT INTO historial_estados_logistic
-      (logisticas_id,
-       estados_logistica_id_anterior,
-       estados_logistica_id_nuevo)
+  IF OLD.estado_logistica_id <> NEW.estado_logistica_id THEN
+    INSERT INTO `lightdatito`.`historial_estados_logistica`
+      (`logisticas_id`, `estado_anterior_id`, `estado_nuevo_id`)
     VALUES
       (NEW.id,
        OLD.estado_logistica_id,
        NEW.estado_logistica_id);
   END IF;
 END$$
-DELIMITER ;
-
-
 
 CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1) Desactivar temporalmente las FKs
 SET
     FOREIGN_KEY_CHECKS = 0;
 
--- 2) Vaciar todas las tablas
 TRUNCATE TABLE asignaciones;
 
 TRUNCATE TABLE asignaciones_reportes;
@@ -3349,14 +3329,13 @@ TRUNCATE TABLE tipo_usuario;
 
 TRUNCATE TABLE usuarios;
 
--- 3) Reactivar las FKs
+TRUNCATE TABLE historial_estados_logistica;
+
 SET
     FOREIGN_KEY_CHECKS = 1;
 
 END $$
-
 DELIMITER ;
-
 SET
     SQL_MODE = @OLD_SQL_MODE;
 
