@@ -59,21 +59,6 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`usuarios` (
 ) ENGINE = InnoDB AUTO_INCREMENT = 11 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `lightdatito`.`asignaciones`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`asignaciones` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `fecha_creacion` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
-    `asignador` INT(11) NOT NULL,
-    `responsable` INT(11) NOT NULL,
-    PRIMARY KEY (`id`, `asignador`, `responsable`),
-    INDEX `fk_asignaciones_usuarios1_idx` (`asignador` ASC),
-    INDEX `fk_asignaciones_usuarios2_idx` (`responsable` ASC),
-    CONSTRAINT `fk_asignaciones_usuarios1` FOREIGN KEY (`asignador`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_asignaciones_usuarios2` FOREIGN KEY (`responsable`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
 -- Table `lightdatito`.`proyectos`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `lightdatito`.`proyectos` (
@@ -157,47 +142,39 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`reportes` (
     `titulo` VARCHAR(45) NULL DEFAULT NULL,
     `descripcion` VARCHAR(45) NULL DEFAULT NULL,
     `fecha_creacion` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
-    `fecha_comienzo` TIMESTAMP NULL DEFAULT NULL,
     `fecha_limite` TIMESTAMP NULL DEFAULT NULL,
     `tipo_reporte_id` INT(11) NOT NULL,
     `observador` INT(11) NOT NULL,
     `proyecto_id` INT(11) NOT NULL,
     `logistica_id` INT(11) NOT NULL,
     `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
+    `estado_reporte_id` INT(11) NOT NULL DEFAULT 1,  
     PRIMARY KEY (`id`),
     INDEX `fk_tickets_logisticas1_idx` (`logistica_id` ASC),
     INDEX `fk_reportes_tipo_ticket1_idx` (`tipo_reporte_id` ASC),
+    INDEX `fk_reportes_estado_ticket1_idx` (`estado_reporte_id` ASC),    
     INDEX `fk_reportes_usuarios2_idx` (`observador` ASC),
     INDEX `fk_reportes_proyectos2_idx` (`proyecto_id` ASC),
     CONSTRAINT `fk_reportes_proyectos2` FOREIGN KEY (`proyecto_id`) REFERENCES `lightdatito`.`proyectos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
     CONSTRAINT `fk_reportes_tipo_ticket1` FOREIGN KEY (`tipo_reporte_id`) REFERENCES `lightdatito`.`tipo_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    CONSTRAINT `fk_reportes_estado_ticket1_idx` FOREIGN KEY (`estado_reporte_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
     CONSTRAINT `fk_reportes_usuarios2` FOREIGN KEY (`observador`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
     CONSTRAINT `fk_tickets_logisticas1` FOREIGN KEY (`logistica_id`) REFERENCES `lightdatito`.`logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE = InnoDB AUTO_INCREMENT = 11 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`asignaciones_reportes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`asignaciones_reportes` (
-    `reporte_id` INT(11) NOT NULL,
-    `asignacion_id` INT(11) NOT NULL,
-    PRIMARY KEY (`reporte_id`, `asignacion_id`),
-    INDEX `fk_reportes_has_asignaciones_asignaciones1_idx` (`asignacion_id` ASC),
-    INDEX `fk_reportes_has_asignaciones_reportes1_idx` (`reporte_id` ASC),
-    CONSTRAINT `fk_reportes_has_asignaciones_asignaciones1` FOREIGN KEY (`asignacion_id`) REFERENCES `lightdatito`.`asignaciones` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_reportes_has_asignaciones_reportes1` FOREIGN KEY (`reporte_id`) REFERENCES `lightdatito`.`reportes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `lightdatito`.`comentarios`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `lightdatito`.`comentarios` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `usuario_id` INT(11) NOT NULL ,
     `fecha_creacion` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
     `fecha_comienzo` TIMESTAMP NULL DEFAULT NULL,
     `contenido` VARCHAR(45) NOT NULL,
     `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+	INDEX `idx_comentarios_usuario` (`usuario_id`),
+	CONSTRAINT `fk_comentarios_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
@@ -211,19 +188,6 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`comentarios_reportes` (
     INDEX `fk_tickets_has_comentarios_tickets1_idx` (`reporte_id` ASC),
     CONSTRAINT `fk_tickets_has_comentarios_comentarios1` FOREIGN KEY (`comentario_id`) REFERENCES `lightdatito`.`comentarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
     CONSTRAINT `fk_tickets_has_comentarios_tickets1` FOREIGN KEY (`reporte_id`) REFERENCES `lightdatito`.`reportes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`equipo_reporte`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`equipo_reporte` (
-    `reporte_id` INT(11) NOT NULL,
-    `usuario_id` INT(11) NOT NULL,
-    PRIMARY KEY (`reporte_id`, `usuario_id`),
-    INDEX `fk_reportes_has_usuarios_usuarios1_idx` (`usuario_id` ASC),
-    INDEX `fk_reportes_has_usuarios_reportes1_idx` (`reporte_id` ASC),
-    CONSTRAINT `fk_reportes_has_usuarios_reportes1` FOREIGN KEY (`reporte_id`) REFERENCES `lightdatito`.`reportes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_reportes_has_usuarios_usuarios1` FOREIGN KEY (`usuario_id`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
@@ -294,19 +258,6 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`puestos_usuario` (
     INDEX `fk_usuarios_has_puestos_usuarios1_idx` (`usuario_id` ASC),
     CONSTRAINT `fk_usuarios_has_puestos_puestos1` FOREIGN KEY (`puesto_id`) REFERENCES `lightdatito`.`puestos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
     CONSTRAINT `fk_usuarios_has_puestos_usuarios1` FOREIGN KEY (`usuario_id`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`reportes_estados`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`reportes_estados` (
-    `reporte_id` INT(11) NOT NULL,
-    `estado_reporte_id` INT(11) NOT NULL,
-    PRIMARY KEY (`reporte_id`, `estado_reporte_id`),
-    INDEX `fk_reportes_has_estados_ticket_estados_ticket1_idx` (`estado_reporte_id` ASC),
-    INDEX `fk_reportes_has_estados_ticket_reportes1_idx` (`reporte_id` ASC),
-    CONSTRAINT `fk_reportes_has_estados_ticket_estados_ticket1` FOREIGN KEY (`estado_reporte_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_reportes_has_estados_ticket_reportes1` FOREIGN KEY (`reporte_id`) REFERENCES `lightdatito`.`reportes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
@@ -392,7 +343,10 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estado_logistica` (
   CONSTRAINT `fk_hist_estado_anterior` FOREIGN KEY (`estado_anterior_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_hist_estado_nuevo` FOREIGN KEY (`estado_nuevo_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+-- -----------------------------------------------------
+-- Table `lightdatito`.`historial_nombre_logistica`
+-- -----------------------------------------------------
+-- terminar aca
 CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_nombre_logistica` (
   `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
   `logisticas_id`        INT(11)      NOT NULL,
@@ -400,12 +354,25 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_nombre_logistica` (
   `nombre_anterior`   VARCHAR(255)      NULL,
   `nombre_nuevo`         VARCHAR(255)    NOT NULL,
    PRIMARY KEY (`id`),
-   INDEX `idx_hist_logistica`        (`logisticas_id`),
-   INDEX `idx_hist_estado_anterior`  (`nombre_anterior_id`),
-   INDEX `idx_hist_estado_nuevo`     (`nombre_nuevo_id`),
-   CONSTRAINT `fk_hist_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+   INDEX `idx_hnl_logistica`        (`logisticas_id`),
+   CONSTRAINT `fk_hnl_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+   
 
+CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estados_reporte` (
+  `id`                         INT(11)      NOT NULL AUTO_INCREMENT,
+  `reporte_id`                 INT(11)      NOT NULL,
+  `fecha_cambio`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `estado_reporte_anterior_id` INT(11)      NULL,
+  `estado_reporte_nuevo_id`    INT(11)      NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_hist_reporte`                    (`reporte_id`),
+  INDEX `idx_estado_ant_reporte`              (`estado_reporte_anterior_id`),
+  INDEX `idx_estado_new_reporte`              (`estado_reporte_nuevo_id`),
+  CONSTRAINT `fk_herp_reporte`  FOREIGN KEY (`reporte_id`) REFERENCES `lightdatito`.`reportes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_herp_ant_reporte` FOREIGN KEY (`estado_reporte_anterior_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_herp_new_reporte` FOREIGN KEY (`estado_reporte_nuevo_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -636,6 +603,26 @@ BEGIN
     ('ESTANDAR',      '7B2CEB', 0),
     ('PREMIUM',       '5003BD', 0),
     ('GRAN LOGISTICA','2F0073', 0);
+END$$
+
+DROP PROCEDURE IF EXISTS poblar_estados_reporte$$
+CREATE PROCEDURE poblar_estados_reporte()
+BEGIN
+  INSERT INTO puestos (nombre, color, eliminado) VALUES
+    ('pendiente',  'E4D1FF',      0),
+    ('en curso',   'C093FF',      0),
+    ('realizado',  '7B2CEB',      0);
+END$$
+
+
+DROP PROCEDURE IF EXISTS poblar_puestos$$
+CREATE PROCEDURE poblar_puestos()
+BEGIN
+  INSERT INTO puestos (nombre, eliminado) VALUES
+    ('desarrollo',       0),
+    ('soporte',          0),
+    ('ventas',           0),
+    ('rrhh',             0);
 END$$
 
 DROP PROCEDURE IF EXISTS poblar_logisticas $$
@@ -3304,7 +3291,6 @@ BEGIN
   END IF;
 END$$
 
-
 -- es necesario un que lo inserte el primer nombre si es un historial de cambios? la primera vez no hay cambios
 CREATE TRIGGER `trg_logisticas_nombre_ai`
 AFTER INSERT ON `lightdatito`.`logisticas`
@@ -3331,20 +3317,39 @@ BEGIN
   END IF;
 END$$
 
+-- 1) Al insertar un nuevo reporte, registra el estado inicial (por defecto 1)
+CREATE TRIGGER `trg_reportes_estado_ai`
+AFTER INSERT ON `lightdatito`.`reportes`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `lightdatito`.`historial_estados_reporte`
+    (`reporte_id`, `estado_reporte_anterior_id`, `estado_reporte_nuevo_id`)
+  VALUES
+    (NEW.id,
+     NULL,                 -- no había estado anterior
+     NEW.estado_reporte_id);  -- que por defecto será 1
+END$$
 
-
+-- 2) Al actualizar un reporte, registra sólo si cambia el estado
+CREATE TRIGGER `trg_reportes_estado_au`
+AFTER UPDATE ON `lightdatito`.`reportes`
+FOR EACH ROW
+BEGIN
+  IF OLD.estado_reporte_id <> NEW.estado_reporte_id THEN
+    INSERT INTO `lightdatito`.`historial_estados_reporte`
+      (`reporte_id`, `estado_reporte_anterior_id`, `estado_reporte_nuevo_id`)
+    VALUES
+      (NEW.id,
+       OLD.estado_reporte_id,
+       NEW.estado_reporte_id);
+  END IF;
+END$$
 
 CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1) Desactivar temporalmente las FKs
 SET
     FOREIGN_KEY_CHECKS = 0;
 
-TRUNCATE TABLE asignaciones;
-
-TRUNCATE TABLE asignaciones_reportes;
-
 TRUNCATE TABLE comentarios;
-
-TRUNCATE TABLE equipo_reporte;
 
 TRUNCATE TABLE estados_logistica;
 
@@ -3367,8 +3372,6 @@ TRUNCATE TABLE puestos;
 TRUNCATE TABLE puestos_usuario;
 
 TRUNCATE TABLE reportes;
-
-TRUNCATE TABLE reportes_estados;
 
 TRUNCATE TABLE tipo_reporte;
 

@@ -96,4 +96,9 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+
+// /api/:id/comentarios
+
+
+
 export default router;
