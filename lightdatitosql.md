@@ -375,6 +375,31 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`logisticas_has_fecha_baja` (
     CONSTRAINT `fk_logisticas_has_fecha_baja_fecha_baja1` FOREIGN KEY (`fecha_baja_id`) REFERENCES `lightdatito`.`fecha_baja` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
 
+-- -----------------------------------------------------
+-- Table `lightdatito`.`historial_estados_logistica`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estados_logistica` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `logisticas_id`        INT(11)    NOT NULL,
+    `fecha_cambio`         DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `estado_anterior_id`   INT(11)    NULL,
+    `estado_nuevo_id`      INT(11)    NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `fk_hist_logistica_idx`        (`id_logistica` ASC),
+    INDEX `fk_hist_estado_logistica_idx` (`id_estado_logistica` ASC),
+    CONSTRAINT `fk_hist_logistica` FOREIGN KEY (`id_logistica`) REFERENCES `lightdatito`.`logisticas` (`id_logistica`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    CONSTRAINT `fk_hist_estado_logistica` FOREIGN KEY (`id_estado_logistica`) REFERENCES `lightdatito`.`estados_logistica` (`id_estado_logistica`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
+
+
+
+
+
+
+
+
+
+
 USE `lightdatito`;
 
 -- -----------------------------------------------------
@@ -3242,6 +3267,44 @@ VALUES
     );
 
 END $$
+-- AGREGAR TRIGGERS DE METADATA
+
+DELIMITER $$
+CREATE TRIGGER trg_logisticas_ai
+AFTER INSERT ON logisticas
+FOR EACH ROW
+BEGIN
+  INSERT INTO historial_estados_logistic
+    (logisticas_id,
+     estados_logistica_id_anterior,
+     estados_logistica_id_nuevo)
+  VALUES
+    (NEW.id,
+     NULL,
+     NEW.estado_logistica_id);
+END$$
+DELIMITER ;
+
+-- 2) Trigger para UPDATE: sólo si cambia el estado
+DELIMITER $$
+CREATE TRIGGER trg_logisticas_au
+AFTER UPDATE ON logisticas
+FOR EACH ROW
+BEGIN
+  IF NEW.estado_logistica_id <> OLD.estado_logistica_id THEN
+    INSERT INTO historial_estados_logistic
+      (logisticas_id,
+       estados_logistica_id_anterior,
+       estados_logistica_id_nuevo)
+    VALUES
+      (NEW.id,
+       OLD.estado_logistica_id,
+       NEW.estado_logistica_id);
+  END IF;
+END$$
+DELIMITER ;
+
+
 
 CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1) Desactivar temporalmente las FKs
 SET

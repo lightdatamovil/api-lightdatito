@@ -11,7 +11,7 @@ import { logRed } from './logsCustom.js';
 export function handleError(req, res, err) {
     if (err instanceof CustomException) {
         // 400 Bad Request para nuestras CustomException
-        logRed(`Error 400 ${req.method} ${req.originalUrl}:`, err.toJSON());
+        logRed(`Error 400 ${req.method} ${req.originalUrl}:${err.toJsonString()}`);
         return res.status(400).json(err.toJSON());
     }
     // 500 Internal Server Error para TODO lo demás
@@ -20,6 +20,6 @@ export function handleError(req, res, err) {
         message: err.message,
         stack: err.stack
     });
-    logRed(`Error 500 ${req.method} ${req.originalUrl}:`, fatal.toJSON());
+    logRed(`Error 500 ${req.method} ${req.originalUrl}:${fatal.toJsonString()}`);
     return res.status(500).json(fatal.toJSON());
 }

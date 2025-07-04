@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
 // Obtener todos
 router.get("/", async (req, res) => {
   const start = performance.now();
-  if (!verificarTodo(req, res)) return;
+
   try {
     const list = await getAllComentarios();
     res.status(200).json({ body: list, message: "Comentarios obtenidos" });
