@@ -378,7 +378,7 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`logisticas_has_fecha_baja` (
 -- -----------------------------------------------------
 -- Table `lightdatito`.`historial_estados_logistica`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estados_logistica` (
+CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estado_logistica` (
   `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
   `logisticas_id`        INT(11)      NOT NULL,
   `fecha_cambio`         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -392,6 +392,23 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estados_logistica` (
   CONSTRAINT `fk_hist_estado_anterior` FOREIGN KEY (`estado_anterior_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_hist_estado_nuevo` FOREIGN KEY (`estado_nuevo_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_nombre_logistica` (
+  `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
+  `logisticas_id`        INT(11)      NOT NULL,
+  `fecha_cambio`         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `nombre_anterior`   VARCHAR(255)      NULL,
+  `nombre_nuevo`         VARCHAR(255)    NOT NULL,
+   PRIMARY KEY (`id`),
+   INDEX `idx_hist_logistica`        (`logisticas_id`),
+   INDEX `idx_hist_estado_anterior`  (`nombre_anterior_id`),
+   INDEX `idx_hist_estado_nuevo`     (`nombre_nuevo_id`),
+   CONSTRAINT `fk_hist_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
 
 -- USE `lightdatito`;
 
@@ -600,8 +617,8 @@ VALUES
     (nombre);
 
 END $$
-DROP PROCEDURE IF EXISTS poblar_estados_logistica$$
 
+DROP PROCEDURE IF EXISTS poblar_estados_logistica$$
 CREATE PROCEDURE poblar_estados_logistica()
 BEGIN
   INSERT INTO estados_logistica (nombre, color) VALUES
@@ -3287,6 +3304,36 @@ BEGIN
   END IF;
 END$$
 
+
+-- es necesario un que lo inserte el primer nombre si es un historial de cambios? la primera vez no hay cambios
+CREATE TRIGGER `trg_logisticas_nombre_ai`
+AFTER INSERT ON `lightdatito`.`logisticas`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `lightdatito`.`historial_nombre_logistica`
+    (`logisticas_id`, `nombre_anterior`, `nombre_nuevo`)
+  VALUES
+    (NEW.id,
+     NULL,
+     NEW.nombre);
+END$$
+
+
+CREATE TRIGGER `trg_logisticas_nombre_au`
+AFTER UPDATE ON `lightdatito`.`logisticas`
+FOR EACH ROW
+BEGIN
+  IF OLD.nombre <> NEW.nombre THEN
+    INSERT INTO `lightdatito`.`historial_nombres_logistica`
+      (`logisticas_id`, `nombre_anterior`, `nombre_nuevo`)
+    VALUES
+      (NEW.id, OLD.nombre, NEW.nombre);
+  END IF;
+END$$
+
+
+
+
 CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1) Desactivar temporalmente las FKs
 SET
     FOREIGN_KEY_CHECKS = 0;
@@ -3329,7 +3376,9 @@ TRUNCATE TABLE tipo_usuario;
 
 TRUNCATE TABLE usuarios;
 
-TRUNCATE TABLE historial_estados_logistica;
+TRUNCATE TABLE historial_estado_logistica;
+
+TRUNCATE TABLE historial_nombre_logistica;
 
 SET
     FOREIGN_KEY_CHECKS = 1;
