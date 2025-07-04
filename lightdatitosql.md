@@ -343,10 +343,10 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estado_logistica` (
   CONSTRAINT `fk_hist_estado_anterior` FOREIGN KEY (`estado_anterior_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_hist_estado_nuevo` FOREIGN KEY (`estado_nuevo_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- -----------------------------------------------------
 -- Table `lightdatito`.`historial_nombre_logistica`
 -- -----------------------------------------------------
--- terminar aca
 CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_nombre_logistica` (
   `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
   `logisticas_id`        INT(11)      NOT NULL,
@@ -358,8 +358,28 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_nombre_logistica` (
    CONSTRAINT `fk_hnl_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
    
-
+-- -----------------------------------------------------
+-- Table `lightdatito`.`historial_plan_logistica`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_plan_logistica` (
+  `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
+  `logisticas_id`        INT(11)      NOT NULL,
+  `fecha_cambio`         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `plan_anterior_id`     INT(11)      NULL,
+  `plan_nuevo_id`        INT(11)      NOT NULL,
+   PRIMARY KEY (`id`),
+   INDEX `idx_hpl_logistica`    (`logisticas_id`),
+   INDEX `idx_hpl_plan_ant`     (`plan_anterior_id`),
+   INDEX `idx_hpl_plan_new`     (`plan_nuevo_id`),
+   CONSTRAINT `fk_hpl_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+   CONSTRAINT `fk_hpl_plan_ant` FOREIGN KEY (`plan_anterior_id`) REFERENCES `lightdatito`.`plan` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+   CONSTRAINT `fk_hpl_plan_new` FOREIGN KEY (`plan_nuevo_id`) REFERENCES `lightdatito`.`plan` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+   
+-- -----------------------------------------------------
+-- Table `lightdatito`.`historial_estados_reporte`
 CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estados_reporte` (
+
   `id`                         INT(11)      NOT NULL AUTO_INCREMENT,
   `reporte_id`                 INT(11)      NOT NULL,
   `fecha_cambio`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -373,6 +393,9 @@ CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estados_reporte` (
   CONSTRAINT `fk_herp_ant_reporte` FOREIGN KEY (`estado_reporte_anterior_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_herp_new_reporte` FOREIGN KEY (`estado_reporte_nuevo_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 
 
 
@@ -3344,6 +3367,33 @@ BEGIN
        NEW.estado_reporte_id);
   END IF;
 END$$
+
+CREATE TRIGGER `trg_logisticas_plan_ai`
+AFTER INSERT ON `lightdatito`.`logisticas`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `lightdatito`.`historial_plan_logistica`
+    (`logisticas_id`, `plan_anterior_id`, `plan_nuevo_id`)
+  VALUES
+    (NEW.id,
+     NULL,
+     NEW.plan_id);
+END$$
+
+CREATE TRIGGER `trg_logisticas_plan_au`
+AFTER UPDATE ON `lightdatito`.`logisticas`
+FOR EACH ROW
+BEGIN
+  IF OLD.plan_id <> NEW.plan_id THEN
+    INSERT INTO `lightdatito`.`historial_plan_logistica`
+      (`logisticas_id`, `plan_anterior_id`, `plan_nuevo_id`)
+    VALUES
+      (NEW.id,
+       OLD.plan_id,
+       NEW.plan_id);
+  END IF;
+END$$
+
 
 CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1) Desactivar temporalmente las FKs
 SET
