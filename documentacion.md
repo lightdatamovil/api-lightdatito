@@ -1,6 +1,6 @@
 # Documentación CRM Lightdatuto
 
-## Índice
+## Menú Principal
 
 - [Reportes](#reportes)  
 - [Logísticas](#logísticas)  
