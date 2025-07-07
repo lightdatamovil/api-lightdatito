@@ -24,355 +24,548 @@ SET
 -- -----------------------------------------------------
 -- Schema lightdatito
 -- -----------------------------------------------------
+
 DROP SCHEMA IF EXISTS `lightdatito`;
-
 CREATE SCHEMA IF NOT EXISTS `lightdatito` DEFAULT CHARACTER SET utf8;
-
 USE `lightdatito`;
 
 -- -----------------------------------------------------
--- Table `lightdatito`.`tipo_usuario`
+-- Table `tipo_usuario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`tipo_usuario` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `fecha_creacion` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 4 DEFAULT CHARACTER SET = utf8;
+CREATE TABLE IF NOT EXISTS `tipo_usuario` (
+  `id`            INT(11)      NOT NULL AUTO_INCREMENT,
+  `nombre`        VARCHAR(45)  NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `eliminado`     TINYINT(4)   NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Table `lightdatito`.`usuarios`
+-- Table `usuarios`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`usuarios` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `email` VARCHAR(45) NULL DEFAULT NULL,
-    `password` VARCHAR(256) NOT NULL,
-    `url_imagen` VARCHAR(256) NULL DEFAULT NULL,
-    `tipo_usuario_id` INT(11) NOT NULL,
-    `fecha_creacion` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
-    INDEX `fk_usuarios_tipo_usuario1_idx` (`tipo_usuario_id` ASC),
-    CONSTRAINT `fk_usuarios_tipo_usuario1` FOREIGN KEY (`tipo_usuario_id`) REFERENCES `lightdatito`.`tipo_usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB AUTO_INCREMENT = 11 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`proyectos`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`proyectos` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 4 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`tipo_reporte`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`tipo_reporte` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `color` VARCHAR(7) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 5 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`estados_logistica`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`estados_logistica` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `color` VARCHAR(7) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`paises`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`paises` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `codigo_iso` VARCHAR(45) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 247 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`plan`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`plan` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `color` VARCHAR(7) NOT NULL,
-    `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`logisticas`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`logisticas` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `did` INT(11) NULL DEFAULT NULL,
-    `nombre` VARCHAR(45) NULL DEFAULT NULL,
-    `url_imagen` VARCHAR(256) NULL DEFAULT NULL,
-    `plan_id` INT(11) NOT NULL,
-    `estado_logistica_id` INT(11) NOT NULL,
-    `codigo` VARCHAR(6) NULL DEFAULT NULL,
-    `password_soporte` VARCHAR(45) NULL DEFAULT NULL,
-    `cuit` VARCHAR(45) NULL DEFAULT NULL,
-    `email` VARCHAR(45) NULL DEFAULT NULL,
-    `url_sistema` VARCHAR(256) NULL DEFAULT NULL,
-    `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    `pais_id` INT(11) NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `fk_logisticas_plan1_idx` (`plan_id` ASC),
-    INDEX `fk_logisticas_estados_logisticas1_idx` (`estado_logistica_id` ASC),
-    INDEX `fk_logisticas_paises1_idx` (`pais_id` ASC),
-    CONSTRAINT `fk_logisticas_estados_logisticas1` FOREIGN KEY (`estado_logistica_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_logisticas_paises1` FOREIGN KEY (`pais_id`) REFERENCES `lightdatito`.`paises` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_logisticas_plan1` FOREIGN KEY (`plan_id`) REFERENCES `lightdatito`.`plan` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB AUTO_INCREMENT = 4 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`reportes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`reportes` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `titulo` VARCHAR(45) NULL DEFAULT NULL,
-    `descripcion` VARCHAR(45) NULL DEFAULT NULL,
-    `fecha_creacion` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
-    `fecha_limite` TIMESTAMP NULL DEFAULT NULL,
-    `tipo_reporte_id` INT(11) NOT NULL,
-    `observador` INT(11) NOT NULL,
-    `proyecto_id` INT(11) NOT NULL,
-    `logistica_id` INT(11) NOT NULL,
-    `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    `estado_reporte_id` INT(11) NOT NULL DEFAULT 1,  
-    PRIMARY KEY (`id`),
-    INDEX `fk_tickets_logisticas1_idx` (`logistica_id` ASC),
-    INDEX `fk_reportes_tipo_ticket1_idx` (`tipo_reporte_id` ASC),
-    INDEX `fk_reportes_estado_ticket1_idx` (`estado_reporte_id` ASC),    
-    INDEX `fk_reportes_usuarios2_idx` (`observador` ASC),
-    INDEX `fk_reportes_proyectos2_idx` (`proyecto_id` ASC),
-    CONSTRAINT `fk_reportes_proyectos2` FOREIGN KEY (`proyecto_id`) REFERENCES `lightdatito`.`proyectos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_reportes_tipo_ticket1` FOREIGN KEY (`tipo_reporte_id`) REFERENCES `lightdatito`.`tipo_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_reportes_estado_ticket1_idx` FOREIGN KEY (`estado_reporte_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_reportes_usuarios2` FOREIGN KEY (`observador`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_tickets_logisticas1` FOREIGN KEY (`logistica_id`) REFERENCES `lightdatito`.`logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB AUTO_INCREMENT = 11 DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`comentarios`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`comentarios` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `usuario_id` INT(11) NOT NULL ,
-    `fecha_creacion` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
-    `fecha_comienzo` TIMESTAMP NULL DEFAULT NULL,
-    `contenido` VARCHAR(45) NOT NULL,
-    `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
-	INDEX `idx_comentarios_usuario` (`usuario_id`),
-	CONSTRAINT `fk_comentarios_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`comentarios_reportes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`comentarios_reportes` (
-    `reporte_id` INT(11) NOT NULL,
-    `comentario_id` INT(11) NOT NULL,
-    PRIMARY KEY (`reporte_id`, `comentario_id`),
-    INDEX `fk_tickets_has_comentarios_comentarios1_idx` (`comentario_id` ASC),
-    INDEX `fk_tickets_has_comentarios_tickets1_idx` (`reporte_id` ASC),
-    CONSTRAINT `fk_tickets_has_comentarios_comentarios1` FOREIGN KEY (`comentario_id`) REFERENCES `lightdatito`.`comentarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_tickets_has_comentarios_tickets1` FOREIGN KEY (`reporte_id`) REFERENCES `lightdatito`.`reportes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`estados_reporte`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`estados_reporte` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `color` VARCHAR(7) NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`tipo_observacion`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`tipo_observacion` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `color` VARCHAR(7) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`observaciones_logistica`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`observaciones_logistica` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    `tipo_observacion_id` INT(11) NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `fk_observaciones_logistica_tipo_observacion1_idx` (`tipo_observacion_id` ASC),
-    CONSTRAINT `fk_observaciones_logistica_tipo_observacion1` FOREIGN KEY (`tipo_observacion_id`) REFERENCES `lightdatito`.`tipo_observacion` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`logisticas_observaciones`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`logisticas_observaciones` (
-    `logisticas_id` INT(11) NOT NULL,
-    `observaciones_logistica_id` INT(11) NOT NULL,
-    PRIMARY KEY (`logisticas_id`, `observaciones_logistica_id`),
-    INDEX `fk_logisticas_has_observaciones_logistica_observaciones_log_idx` (`observaciones_logistica_id` ASC),
-    INDEX `fk_logisticas_has_observaciones_logistica_logisticas1_idx` (`logisticas_id` ASC),
-    CONSTRAINT `fk_logisticas_has_observaciones_logistica_logisticas1` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_logisticas_has_observaciones_logistica_observaciones_logis1` FOREIGN KEY (`observaciones_logistica_id`) REFERENCES `lightdatito`.`observaciones_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`puestos`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`puestos` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `nombre` VARCHAR(45) NOT NULL,
-    `fecha_creacion` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    `eliminado` TINYINT(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`puestos_usuario`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`puestos_usuario` (
-    `usuario_id` INT(11) NOT NULL,
-    `puesto_id` INT(11) NOT NULL,
-    PRIMARY KEY (`usuario_id`, `puesto_id`),
-    INDEX `fk_usuarios_has_puestos_puestos1_idx` (`puesto_id` ASC),
-    INDEX `fk_usuarios_has_puestos_usuarios1_idx` (`usuario_id` ASC),
-    CONSTRAINT `fk_usuarios_has_puestos_puestos1` FOREIGN KEY (`puesto_id`) REFERENCES `lightdatito`.`puestos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_usuarios_has_puestos_usuarios1` FOREIGN KEY (`usuario_id`) REFERENCES `lightdatito`.`usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`fechas_alta`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`fechas_alta` (
-    `id` INT NOT NULL,
-    `fecha` VARCHAR(45) NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`logisticas_fechas_alta`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`logisticas_fechas_alta` (
-    `logisticas_id` INT(11) NOT NULL,
-    `fechas_alta_id` INT NOT NULL,
-    PRIMARY KEY (`logisticas_id`, `fechas_alta_id`),
-    INDEX `fk_logisticas_has_fechas_alta_fechas_alta1_idx` (`fechas_alta_id` ASC),
-    INDEX `fk_logisticas_has_fechas_alta_logisticas1_idx` (`logisticas_id` ASC),
-    CONSTRAINT `fk_logisticas_has_fechas_alta_logisticas1` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_logisticas_has_fechas_alta_fechas_alta1` FOREIGN KEY (`fechas_alta_id`) REFERENCES `lightdatito`.`fechas_alta` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`fecha_baja`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`fecha_baja` (
-    `id` INT NOT NULL,
-    `fecha` VARCHAR(45) NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`logisticas_has_fecha_baja`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`logisticas_has_fecha_baja` (
-    `logisticas_id` INT(11) NOT NULL,
-    `fecha_baja_id` INT NOT NULL,
-    PRIMARY KEY (`logisticas_id`, `fecha_baja_id`),
-    INDEX `fk_logisticas_has_fecha_baja_fecha_baja1_idx` (`fecha_baja_id` ASC),
-    INDEX `fk_logisticas_has_fecha_baja_logisticas1_idx` (`logisticas_id` ASC),
-    CONSTRAINT `fk_logisticas_has_fecha_baja_logisticas1` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_logisticas_has_fecha_baja_fecha_baja1` FOREIGN KEY (`fecha_baja_id`) REFERENCES `lightdatito`.`fecha_baja` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;
-
--- -----------------------------------------------------
--- Table `lightdatito`.`historial_estados_logistica`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estado_logistica` (
-  `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
-  `logisticas_id`        INT(11)      NOT NULL,
-  `fecha_cambio`         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `estado_anterior_id`   INT(11)      NULL,
-  `estado_nuevo_id`      INT(11)      NOT NULL,
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id`             INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`         VARCHAR(45) NOT NULL,
+  `email`          VARCHAR(45) NULL,
+  `password`       VARCHAR(256)NOT NULL,
+  `url_imagen`     VARCHAR(256)NULL,
+  `tipo_usuario_id` INT(11)    NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `eliminado`      TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  INDEX `idx_hist_logistica`        (`logisticas_id`),
-  INDEX `idx_hist_estado_anterior`  (`estado_anterior_id`),
-  INDEX `idx_hist_estado_nuevo`     (`estado_nuevo_id`),
-  CONSTRAINT `fk_hist_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_hist_estado_anterior` FOREIGN KEY (`estado_anterior_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_hist_estado_nuevo` FOREIGN KEY (`estado_nuevo_id`) REFERENCES `lightdatito`.`estados_logistica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  INDEX `idx_usuarios_tipo_usuario` (`tipo_usuario_id`),
+  CONSTRAINT `fk_usuarios_tipo_usuario`
+    FOREIGN KEY (`tipo_usuario_id`) REFERENCES `tipo_usuario` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Table `lightdatito`.`historial_nombre_logistica`
+-- Table `proyectos`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_nombre_logistica` (
-  `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
-  `logisticas_id`        INT(11)      NOT NULL,
-  `fecha_cambio`         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `nombre_anterior`   VARCHAR(255)      NULL,
-  `nombre_nuevo`         VARCHAR(255)    NOT NULL,
-   PRIMARY KEY (`id`),
-   INDEX `idx_hnl_logistica`        (`logisticas_id`),
-   CONSTRAINT `fk_hnl_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-   
--- -----------------------------------------------------
--- Table `lightdatito`.`historial_plan_logistica`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_plan_logistica` (
-  `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
-  `logisticas_id`        INT(11)      NOT NULL,
-  `fecha_cambio`         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `plan_anterior_id`     INT(11)      NULL,
-  `plan_nuevo_id`        INT(11)      NOT NULL,
-   PRIMARY KEY (`id`),
-   INDEX `idx_hpl_logistica`    (`logisticas_id`),
-   INDEX `idx_hpl_plan_ant`     (`plan_anterior_id`),
-   INDEX `idx_hpl_plan_new`     (`plan_nuevo_id`),
-   CONSTRAINT `fk_hpl_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `lightdatito`.`logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-   CONSTRAINT `fk_hpl_plan_ant` FOREIGN KEY (`plan_anterior_id`) REFERENCES `lightdatito`.`plan` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-   CONSTRAINT `fk_hpl_plan_new` FOREIGN KEY (`plan_nuevo_id`) REFERENCES `lightdatito`.`plan` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+CREATE TABLE IF NOT EXISTS `proyectos` (
+  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-   
--- -----------------------------------------------------
--- Table `lightdatito`.`historial_estados_reporte`
-CREATE TABLE IF NOT EXISTS `lightdatito`.`historial_estados_reporte` (
 
-  `id`                         INT(11)      NOT NULL AUTO_INCREMENT,
-  `reporte_id`                 INT(11)      NOT NULL,
-  `fecha_cambio`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `estado_reporte_anterior_id` INT(11)      NULL,
-  `estado_reporte_nuevo_id`    INT(11)      NOT NULL,
+-- -----------------------------------------------------
+-- Table `tipo_reporte`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tipo_reporte` (
+  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `color`  VARCHAR(7)  NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `estados_logistica`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `estados_logistica` (
+  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `color`  VARCHAR(7)  NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `paises`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `paises` (
+  `id`        INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`    VARCHAR(45) NOT NULL,
+  `codigo_iso` VARCHAR(45)NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `plan`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plan` (
+  `id`            INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`        VARCHAR(45) NOT NULL,
+  `color`         VARCHAR(7)  NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Tables for modules & menus (nuevo DER)
+-- -----------------------------------------------------
+
+-- Table `modulos`
+CREATE TABLE IF NOT EXISTS `modulos` (
+  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Table `modulo`
+CREATE TABLE IF NOT EXISTS `modulo` (
+  `id`           INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`       VARCHAR(45) NOT NULL,
+  `modulos_id`   INT(11)     NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `idx_hist_reporte`                    (`reporte_id`),
-  INDEX `idx_estado_ant_reporte`              (`estado_reporte_anterior_id`),
-  INDEX `idx_estado_new_reporte`              (`estado_reporte_nuevo_id`),
-  CONSTRAINT `fk_herp_reporte`  FOREIGN KEY (`reporte_id`) REFERENCES `lightdatito`.`reportes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_herp_ant_reporte` FOREIGN KEY (`estado_reporte_anterior_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_herp_new_reporte` FOREIGN KEY (`estado_reporte_nuevo_id`) REFERENCES `lightdatito`.`estados_reporte` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  INDEX `idx_modulo_modulos` (`modulos_id`),
+  CONSTRAINT `fk_modulo_modulos`
+    FOREIGN KEY (`modulos_id`) REFERENCES `modulos` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Table `herramientas`
+CREATE TABLE IF NOT EXISTS `herramientas` (
+  `id`                 INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`             VARCHAR(45) NOT NULL,
+  `modulo_modulos_id`  INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_herramientas_modulo` (`modulo_modulos_id`),
+  CONSTRAINT `fk_herramientas_modulo`
+    FOREIGN KEY (`modulo_modulos_id`) REFERENCES `modulo` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Table `menu`
+CREATE TABLE IF NOT EXISTS `menu` (
+  `id`         INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`     VARCHAR(45) NOT NULL,
+  `modulo_id`  INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_menu_modulo` (`modulo_id`),
+  CONSTRAINT `fk_menu_modulo`
+    FOREIGN KEY (`modulo_id`) REFERENCES `modulo` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Junction `modulos_has_plan`
+CREATE TABLE IF NOT EXISTS `modulos_has_plan` (
+  `modulos_id` INT(11) NOT NULL,
+  `plan_id`    INT(11) NOT NULL,
+  PRIMARY KEY (`modulos_id`,`plan_id`),
+  INDEX `idx_mhp_plan` (`plan_id`),
+  CONSTRAINT `fk_mhp_modulos`
+    FOREIGN KEY (`modulos_id`) REFERENCES `modulos` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_mhp_plan`
+    FOREIGN KEY (`plan_id`) REFERENCES `plan` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Tables for particularidades (nuevo DER)
+-- -----------------------------------------------------
+
+-- Table `tipo_particularidad`
+CREATE TABLE IF NOT EXISTS `tipo_particularidad` (
+  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `color`  VARCHAR(7)  NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Table `particularidades`
+CREATE TABLE IF NOT EXISTS `particularidades` (
+  `id`                     INT(11)     NOT NULL AUTO_INCREMENT,
+  `logisticas_id`          INT(11)     NOT NULL,
+  `es_pago`                TINYINT(1)  NOT NULL DEFAULT 0,
+  `tipo_observacion`       TINYINT(1)  NOT NULL DEFAULT 0,
+  `tipo_particularidad_id` INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_part_logistica` (`logisticas_id`),
+  INDEX `idx_part_tipo`      (`tipo_particularidad_id`),
+  CONSTRAINT `fk_part_logistica`
+    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_part_tipo`
+    FOREIGN KEY (`tipo_particularidad_id`) REFERENCES `tipo_particularidad` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Table `historial_particularidades`
+CREATE TABLE IF NOT EXISTS `historial_particularidades` (
+  `id`                       INT(11)     NOT NULL AUTO_INCREMENT,
+  `particularidad_id`        INT(11)     NOT NULL,
+  `fecha_cambio`             DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `tipo_particularidad_ant`  INT(11)     NULL,
+  `tipo_particularidad_new`  INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_hp_part`         (`particularidad_id`),
+  INDEX `idx_hp_ant`          (`tipo_particularidad_ant`),
+  INDEX `idx_hp_new`          (`tipo_particularidad_new`),
+  CONSTRAINT `fk_hp_part`
+    FOREIGN KEY (`particularidad_id`) REFERENCES `particularidades` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hp_part_ant`
+    FOREIGN KEY (`tipo_particularidad_ant`) REFERENCES `tipo_particularidad` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hp_part_new`
+    FOREIGN KEY (`tipo_particularidad_new`) REFERENCES `tipo_particularidad` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `tipo_observacion`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tipo_observacion` (
+  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `color`  VARCHAR(7)  NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `observaciones_logistica`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `observaciones_logistica` (
+  `id`                  INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`              VARCHAR(45) NOT NULL,
+  `eliminado`           TINYINT(4)  NOT NULL DEFAULT 0,
+  `tipo_observacion_id` INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_olo_tipo`   (`tipo_observacion_id`),
+  CONSTRAINT `fk_olo_tipo`
+    FOREIGN KEY (`tipo_observacion_id`) REFERENCES `tipo_observacion` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `logisticas_observaciones`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logisticas_observaciones` (
+  `logisticas_id`            INT(11) NOT NULL,
+  `observaciones_logistica_id` INT(11) NOT NULL,
+  PRIMARY KEY (`logisticas_id`,`observaciones_logistica_id`),
+  INDEX `idx_lo_obs`          (`observaciones_logistica_id`),
+  INDEX `idx_lo_log`          (`logisticas_id`),
+  CONSTRAINT `fk_lo_log` 
+    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_lo_obs` 
+    FOREIGN KEY (`observaciones_logistica_id`) REFERENCES `observaciones_logistica` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `logisticas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logisticas` (
+  `id`                 INT(11)     NOT NULL AUTO_INCREMENT,
+  `did`                INT(11)     NULL,
+  `nombre`             VARCHAR(45) NULL,
+  `url_imagen`         VARCHAR(256)NULL,
+  `plan_id`            INT(11)     NOT NULL,
+  `estado_logistica_id` INT(11)    NOT NULL,
+  `codigo`             VARCHAR(6)  NULL,
+  `password_soporte`   VARCHAR(45) NULL,
+  `cuit`               VARCHAR(45) NULL,
+  `email`              VARCHAR(45) NULL,
+  `url_sistema`        VARCHAR(256)NULL,
+  `eliminado`          TINYINT(4)  NOT NULL DEFAULT 0,
+  `pais_id`            INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_log_plan` (`plan_id`),
+  INDEX `idx_log_estado` (`estado_logistica_id`),
+  INDEX `idx_log_pais`   (`pais_id`),
+  CONSTRAINT `fk_log_plan`
+    FOREIGN KEY (`plan_id`) REFERENCES `plan` (`id`),
+  CONSTRAINT `fk_log_estado`
+    FOREIGN KEY (`estado_logistica_id`) REFERENCES `estados_logistica` (`id`),
+  CONSTRAINT `fk_log_pais`
+    FOREIGN KEY (`pais_id`) REFERENCES `paises` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `fechas_alta`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `fechas_alta` (
+  `id`    INT      NOT NULL,
+  `fecha` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `logisticas_fechas_alta`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logisticas_fechas_alta` (
+  `logisticas_id` INT(11) NOT NULL,
+  `fechas_alta_id` INT     NOT NULL,
+  PRIMARY KEY (`logisticas_id`,`fechas_alta_id`),
+  INDEX `idx_lfa_fa` (`fechas_alta_id`),
+  INDEX `idx_lfa_log` (`logisticas_id`),
+  CONSTRAINT `fk_lfa_log`
+    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`),
+  CONSTRAINT `fk_lfa_fa`
+    FOREIGN KEY (`fechas_alta_id`) REFERENCES `fechas_alta` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `fecha_baja`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `fecha_baja` (
+  `id`    INT      NOT NULL,
+  `fecha` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `logisticas_has_fecha_baja`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `logisticas_has_fecha_baja` (
+  `logisticas_id` INT(11) NOT NULL,
+  `fecha_baja_id` INT     NOT NULL,
+  PRIMARY KEY (`logisticas_id`,`fecha_baja_id`),
+  INDEX `idx_lfb_fb` (`fecha_baja_id`),
+  INDEX `idx_lfb_log` (`logisticas_id`),
+  CONSTRAINT `fk_lfb_log`
+    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`),
+  CONSTRAINT `fk_lfb_fb`
+    FOREIGN KEY (`fecha_baja_id`) REFERENCES `fecha_baja` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `estados_reporte`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `estados_reporte` (
+  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `color`  VARCHAR(7)  NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `reportes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `reportes` (
+  `id`               INT(11)      NOT NULL AUTO_INCREMENT,
+  `titulo`           VARCHAR(45)  NULL,
+  `descripcion`      VARCHAR(45)  NULL,
+  `fecha_creacion`   TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP(),
+  `fecha_limite`     TIMESTAMP    NULL,
+  `tipo_reporte_id`  INT(11)      NOT NULL,
+  `observador`       INT(11)      NOT NULL,
+  `proyecto_id`      INT(11)      NOT NULL,
+  `logistica_id`     INT(11)      NOT NULL,
+  `eliminado`        TINYINT(4)   NOT NULL DEFAULT 0,
+  `estado_reporte_id` INT(11)     NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  INDEX `idx_rep_tipo`    (`tipo_reporte_id`),
+  INDEX `idx_rep_obs`     (`observador`),
+  INDEX `idx_rep_proj`    (`proyecto_id`),
+  INDEX `idx_rep_log`     (`logistica_id`),
+  INDEX `idx_rep_estado`  (`estado_reporte_id`),
+  CONSTRAINT `fk_rep_tipo`
+    FOREIGN KEY (`tipo_reporte_id`) REFERENCES `tipo_reporte` (`id`),
+  CONSTRAINT `fk_rep_obs`
+    FOREIGN KEY (`observador`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_rep_proj`
+    FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`id`),
+  CONSTRAINT `fk_rep_log`
+    FOREIGN KEY (`logistica_id`) REFERENCES `logisticas` (`id`),
+  CONSTRAINT `fk_rep_estado`
+    FOREIGN KEY (`estado_reporte_id`) REFERENCES `estados_reporte` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `comentarios`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `comentarios` (
+  `id`            INT(11)     NOT NULL AUTO_INCREMENT,
+  `usuario_id`    INT(11)     NOT NULL,
+  `fecha_creacion` TIMESTAMP  NULL DEFAULT CURRENT_TIMESTAMP(),
+  `fecha_comienzo` TIMESTAMP  NULL,
+  `contenido`     VARCHAR(45) NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  INDEX `idx_com_usuario` (`usuario_id`),
+  CONSTRAINT `fk_com_usuario`
+    FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
+      ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `comentarios_reportes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `comentarios_reportes` (
+  `reporte_id`   INT(11) NOT NULL,
+  `comentario_id` INT(11) NOT NULL,
+  PRIMARY KEY (`reporte_id`,`comentario_id`),
+  INDEX `idx_cr_rep` (`reporte_id`),
+  INDEX `idx_cr_com` (`comentario_id`),
+  CONSTRAINT `fk_cr_rep`
+    FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`),
+  CONSTRAINT `fk_cr_com`
+    FOREIGN KEY (`comentario_id`) REFERENCES `comentarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Tables for assignments (nuevo DER)
+-- -----------------------------------------------------
+
+-- Table `asignaciones`
+CREATE TABLE IF NOT EXISTS `asignaciones` (
+  `id`             INT(11)     NOT NULL AUTO_INCREMENT,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `asignador`      INT(11)     NOT NULL,
+  `responsable`    INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_asig_asignador`  (`asignador`),
+  INDEX `idx_asig_responsable`(`responsable`),
+  CONSTRAINT `fk_asig_asignador`
+    FOREIGN KEY (`asignador`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_asig_responsable`
+    FOREIGN KEY (`responsable`) REFERENCES `usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Junction `asignaciones_reportes`
+CREATE TABLE IF NOT EXISTS `asignaciones_reportes` (
+  `reporte_id`     INT(11) NOT NULL,
+  `asignacion_id`  INT(11) NOT NULL,
+  PRIMARY KEY (`reporte_id`,`asignacion_id`),
+  INDEX `idx_ar_rep` (`reporte_id`),
+  INDEX `idx_ar_asig`(`asignacion_id`),
+  CONSTRAINT `fk_ar_rep`
+    FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`),
+  CONSTRAINT `fk_ar_asig`
+    FOREIGN KEY (`asignacion_id`) REFERENCES `asignaciones` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Table `historial_asignaciones`
+CREATE TABLE IF NOT EXISTS `historial_asignaciones` (
+  `id`               INT(11)   NOT NULL AUTO_INCREMENT,
+  `asignacion_id`    INT(11)   NOT NULL,
+  `fecha_cambio`     DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `usuario_anterior` INT(11)   NULL,
+  `usuario_nuevo`    INT(11)   NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_ha_asig` (`asignacion_id`),
+  INDEX `idx_ha_uant`(`usuario_anterior`),
+  INDEX `idx_ha_unew`(`usuario_nuevo`),
+  CONSTRAINT `fk_ha_asig`
+    FOREIGN KEY (`asignacion_id`) REFERENCES `asignaciones` (`id`),
+  CONSTRAINT `fk_ha_uant`
+    FOREIGN KEY (`usuario_anterior`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_ha_unew`
+    FOREIGN KEY (`usuario_nuevo`) REFERENCES `usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `puestos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `puestos` (
+  `id`            INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`        VARCHAR(45) NOT NULL,
+  `fecha_creacion` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Junction `puestos_usuario`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `puestos_usuario` (
+  `usuario_id` INT(11) NOT NULL,
+  `puesto_id`  INT(11) NOT NULL,
+  PRIMARY KEY (`usuario_id`,`puesto_id`),
+  INDEX `idx_pu_usuario` (`usuario_id`),
+  INDEX `idx_pu_puesto`  (`puesto_id`),
+  CONSTRAINT `fk_pu_usuario`
+    FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_pu_puesto`
+    FOREIGN KEY (`puesto_id`) REFERENCES `puestos` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Tables for historiales existentes
+-- -----------------------------------------------------
+
+-- historial_estado_logistica
+CREATE TABLE IF NOT EXISTS `historial_estado_logistica` (
+  `id`                   INT(11)     NOT NULL AUTO_INCREMENT,
+  `logisticas_id`        INT(11)     NOT NULL,
+  `fecha_cambio`         DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `estado_anterior_id`   INT(11)     NULL,
+  `estado_nuevo_id`      INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_hl_log`        (`logisticas_id`),
+  INDEX `idx_hl_eant`       (`estado_anterior_id`),
+  INDEX `idx_hl_enew`       (`estado_nuevo_id`),
+  CONSTRAINT `fk_hl_log` 
+    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`),
+  CONSTRAINT `fk_hl_eant`
+    FOREIGN KEY (`estado_anterior_id`) REFERENCES `estados_logistica` (`id`),
+  CONSTRAINT `fk_hl_enew`
+    FOREIGN KEY (`estado_nuevo_id`) REFERENCES `estados_logistica` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- historial_nombre_logistica
+CREATE TABLE IF NOT EXISTS `historial_nombre_logistica` (
+  `id`                 INT(11)     NOT NULL AUTO_INCREMENT,
+  `logisticas_id`      INT(11)     NOT NULL,
+  `fecha_cambio`       DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `nombre_anterior`    VARCHAR(255) NULL,
+  `nombre_nuevo`       VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_hnl_log`   (`logisticas_id`),
+  CONSTRAINT `fk_hnl_log`
+    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- historial_plan_logistica
+CREATE TABLE IF NOT EXISTS `historial_plan_logistica` (
+  `id`                 INT(11)   NOT NULL AUTO_INCREMENT,
+  `logisticas_id`      INT(11)   NOT NULL,
+  `fecha_cambio`       DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `plan_anterior_id`   INT(11)   NULL,
+  `plan_nuevo_id`      INT(11)   NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_hpl_log`   (`logisticas_id`),
+  INDEX `idx_hpl_pant`  (`plan_anterior_id`),
+  INDEX `idx_hpl_pnew`  (`plan_nuevo_id`),
+  CONSTRAINT `fk_hpl_log`
+    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`),
+  CONSTRAINT `fk_hpl_pant`
+    FOREIGN KEY (`plan_anterior_id`) REFERENCES `plan` (`id`),
+  CONSTRAINT `fk_hpl_pnew`
+    FOREIGN KEY (`plan_nuevo_id`) REFERENCES `plan` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- historial_estados_reporte
+CREATE TABLE IF NOT EXISTS `historial_estados_reporte` (
+  `id`                         INT(11)     NOT NULL AUTO_INCREMENT,
+  `reporte_id`                 INT(11)     NOT NULL,
+  `fecha_cambio`               DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `estado_reporte_anterior_id` INT(11)     NULL,
+  `estado_reporte_nuevo_id`    INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_herp_rep`           (`reporte_id`),
+  INDEX `idx_herp_eant`          (`estado_reporte_anterior_id`),
+  INDEX `idx_herp_enew`          (`estado_reporte_nuevo_id`),
+  CONSTRAINT `fk_herp_rep`
+    FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`),
+  CONSTRAINT `fk_herp_eant`
+    FOREIGN KEY (`estado_reporte_anterior_id`) REFERENCES `estados_reporte` (`id`),
+  CONSTRAINT `fk_herp_enew`
+    FOREIGN KEY (`estado_reporte_nuevo_id`) REFERENCES `estados_reporte` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -609,7 +802,7 @@ END$$
 DROP PROCEDURE IF EXISTS poblar_estados_reporte$$
 CREATE PROCEDURE poblar_estados_reporte()
 BEGIN
-  INSERT INTO puestos (nombre, color, eliminado) VALUES
+  INSERT INTO estados_reporte (nombre, color, eliminado) VALUES
     ('pendiente',  'E4D1FF',      0),
     ('en curso',   'C093FF',      0),
     ('realizado',  '7B2CEB',      0);
