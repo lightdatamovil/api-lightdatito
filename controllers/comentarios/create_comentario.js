@@ -9,7 +9,7 @@ export async function createComentario(reporte_id, texto) {
             `INSERT INTO comentarios (contenido) VALUES (?)`,
             [texto]
         );
-       
+
         const newId = result.insertId;
         if (!newId) {
             throw new CustomException({
@@ -17,12 +17,7 @@ export async function createComentario(reporte_id, texto) {
                 message: "No se obtuvo el ID del comentario insertado"
             });
         }
-         //insertar en tabla itermedia
-        const result2 = await executeQuery(
-            `INSERT INTO comentarios_reportes (reporte_id, comentario_id) VALUES (?, ?)`,
-            [reporte_id, newId]
-        );
-        
+
 
         const [row] = await executeQuery(
             `SELECT * FROM comentarios WHERE id = ?`,

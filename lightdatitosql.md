@@ -103,13 +103,7 @@ CREATE TABLE IF NOT EXISTS `plan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Tables for modules & menus (nuevo DER)
--- -----------------------------------------------------
-
--- -----------------------------------------------------
 -- Tabla `menu`
--- Un menú puede pertenecer a muchos planes (N–N via menu_plan),
--- y puede contener muchos módulos (1–N)
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `menu` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
@@ -265,6 +259,7 @@ CREATE TABLE IF NOT EXISTS `estados_reporte` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
+  `eliminado`  tinyint(1)  NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
