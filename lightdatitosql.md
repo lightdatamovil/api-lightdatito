@@ -16,15 +16,8 @@ SET
   SQL_MODE                 = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
 -- Schema lightdatito
 -- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema lightdatito
--- -----------------------------------------------------
-
 DROP SCHEMA IF EXISTS `lightdatito`;
 CREATE SCHEMA IF NOT EXISTS `lightdatito` DEFAULT CHARACTER SET utf8;
 USE `lightdatito`;
@@ -113,61 +106,55 @@ CREATE TABLE IF NOT EXISTS `plan` (
 -- Tables for modules & menus (nuevo DER)
 -- -----------------------------------------------------
 
--- Table `modulos`
-CREATE TABLE IF NOT EXISTS `modulos` (
+-- -----------------------------------------------------
+-- Tabla `menu`
+-- Un menú puede pertenecer a muchos planes (N–N via menu_plan),
+-- y puede contener muchos módulos (1–N)
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `menu` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Table `modulo`
+-- -----------------------------------------------------
+-- Junction `menu_plan`
+-- Relaciona N menus ↔ N planes
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `menu_plan` (
+  `menu_id` INT(11) NOT NULL,
+  `plan_id` INT(11) NOT NULL,
+  PRIMARY KEY (`menu_id`,`plan_id`),
+  INDEX `idx_mp_plan` (`plan_id`),
+  INDEX `idx_mp_menu` (`menu_id`),
+  CONSTRAINT `fk_mp_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `fk_mp_plan` FOREIGN KEY (`plan_id`) REFERENCES `plan` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Tabla `modulo`
+-- Cada módulo pertenece a un único menú (1–N)
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `modulo` (
-  `id`           INT(11)     NOT NULL AUTO_INCREMENT,
-  `nombre`       VARCHAR(45) NOT NULL,
-  `modulos_id`   INT(11)     NOT NULL,
+  `id`       INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre`   VARCHAR(45) NOT NULL,
+  `menu_id`  INT(11)     NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `idx_modulo_modulos` (`modulos_id`),
-  CONSTRAINT `fk_modulo_modulos`
-    FOREIGN KEY (`modulos_id`) REFERENCES `modulos` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
+  INDEX `idx_mod_menu` (`menu_id`),
+  CONSTRAINT `fk_mod_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Table `herramientas`
-CREATE TABLE IF NOT EXISTS `herramientas` (
-  `id`                 INT(11)     NOT NULL AUTO_INCREMENT,
-  `nombre`             VARCHAR(45) NOT NULL,
-  `modulo_modulos_id`  INT(11)     NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `idx_herramientas_modulo` (`modulo_modulos_id`),
-  CONSTRAINT `fk_herramientas_modulo`
-    FOREIGN KEY (`modulo_modulos_id`) REFERENCES `modulo` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Table `menu`
-CREATE TABLE IF NOT EXISTS `menu` (
+-- -----------------------------------------------------
+-- Tabla `herramientas`
+-- Cada herramienta pertenece a un único módulo (1–N)
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `herramienta` (
   `id`         INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`     VARCHAR(45) NOT NULL,
   `modulo_id`  INT(11)     NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `idx_menu_modulo` (`modulo_id`),
-  CONSTRAINT `fk_menu_modulo`
-    FOREIGN KEY (`modulo_id`) REFERENCES `modulo` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Junction `modulos_has_plan`
-CREATE TABLE IF NOT EXISTS `modulos_has_plan` (
-  `modulos_id` INT(11) NOT NULL,
-  `plan_id`    INT(11) NOT NULL,
-  PRIMARY KEY (`modulos_id`,`plan_id`),
-  INDEX `idx_mhp_plan` (`plan_id`),
-  CONSTRAINT `fk_mhp_modulos`
-    FOREIGN KEY (`modulos_id`) REFERENCES `modulos` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_mhp_plan`
-    FOREIGN KEY (`plan_id`) REFERENCES `plan` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
+  INDEX `idx_her_mod` (`modulo_id`),
+  CONSTRAINT `fk_her_mod` FOREIGN KEY (`modulo_id`) REFERENCES `modulo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
@@ -222,47 +209,6 @@ CREATE TABLE IF NOT EXISTS `historial_particularidades` (
       ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
--- Table `tipo_observacion`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `tipo_observacion` (
-  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NOT NULL,
-  `color`  VARCHAR(7)  NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Table `observaciones_logistica`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `observaciones_logistica` (
-  `id`                  INT(11)     NOT NULL AUTO_INCREMENT,
-  `nombre`              VARCHAR(45) NOT NULL,
-  `eliminado`           TINYINT(4)  NOT NULL DEFAULT 0,
-  `tipo_observacion_id` INT(11)     NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `idx_olo_tipo`   (`tipo_observacion_id`),
-  CONSTRAINT `fk_olo_tipo`
-    FOREIGN KEY (`tipo_observacion_id`) REFERENCES `tipo_observacion` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Table `logisticas_observaciones`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `logisticas_observaciones` (
-  `logisticas_id`            INT(11) NOT NULL,
-  `observaciones_logistica_id` INT(11) NOT NULL,
-  PRIMARY KEY (`logisticas_id`,`observaciones_logistica_id`),
-  INDEX `idx_lo_obs`          (`observaciones_logistica_id`),
-  INDEX `idx_lo_log`          (`logisticas_id`),
-  CONSTRAINT `fk_lo_log` 
-    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_lo_obs` 
-    FOREIGN KEY (`observaciones_logistica_id`) REFERENCES `observaciones_logistica` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Table `logisticas`
@@ -293,53 +239,6 @@ CREATE TABLE IF NOT EXISTS `logisticas` (
     FOREIGN KEY (`pais_id`) REFERENCES `paises` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
--- Table `fechas_alta`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `fechas_alta` (
-  `id`    INT      NOT NULL,
-  `fecha` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Table `logisticas_fechas_alta`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `logisticas_fechas_alta` (
-  `logisticas_id` INT(11) NOT NULL,
-  `fechas_alta_id` INT     NOT NULL,
-  PRIMARY KEY (`logisticas_id`,`fechas_alta_id`),
-  INDEX `idx_lfa_fa` (`fechas_alta_id`),
-  INDEX `idx_lfa_log` (`logisticas_id`),
-  CONSTRAINT `fk_lfa_log`
-    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`),
-  CONSTRAINT `fk_lfa_fa`
-    FOREIGN KEY (`fechas_alta_id`) REFERENCES `fechas_alta` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Table `fecha_baja`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `fecha_baja` (
-  `id`    INT      NOT NULL,
-  `fecha` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Table `logisticas_has_fecha_baja`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `logisticas_has_fecha_baja` (
-  `logisticas_id` INT(11) NOT NULL,
-  `fecha_baja_id` INT     NOT NULL,
-  PRIMARY KEY (`logisticas_id`,`fecha_baja_id`),
-  INDEX `idx_lfb_fb` (`fecha_baja_id`),
-  INDEX `idx_lfb_log` (`logisticas_id`),
-  CONSTRAINT `fk_lfb_log`
-    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`),
-  CONSTRAINT `fk_lfb_fb`
-    FOREIGN KEY (`fecha_baja_id`) REFERENCES `fecha_baja` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Table `estados_reporte`
@@ -366,89 +265,44 @@ CREATE TABLE IF NOT EXISTS `reportes` (
   `logistica_id`     INT(11)      NOT NULL,
   `eliminado`        TINYINT(4)   NOT NULL DEFAULT 0,
   `estado_reporte_id` INT(11)     NOT NULL DEFAULT 1,
+  `usuario_asignado_id`    INT(11)     NOT NULL,
   PRIMARY KEY (`id`),
+  INDEX `idx_asig_responsable`(`usuario_asignado_id`),
   INDEX `idx_rep_tipo`    (`tipo_reporte_id`),
   INDEX `idx_rep_obs`     (`observador`),
   INDEX `idx_rep_proj`    (`proyecto_id`),
   INDEX `idx_rep_log`     (`logistica_id`),
   INDEX `idx_rep_estado`  (`estado_reporte_id`),
-  CONSTRAINT `fk_rep_tipo`
-    FOREIGN KEY (`tipo_reporte_id`) REFERENCES `tipo_reporte` (`id`),
-  CONSTRAINT `fk_rep_obs`
-    FOREIGN KEY (`observador`) REFERENCES `usuarios` (`id`),
-  CONSTRAINT `fk_rep_proj`
-    FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`id`),
-  CONSTRAINT `fk_rep_log`
-    FOREIGN KEY (`logistica_id`) REFERENCES `logisticas` (`id`),
-  CONSTRAINT `fk_rep_estado`
-    FOREIGN KEY (`estado_reporte_id`) REFERENCES `estados_reporte` (`id`)
+  CONSTRAINT `fk_rep_tipo` FOREIGN KEY (`tipo_reporte_id`) REFERENCES `tipo_reporte` (`id`),
+  CONSTRAINT `fk_rep_obs` FOREIGN KEY (`observador`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_rep_proj` FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`id`),
+  CONSTRAINT `fk_rep_log` FOREIGN KEY (`logistica_id`) REFERENCES `logisticas` (`id`),
+  CONSTRAINT `fk_rep_estado` FOREIGN KEY (`estado_reporte_id`) REFERENCES `estados_reporte` (`id`),
+  CONSTRAINT `fk_asig_responsable` FOREIGN KEY (`usuario_asignado_id`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Table `comentarios`
+-- Table comentarios
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `comentarios` (
-  `id`            INT(11)     NOT NULL AUTO_INCREMENT,
-  `usuario_id`    INT(11)     NOT NULL,
-  `fecha_creacion` TIMESTAMP  NULL DEFAULT CURRENT_TIMESTAMP(),
-  `fecha_comienzo` TIMESTAMP  NULL,
-  `contenido`     VARCHAR(45) NOT NULL,
-  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  `id`             INT(11)      NOT NULL AUTO_INCREMENT,
+  `usuario_id`     INT(11)      NOT NULL,
+  `reporte_id`     INT(11)      NOT NULL,
+  `fecha_creacion` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `fecha_comienzo` TIMESTAMP    NULL,
+  `contenido`      VARCHAR(255) NOT NULL,
+  `eliminado`      TINYINT(1)   NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_com_usuario` (`usuario_id`),
-  CONSTRAINT `fk_com_usuario`
-    FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
+  INDEX `idx_com_reporte` (`reporte_id`),
+  CONSTRAINT `fk_com_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_com_reporte` FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
--- Table `comentarios_reportes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `comentarios_reportes` (
-  `reporte_id`   INT(11) NOT NULL,
-  `comentario_id` INT(11) NOT NULL,
-  PRIMARY KEY (`reporte_id`,`comentario_id`),
-  INDEX `idx_cr_rep` (`reporte_id`),
-  INDEX `idx_cr_com` (`comentario_id`),
-  CONSTRAINT `fk_cr_rep`
-    FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`),
-  CONSTRAINT `fk_cr_com`
-    FOREIGN KEY (`comentario_id`) REFERENCES `comentarios` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Tables for assignments (nuevo DER)
+-- Tables historial_asignaciones
 -- -----------------------------------------------------
-
--- Table `asignaciones`
-CREATE TABLE IF NOT EXISTS `asignaciones` (
-  `id`             INT(11)     NOT NULL AUTO_INCREMENT,
-  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `asignador`      INT(11)     NOT NULL,
-  `responsable`    INT(11)     NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `idx_asig_asignador`  (`asignador`),
-  INDEX `idx_asig_responsable`(`responsable`),
-  CONSTRAINT `fk_asig_asignador`
-    FOREIGN KEY (`asignador`) REFERENCES `usuarios` (`id`),
-  CONSTRAINT `fk_asig_responsable`
-    FOREIGN KEY (`responsable`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Junction `asignaciones_reportes`
-CREATE TABLE IF NOT EXISTS `asignaciones_reportes` (
-  `reporte_id`     INT(11) NOT NULL,
-  `asignacion_id`  INT(11) NOT NULL,
-  PRIMARY KEY (`reporte_id`,`asignacion_id`),
-  INDEX `idx_ar_rep` (`reporte_id`),
-  INDEX `idx_ar_asig`(`asignacion_id`),
-  CONSTRAINT `fk_ar_rep`
-    FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`),
-  CONSTRAINT `fk_ar_asig`
-    FOREIGN KEY (`asignacion_id`) REFERENCES `asignaciones` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Table `historial_asignaciones`
 CREATE TABLE IF NOT EXISTS `historial_asignaciones` (
   `id`               INT(11)   NOT NULL AUTO_INCREMENT,
   `asignacion_id`    INT(11)   NOT NULL,
@@ -496,7 +350,6 @@ CREATE TABLE IF NOT EXISTS `puestos_usuario` (
 -- -----------------------------------------------------
 -- Tables for historiales existentes
 -- -----------------------------------------------------
-
 -- historial_estado_logistica
 CREATE TABLE IF NOT EXISTS `historial_estado_logistica` (
   `id`                   INT(11)     NOT NULL AUTO_INCREMENT,
@@ -566,8 +419,6 @@ CREATE TABLE IF NOT EXISTS `historial_estados_reporte` (
   CONSTRAINT `fk_herp_enew`
     FOREIGN KEY (`estado_reporte_nuevo_id`) REFERENCES `estados_reporte` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 
 
 
@@ -3458,7 +3309,7 @@ VALUES
 
 END $$
 -- AGREGAR TRIGGERS DE METADATA
-
+-- TRIGGER HISTORIAL ESTADOS LOGISTICA
 CREATE TRIGGER `trg_logisticas_ai`
 AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
@@ -3485,6 +3336,8 @@ BEGIN
   END IF;
 END$$
 
+
+-- TRIGGER HISTORIAL NOMBRE LOGISTICA
 -- es necesario un que lo inserte el primer nombre si es un historial de cambios? la primera vez no hay cambios
 CREATE TRIGGER `trg_logisticas_nombre_ai`
 AFTER INSERT ON `lightdatito`.`logisticas`
@@ -3511,6 +3364,8 @@ BEGIN
   END IF;
 END$$
 
+
+-- TRIGGER ESTADOS REPORTES
 -- 1) Al insertar un nuevo reporte, registra el estado inicial (por defecto 1)
 CREATE TRIGGER `trg_reportes_estado_ai`
 AFTER INSERT ON `lightdatito`.`reportes`
@@ -3539,6 +3394,7 @@ BEGIN
   END IF;
 END$$
 
+-- -- TRIGGER HISTORIAL PLANES LOGISTICA
 CREATE TRIGGER `trg_logisticas_plan_ai`
 AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
@@ -3564,6 +3420,39 @@ BEGIN
        NEW.plan_id);
   END IF;
 END$$
+
+-- TRIGGER PARA HISTORIAL ASIGNACIONES
+CREATE TRIGGER `trg_reportes_asignaciones_ai`
+AFTER INSERT ON `lightdatito`.`asignaciones`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `lightdatito`.`historial_reporte_asignaciones`
+    (`reporte_id`, `usuario_anterior_id`, `usuario_nuevo_id`)
+  VALUES
+    (NEW.id,
+     NULL,
+     NEW.usuario_id);
+END$$
+
+
+-- INTENTO DOS PROBAR CUAL ES MAS EFICIENTE SOLO CUANDO SE UPDATEA LA COLUMNA NECESARIA
+DROP TRIGGER IF EXISTS trg_reportes_asignado_au$$
+CREATE TRIGGER trg_reportes_asignado_au
+AFTER UPDATE ON reportes
+FOR EACH ROW
+BEGIN
+  IF OLD.usuario_asignado <> NEW.usuario_asignado THEN
+    INSERT INTO historial_asignaciones
+      (reporte_id, fecha_cambio, usuario_anterior, usuario_nuevo)
+    VALUES
+      (NEW.id,
+       NOW(),
+       OLD.usuario_asignado,
+       NEW.usuario_asignado);
+  END IF;
+END$$
+
+
 
 
 CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1) Desactivar temporalmente las FKs
