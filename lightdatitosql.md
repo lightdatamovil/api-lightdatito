@@ -3489,43 +3489,44 @@ CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1
 SET
     FOREIGN_KEY_CHECKS = 0;
 
-TRUNCATE TABLE comentarios;
+TRUNCATE TABLE `comentarios`;
+  TRUNCATE TABLE `historial_asignaciones`;
+  TRUNCATE TABLE `historial_estados_logistica`;
+  TRUNCATE TABLE `historial_nombre_logistica`;
+  TRUNCATE TABLE `historial_plan_logistica`;
+  TRUNCATE TABLE `historial_estados_reporte`;
+  TRUNCATE TABLE `historial_particularidades`;
 
-TRUNCATE TABLE estados_logistica;
+  TRUNCATE TABLE `logisticas_observaciones`;
+  TRUNCATE TABLE `observaciones_logistica`;
+  TRUNCATE TABLE `particularidades`;
+  TRUNCATE TABLE `tipo_particularidad`;
 
-TRUNCATE TABLE estados_reporte;
+  TRUNCATE TABLE `modulo_herramienta`;
+  TRUNCATE TABLE `herramienta`;
+  TRUNCATE TABLE `modulo`;
+  TRUNCATE TABLE `menu_plan`;
+  TRUNCATE TABLE `menu`;
 
-TRUNCATE TABLE logisticas;
+  TRUNCATE TABLE `reportes`;
+  TRUNCATE TABLE `estados_reporte`;
+  TRUNCATE TABLE `logisticas`;
 
-TRUNCATE TABLE logisticas_observaciones;
+  TRUNCATE TABLE `plan`;
+  TRUNCATE TABLE `paises`;
+  TRUNCATE TABLE `estados_logistica`;
+  TRUNCATE TABLE `tipo_reporte`;
+  TRUNCATE TABLE `proyectos`;
 
-TRUNCATE TABLE observaciones_logistica;
+  TRUNCATE TABLE `puestos_usuario`;
+  TRUNCATE TABLE `puestos`;
 
-TRUNCATE TABLE paises;
+  TRUNCATE TABLE `usuarios`;
+  TRUNCATE TABLE `tipo_usuario`;
 
-TRUNCATE TABLE plan;
-
-TRUNCATE TABLE proyectos;
-
-TRUNCATE TABLE puestos;
-
-TRUNCATE TABLE puestos_usuario;
-
-TRUNCATE TABLE reportes;
-
-TRUNCATE TABLE tipo_reporte;
-
-TRUNCATE TABLE tipo_usuario;
-
-TRUNCATE TABLE usuarios;
-
-TRUNCATE TABLE historial_estado_logistica;
-
-TRUNCATE TABLE historial_nombre_logistica;
-
-TRUNCATE TABLE historial_plan_logistica;
-
-
+  -- 3) Reactivar las FKs
+  SET FOREIGN_KEY_CHECKS = 1;
+END$$
 
 SET
     FOREIGN_KEY_CHECKS = 1;
