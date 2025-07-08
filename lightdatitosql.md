@@ -122,9 +122,10 @@ CREATE TABLE IF NOT EXISTS `menu` (
 -- Relaciona N menus ↔ N planes
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `menu_plan` (
+  `id` INT(11) NOT NULL,
   `menu_id` INT(11) NOT NULL,
   `plan_id` INT(11) NOT NULL,
-  PRIMARY KEY (`menu_id`,`plan_id`),
+  PRIMARY KEY (`id`),
   INDEX `idx_mp_plan` (`plan_id`),
   INDEX `idx_mp_menu` (`menu_id`),
   CONSTRAINT `fk_mp_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
@@ -158,8 +159,20 @@ CREATE TABLE IF NOT EXISTS `herramienta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Tables for particularidades (nuevo DER)
+-- Junction `modulo_herramienta`
+-- Relaciona N menus ↔ N planes
 -- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `modulo_herramienta` (
+  `id`         INT(11)     NOT NULL AUTO_INCREMENT,
+  `modulo_id` INT(11) NOT NULL,
+  `herramienta_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_mp_modulo` (`modulo_id`),
+  INDEX `idx_mp_herramienta` (`herramienta_id`),
+  CONSTRAINT `fk_mp_modulo` FOREIGN KEY (`modulo_id`) REFERENCES `modulo` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `fk_mp_herramienta` FOREIGN KEY (`herramienta_id`) REFERENCES `herramienta` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 -- Table `tipo_particularidad`
 CREATE TABLE IF NOT EXISTS `tipo_particularidad` (
