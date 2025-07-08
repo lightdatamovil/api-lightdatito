@@ -227,16 +227,21 @@ CREATE TABLE IF NOT EXISTS `logisticas` (
   `url_sistema`        VARCHAR(256)NULL,
   `eliminado`          TINYINT(4)  NOT NULL DEFAULT 0,
   `pais_id`            INT(11)     NOT NULL,
+  `tipo_particularidad_id`   INT(11)      NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `idx_log_plan` (`plan_id`),
   INDEX `idx_log_estado` (`estado_logistica_id`),
   INDEX `idx_log_pais`   (`pais_id`),
+  INDEX `idx_log_particularidad`  (`tipo_particularidad_id`),
   CONSTRAINT `fk_log_plan`
     FOREIGN KEY (`plan_id`) REFERENCES `plan` (`id`),
   CONSTRAINT `fk_log_estado`
     FOREIGN KEY (`estado_logistica_id`) REFERENCES `estados_logistica` (`id`),
   CONSTRAINT `fk_log_pais`
-    FOREIGN KEY (`pais_id`) REFERENCES `paises` (`id`)
+    FOREIGN KEY (`pais_id`) REFERENCES `paises` (`id`),
+  CONSTRAINT `fk_log_particularidad`
+    FOREIGN KEY (`tipo_particularidad_id`) REFERENCES `tipo_particularidad` (`id`)
+      ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -305,20 +310,20 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `historial_asignaciones` (
   `id`               INT(11)   NOT NULL AUTO_INCREMENT,
-  `asignacion_id`    INT(11)   NOT NULL,
+  `reporte_id`    INT(11)   NOT NULL,
   `fecha_cambio`     DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `usuario_anterior` INT(11)   NULL,
-  `usuario_nuevo`    INT(11)   NOT NULL,
+  `usuario_anterior_id` INT(11)   NULL,
+  `usuario_nuevo_id`    INT(11)   NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `idx_ha_asig` (`asignacion_id`),
-  INDEX `idx_ha_uant`(`usuario_anterior`),
-  INDEX `idx_ha_unew`(`usuario_nuevo`),
+  INDEX `idx_ha_asig` (`reporte_id`),
+  INDEX `idx_ha_uant`(`usuario_anterior_id`),
+  INDEX `idx_ha_unew`(`usuario_nuevo_id`),
   CONSTRAINT `fk_ha_asig`
-    FOREIGN KEY (`asignacion_id`) REFERENCES `asignaciones` (`id`),
+    FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`),
   CONSTRAINT `fk_ha_uant`
-    FOREIGN KEY (`usuario_anterior`) REFERENCES `usuarios` (`id`),
+    FOREIGN KEY (`usuario_anterior_id`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `fk_ha_unew`
-    FOREIGN KEY (`usuario_nuevo`) REFERENCES `usuarios` (`id`)
+    FOREIGN KEY (`usuario_nuevo_id`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
@@ -3308,18 +3313,20 @@ VALUES
     );
 
 END $$
+
+
 -- AGREGAR TRIGGERS DE METADATA
 -- TRIGGER HISTORIAL ESTADOS LOGISTICA
 CREATE TRIGGER `trg_logisticas_ai`
 AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
-  INSERT INTO `lightdatito`.`historial_estados_logistica`
-    (`logisticas_id`, `estado_anterior_id`, `estado_nuevo_id`)
+  INSERT INTO `lightdatito`.`historial_estado_logistica`
+    (`logisticas_id`, `estado_anterior_id`, `estado_nuevo_id`,`fecha_cambio`)
   VALUES
     (NEW.id,
      NULL,
-     NEW.estado_logistica_id);
+     NEW.estado_logistica_id, now());
 END$$
 
 CREATE TRIGGER `trg_logisticas_au`
@@ -3327,12 +3334,13 @@ AFTER UPDATE ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
   IF OLD.estado_logistica_id <> NEW.estado_logistica_id THEN
-    INSERT INTO `lightdatito`.`historial_estados_logistica`
-      (`logisticas_id`, `estado_anterior_id`, `estado_nuevo_id`)
+    INSERT INTO `lightdatito`.`historial_estado_logistica`
+      (`logisticas_id`, `estado_anterior_id`, `estado_nuevo_id`,`fecha_cambio`)
     VALUES
       (NEW.id,
        OLD.estado_logistica_id,
-       NEW.estado_logistica_id);
+       NEW.estado_logistica_id,
+       now());
   END IF;
 END$$
 
@@ -3344,11 +3352,11 @@ AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
   INSERT INTO `lightdatito`.`historial_nombre_logistica`
-    (`logisticas_id`, `nombre_anterior`, `nombre_nuevo`)
+    (`logisticas_id`, `nombre_anterior`, `nombre_nuevo`,`fecha_cambio`)
   VALUES
     (NEW.id,
      NULL,
-     NEW.nombre);
+     NEW.nombre, now());
 END$$
 
 
@@ -3358,12 +3366,11 @@ FOR EACH ROW
 BEGIN
   IF OLD.nombre <> NEW.nombre THEN
     INSERT INTO `lightdatito`.`historial_nombres_logistica`
-      (`logisticas_id`, `nombre_anterior`, `nombre_nuevo`)
+      (`logisticas_id`, `nombre_anterior`, `nombre_nuevo`,`fecha_cambio`)
     VALUES
-      (NEW.id, OLD.nombre, NEW.nombre);
+      (NEW.id, OLD.nombre, NEW.nombre, now());
   END IF;
 END$$
-
 
 -- TRIGGER ESTADOS REPORTES
 -- 1) Al insertar un nuevo reporte, registra el estado inicial (por defecto 1)
@@ -3372,25 +3379,25 @@ AFTER INSERT ON `lightdatito`.`reportes`
 FOR EACH ROW
 BEGIN
   INSERT INTO `lightdatito`.`historial_estados_reporte`
-    (`reporte_id`, `estado_reporte_anterior_id`, `estado_reporte_nuevo_id`)
+    (`reporte_id`, `estado_reporte_anterior_id`, `estado_reporte_nuevo_id`,`fecha_cambio`)
   VALUES
     (NEW.id,
      NULL,                 -- no había estado anterior
-     NEW.estado_reporte_id);  -- que por defecto será 1
+     NEW.estado_reporte_id, now());  -- que por defecto será 1
 END$$
 
--- 2) Al actualizar un reporte, registra sólo si cambia el estado
+
 CREATE TRIGGER `trg_reportes_estado_au`
 AFTER UPDATE ON `lightdatito`.`reportes`
 FOR EACH ROW
 BEGIN
   IF OLD.estado_reporte_id <> NEW.estado_reporte_id THEN
     INSERT INTO `lightdatito`.`historial_estados_reporte`
-      (`reporte_id`, `estado_reporte_anterior_id`, `estado_reporte_nuevo_id`)
+      (`reporte_id`, `estado_reporte_anterior_id`, `estado_reporte_nuevo_id`,`fecha_cambio`)
     VALUES
       (NEW.id,
        OLD.estado_reporte_id,
-       NEW.estado_reporte_id);
+       NEW.estado_reporte_id, now());
   END IF;
 END$$
 
@@ -3400,11 +3407,11 @@ AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
   INSERT INTO `lightdatito`.`historial_plan_logistica`
-    (`logisticas_id`, `plan_anterior_id`, `plan_nuevo_id`)
+    (`logisticas_id`, `plan_anterior_id`, `plan_nuevo_id`,`fecha_cambio`)
   VALUES
     (NEW.id,
      NULL,
-     NEW.plan_id);
+     NEW.plan_id, now());
 END$$
 
 CREATE TRIGGER `trg_logisticas_plan_au`
@@ -3413,42 +3420,57 @@ FOR EACH ROW
 BEGIN
   IF OLD.plan_id <> NEW.plan_id THEN
     INSERT INTO `lightdatito`.`historial_plan_logistica`
-      (`logisticas_id`, `plan_anterior_id`, `plan_nuevo_id`)
+      (`logisticas_id`, `plan_anterior_id`, `plan_nuevo_id`,`fecha_cambio`)
     VALUES
       (NEW.id,
        OLD.plan_id,
-       NEW.plan_id);
+       NEW.plan_id, now());
   END IF;
 END$$
 
+
 -- TRIGGER PARA HISTORIAL ASIGNACIONES
-CREATE TRIGGER `trg_reportes_asignaciones_ai`
-AFTER INSERT ON `lightdatito`.`asignaciones`
+CREATE TRIGGER `trg_logisticas_asignaciones_ai`
+AFTER INSERT ON `lightdatito`.`reportes`
 FOR EACH ROW
 BEGIN
-  INSERT INTO `lightdatito`.`historial_reporte_asignaciones`
-    (`reporte_id`, `usuario_anterior_id`, `usuario_nuevo_id`)
+  INSERT INTO `lightdatito`.`historial_asignaciones`
+    (`reporte_id`, `usuario_anterior_id`, `usuario_nuevo_id`,`fecha_cambio`)
   VALUES
     (NEW.id,
      NULL,
-     NEW.usuario_id);
+     NEW.usuario_asignado_id, now());
 END$$
 
 
--- INTENTO DOS PROBAR CUAL ES MAS EFICIENTE SOLO CUANDO SE UPDATEA LA COLUMNA NECESARIA
-DROP TRIGGER IF EXISTS trg_reportes_asignado_au$$
-CREATE TRIGGER trg_reportes_asignado_au
-AFTER UPDATE ON reportes
+CREATE TRIGGER `trg_logisticas_asignaciones_au`
+AFTER UPDATE ON `lightdatito`.`reportes`
 FOR EACH ROW
 BEGIN
-  IF OLD.usuario_asignado <> NEW.usuario_asignado THEN
-    INSERT INTO historial_asignaciones
-      (reporte_id, fecha_cambio, usuario_anterior, usuario_nuevo)
+  IF OLD.usuario_asignado_id <> NEW.usuario_asignado_id THEN
+    INSERT INTO `lightdatito`.`historial_asignaciones`
+      (`reporte_id`,`usuario_anterior_id`, `usuario_nuevo_id`,`fecha_cambio`)
+    VALUES
+      (NEW.id, OLD.usuario_asignado_id, NEW.usuario_asignado_id, now());
+  END IF;
+END$$
+
+
+-- TRIGGER PARA HISTORIAL PARTICULARIDADES PENSARLO BIEN REVISAR SOLO UPDATEA
+DROP TRIGGER IF EXISTS `trg_logisticas_particularidad_au`$$
+CREATE TRIGGER `trg_logisticas_particularidad_au`
+AFTER UPDATE ON `logisticas`
+FOR EACH ROW
+BEGIN
+  -- Sólo registra en el historial si cambió la particularidad
+  IF OLD.tipo_particularidad_id <> NEW.tipo_particularidad_id THEN
+    INSERT INTO `historial_particularidades`
+      (`logisticas_id`, `fecha_cambio`, `tipo_particularidad_ant`, `tipo_particularidad_new`)
     VALUES
       (NEW.id,
        NOW(),
-       OLD.usuario_asignado,
-       NEW.usuario_asignado);
+       OLD.tipo_particularidad_id,
+       NEW.tipo_particularidad_id);
   END IF;
 END$$
 
