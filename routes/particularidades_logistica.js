@@ -1,15 +1,14 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
-import { logRed, logPurple, logGreen } from '../src/funciones/logsCustom.js';
-import { verifyAll } from '../src/funciones/verifyParameters.js';
-import CustomException from '../models/custom_exception.js';
-import { createParticularidadLogistica } from '../controllers/observacion_logistica/create_particularidad_logistica.js';
-import { getAllParticularidadesLogisticas } from '../controllers/observacion_logistica/get_all_particularidades_logistica.js';
-import { getParticularidadLogisticaById } from '../controllers/observacion_logistica/get_partcularidad_logistica_by_id.js';
-import { updateParticularidadLogistica } from '../controllers/observacion_logistica/edit_paricularidad_logistica.js';
-import { deleteParticularidadLogistica } from '../controllers/observacion_logistica/delete_particularidad_logistica.js';
+import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
+import { createParticularidadLogistica } from '../controllers/particularidad_logistica/create_particularidad_logistica.js';
+import { getAllParticularidadesLogisticas } from '../controllers/particularidad_logistica/get_all_particularidad_logistica.js';
+import { getParticularidadLogisticaById } from '../controllers/particularidad_logistica/get_particularidad_logistica_by_id.js';
+import { updateParticularidadLogistica } from '../controllers/particularidad_logistica/edit_particularidad_logistica.js';
+import { deleteParticularidadLogistica } from '../controllers/particularidad_logistica/delete_particularidad_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { getAllParticularidadesForLogistica } from '../controllers/particularidad_logistica/get_all_particularidades_for_logistica.js';
 
 const router = Router();
 
@@ -112,6 +111,25 @@ router.delete('/:id', async (req, res) => {
 });
 
 //  Listar todas las particularidades de una logistica
+router.get("/logistica_id/:id", async (req, res) => {
+    const start = performance.now();
 
+    try {
+        const list = await getAllParticularidadesForLogistica(req.params.id);
+        if (list.length === 0) {
+            res.status(404).json({ message: "No se encontraron particularidades" });
+            logGreen(`GET /api/particularidades-logistica/logistica_id/${req.params.id}: sin particularidades`);
+            return;
+        }
+        res.status(200).json({ body: list, message: "Particularidades obtenidas" });
+        logGreen("GET /api/particularidades-logistica: éxito al listar particularidades");
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `GET /api/particularidades-logistica ejecutado en ${performance.now() - start} ms`
+        );
+    }
+});
 
 export default router;

@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import ParticularidadLogistica from '../../models/partiularidad_logistica.js';
+
 
 /**
  * Elimina una observación de logística y su vínculo en logisticas_observaciones
@@ -19,7 +19,6 @@ export async function deleteObservacionLogistica(id) {
                 message: `No existe una particularidad de logística con id=${id}`
             });
         }
-
 
         // 3) Eliminar la particularidad
         await executeQuery(
