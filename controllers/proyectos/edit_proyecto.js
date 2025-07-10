@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Proyecto from '../../models/proyecto.js';
+import { getProyectoById } from './get_proyecto_by_id.js';
 
 export async function updateProyecto(id, data) {
     try {
@@ -14,7 +14,7 @@ export async function updateProyecto(id, data) {
         return getProyectoById(id);
     } catch (error) {
         throw new CustomException(
-            'Error creating estado_logistica',
+            'Error updating proyecto',
             error.message,
             error.stack
         );
