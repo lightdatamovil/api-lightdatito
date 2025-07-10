@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `herramienta` (
 -- -----------------------------------------------------
 -- Relaciona N menus ↔ N planes
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `modulo_herramipoblar_tipo_usuarioenta` (
+CREATE TABLE IF NOT EXISTS `modulo_herramipoblar_tipo_usuario` (
   `id`         INT(11)     NOT NULL AUTO_INCREMENT,
   `modulo_id` INT(11) NOT NULL,
   `herramienta_id` INT(11) NOT NULL,
