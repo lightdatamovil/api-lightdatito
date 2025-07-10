@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import { getPuestoById } from '../get_puesto_by_id.js';
+import { getPuestoById } from './get_puesto_by_id.js';
 
 export async function updatePuesto(id, data) {
     try {

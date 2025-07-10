@@ -13,6 +13,7 @@ import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 import CustomException from '../models/custom_exception.js';
 import { updatePuestoUsuario } from '../controllers/usuarios/edit_puesto_usuario.js';
+import { asignarPuestoUsuario } from '../controllers/usuarios/asignar_puesto_usuario.js';
 
 const router = Router();
 
@@ -120,27 +121,47 @@ router.get("/:userId/ultima-semana", async (req, res) => {
         );
     }
 });
+
+
 // Actualizar un usuario
+const ALLOWED_PUT_FIELDS = ['nombre', 'email', 'password', 'url_imagen', 'tipoPuestoId'];
+
 router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         const usuarioId = Number(req.params.id);
-        const { tipoPuestoId, ...userFields } = req.body;
+        const receivedFields = Object.keys(req.body);
 
+        // 1) Verificar si TODOS los campos recibidos están permitidos
+        const unknownFields = receivedFields.filter(
+            field => !ALLOWED_PUT_FIELDS.includes(field)
+        );
+        if (unknownFields.length > 0) {
+            logRed(`PUT /api/usuarios/${usuarioId}: campos no permitidos → ${unknownFields.join(', ')}`);
+            return res.status(400).json({
+                title: 'Campos inválidos',
+                message: `No se permiten estos campos: ${unknownFields.join(', ')}`
+            });
+        }
+
+        // 2) Separar tipoPuestoId del resto de los campos
+        const { tipoPuestoId, ...userFields } = req.body;
         let updated;
-        // 2) Si hay otros campos, los actualizamos en la tabla usuarios
+
+        // 3) Actualizar campos de usuario si existen
         if (Object.keys(userFields).length) {
             updated = await updateUsuario(usuarioId, userFields);
         }
 
-        // 3) Si vino tipoPuestoId, lo procesamos aparte
+        // 4) Actualizar tipoPuestoId si fue enviado
         if (tipoPuestoId !== undefined) {
             await updatePuestoUsuario(usuarioId, tipoPuestoId);
-            // recargamos para devolver el usuario ya con su nuevo puesto
+            // recargar usuario actualizado
             updated = await getUsuarioById(usuarioId);
         }
-        // 4) Si no había nada para actualizar (ni userFields ni puesto), devolvemos igual el registro
+
+        // 5) Si no se actualizó nada, devolver el usuario igualmente
         if (!updated) {
             updated = await getUsuarioById(usuarioId);
         }
@@ -166,6 +187,36 @@ router.delete('/:id', async (req, res) => {
         return handleError(req, res, err);
     } finally {
         logPurple(`DELETE /api/usuarios/:id ejecutado en ${performance.now() - start} ms`);
+    }
+});
+
+// Asignar o reasignar puesto a un usuario
+router.post('/:id/puesto', async (req, res) => {
+    const start = performance.now();
+
+    // Validar que venga ID en params y tipoPuestoId en body
+    if (!verificarTodo(req, res, ['id'], ['tipoPuestoId'])) return;
+
+    try {
+        const usuarioId = Number(req.params.id);
+        const { tipoPuestoId } = req.body;
+
+        // Invocamos la nueva función
+        await asignarPuestoUsuario(usuarioId, tipoPuestoId);
+
+        // Recargamos y devolvemos el usuario con su puesto actualizado
+        const updated = await getUsuarioById(usuarioId);
+        res
+            .status(200)
+            .json({ body: updated, message: 'Puesto asignado correctamente' });
+
+        logGreen(`POST /api/usuarios/${usuarioId}/puesto: puesto asignado`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `POST /api/usuarios/:id/puesto ejecutado en ${performance.now() - start} ms`
+        );
     }
 });
 
