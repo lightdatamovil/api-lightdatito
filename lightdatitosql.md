@@ -22,7 +22,6 @@ DROP SCHEMA IF EXISTS `lightdatito`;
 CREATE SCHEMA IF NOT EXISTS `lightdatito` DEFAULT CHARACTER SET utf8;
 USE `lightdatito`;
 
-
 -- -----------------------------------------------------
 -- Table `usuarios`
 -- -----------------------------------------------------
@@ -43,6 +42,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 CREATE TABLE IF NOT EXISTS `proyectos` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -54,7 +54,8 @@ CREATE TABLE IF NOT EXISTS `tipo_reporte` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
-   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -65,7 +66,8 @@ CREATE TABLE IF NOT EXISTS `estados_logistica` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
-`eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -86,6 +88,7 @@ CREATE TABLE IF NOT EXISTS `plan` (
   `id`            INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`        VARCHAR(45) NOT NULL,
   `color`         VARCHAR(7)  NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -96,6 +99,7 @@ CREATE TABLE IF NOT EXISTS `plan` (
 CREATE TABLE IF NOT EXISTS `menu` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -108,6 +112,7 @@ CREATE TABLE IF NOT EXISTS `menu_plan` (
   `id` INT(11) NOT NULL,
   `menu_id` INT(11) NOT NULL,
   `plan_id` INT(11) NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_mp_plan` (`plan_id`),
@@ -124,6 +129,7 @@ CREATE TABLE IF NOT EXISTS `modulo` (
   `id`       INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`   VARCHAR(45) NOT NULL,
   `menu_id`  INT(11)     NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_mod_menu` (`menu_id`),
@@ -138,6 +144,7 @@ CREATE TABLE IF NOT EXISTS `herramienta` (
   `id`         INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`     VARCHAR(45) NOT NULL,
   `modulo_principal`  INT(11)  NOT NULL DEFAULT 0,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_her_mod` (`modulo_principal`),
@@ -151,6 +158,7 @@ CREATE TABLE IF NOT EXISTS `modulo_herramipoblar_tipo_usuarioenta` (
   `id`         INT(11)     NOT NULL AUTO_INCREMENT,
   `modulo_id` INT(11) NOT NULL,
   `herramienta_id` INT(11) NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_mp_modulo` (`modulo_id`),
@@ -165,6 +173,7 @@ CREATE TABLE IF NOT EXISTS `tipo_particularidad` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -176,6 +185,7 @@ CREATE TABLE IF NOT EXISTS `particularidades` (
   `es_pago`                TINYINT(1)  NOT NULL DEFAULT 0,
   `particularidad`         VARCHAR(256),
   `tipo_particularidad_id` INT(11)     NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_part_logistica` (`logisticas_id`),
@@ -222,6 +232,7 @@ CREATE TABLE IF NOT EXISTS `logisticas` (
   `cuit`               VARCHAR(45) NULL,
   `email`              VARCHAR(45) NULL,
   `url_sistema`        VARCHAR(256)NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`          TINYINT(4)  NOT NULL DEFAULT 0,
   `pais_id`            INT(11)     NOT NULL,
   `tipo_particularidad_id`   INT(11)      NULL DEFAULT NULL,
@@ -249,6 +260,7 @@ CREATE TABLE IF NOT EXISTS `estados_reporte` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`  tinyint(1)  NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -292,7 +304,6 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
   `usuario_id`     INT(11)      NOT NULL,
   `reporte_id`     INT(11)      NOT NULL,
   `fecha_creacion` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  `fecha_comienzo` TIMESTAMP    NULL,
   `contenido`      VARCHAR(255) NOT NULL,
   `eliminado`      TINYINT(1)   NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
@@ -342,6 +353,7 @@ CREATE TABLE IF NOT EXISTS `puestos_usuario` (
   `usuario_id` INT(11) NOT NULL,
   `puesto_id`  INT(11) NOT NULL,
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   PRIMARY KEY (`usuario_id`,`puesto_id`),
   INDEX `idx_pu_usuario` (`usuario_id`),
   INDEX `idx_pu_puesto`  (`puesto_id`),
@@ -393,6 +405,7 @@ CREATE TABLE IF NOT EXISTS `historial_plan_logistica` (
   `fecha_cambio`       DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `plan_anterior_id`   INT(11)   NULL,
   `plan_nuevo_id`      INT(11)   NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   PRIMARY KEY (`id`),
   INDEX `idx_hpl_log`   (`logisticas_id`),
   INDEX `idx_hpl_pant`  (`plan_anterior_id`),
@@ -3520,7 +3533,6 @@ TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `puestos`;
 
   TRUNCATE TABLE `usuarios`;
-  TRUNCATE TABLE `tipo_usuario`;
   
   SET
     FOREIGN_KEY_CHECKS = 1;
