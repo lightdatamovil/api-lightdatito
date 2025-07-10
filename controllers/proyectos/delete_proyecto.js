@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Proyecto from '../../models/proyecto.js';
+
 
 export async function deleteProyecto(id) {
     try {

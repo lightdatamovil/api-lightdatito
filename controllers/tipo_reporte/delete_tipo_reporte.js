@@ -1,6 +1,5 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import TipoReporte from '../../models/tipo_reporte.js';
 export async function deleteTipoReporte(id) {
     try {
         // 1) Verificar que exista el tipo de reporte
