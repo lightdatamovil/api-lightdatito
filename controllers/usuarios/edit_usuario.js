@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import { getUsuarioById } from './getUsuarioById.js';
+import { getUsuarioById } from './get_user_by_id.js';
 
 /**
  * Update an existing usuario by ID.
@@ -15,7 +15,7 @@ export async function updateUsuario(id, data) {
         const setClause = fields.map(f => `${f} = ?`).join(', ');
         await executeQuery(
             `UPDATE usuarios SET ${setClause} WHERE id = ?`,
-            [...Object.values(data), id]
+            [...Object.values(data), id], true
         );
         return getUsuarioById(id);
     } catch (error) {

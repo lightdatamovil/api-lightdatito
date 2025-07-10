@@ -12,17 +12,18 @@ import { getReportesUltimaSemana } from '../controllers/usuarios/get_reportes_da
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 import CustomException from '../models/custom_exception.js';
+import { updatePuestoUsuario } from '../controllers/usuarios/edit_puesto_usuario.js';
 
 const router = Router();
 
 // Crear un nuevo usuario
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = ['nombre', 'email', 'password', 'urlImagen', 'tipoUsuarioId',];
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
+    const requiredBodyFields = ['nombre', 'email', 'password', 'urlImagen', 'tipoPuestoId',];
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const { nombre, email, password, urlImagen, tipoUsuarioId } = req.body;
-        const newItem = await createUsuario(nombre, email, password, urlImagen, tipoUsuarioId);
+        const { nombre, email, password, urlImagen, tipoPuestoId } = req.body;
+        const newItem = await createUsuario(nombre, email, password, urlImagen, tipoPuestoId);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/usuarios: éxito al crear usuario con ID ${newItem.id}`);
     } catch (err) {
@@ -122,11 +123,30 @@ router.get("/:userId/ultima-semana", async (req, res) => {
 // Actualizar un usuario
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        const updated = await updateUsuario(req.params.id, req.body);
+        const usuarioId = Number(req.params.id);
+        const { tipoPuestoId, ...userFields } = req.body;
+
+        let updated;
+        // 2) Si hay otros campos, los actualizamos en la tabla usuarios
+        if (Object.keys(userFields).length) {
+            updated = await updateUsuario(usuarioId, userFields);
+        }
+
+        // 3) Si vino tipoPuestoId, lo procesamos aparte
+        if (tipoPuestoId !== undefined) {
+            await updatePuestoUsuario(usuarioId, tipoPuestoId);
+            // recargamos para devolver el usuario ya con su nuevo puesto
+            updated = await getUsuarioById(usuarioId);
+        }
+        // 4) Si no había nada para actualizar (ni userFields ni puesto), devolvemos igual el registro
+        if (!updated) {
+            updated = await getUsuarioById(usuarioId);
+        }
+
         res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
-        logGreen(`PUT /api/usuarios/${req.params.id}: éxito al actualizar usuario`);
+        logGreen(`PUT /api/usuarios/${usuarioId}: éxito al actualizar usuario`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {

@@ -43,7 +43,6 @@ router.post('/', async (req, res) => {
 // Listar todas las logísticas
 router.get('/', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res)) return;
 
     try {
         const list = await getAllLogisticas();

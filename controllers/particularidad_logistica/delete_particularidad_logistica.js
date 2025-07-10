@@ -3,10 +3,10 @@ import CustomException from '../../models/custom_exception.js';
 
 
 /**
- * Elimina una observación de logística y su vínculo en logisticas_observaciones
- * @param {number} id - El ID de la observación a eliminar
+ * Elimina una particularidad de logística 
+ * @param {number} id - El ID de la particularidad a eliminar
  */
-export async function deleteObservacionLogistica(id) {
+export async function deleteParticularidadLogistica(id) {
     try {
         // 1) Verificar que exista la particularidad
         const [row] = await executeQuery(
