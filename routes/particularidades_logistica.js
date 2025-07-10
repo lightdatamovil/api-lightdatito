@@ -13,7 +13,7 @@ import { verificarTodo } from '../src/funciones/verificarAllt.js';
 
 const router = Router();
 
-// Crear observación de logística
+// Crear particularidad a logística
 router.post('/:logisticaId', async (req, res) => {
     const start = performance.now();
     const requiredBodyFields = ['logisticaId', 'nombre'];

@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import ObservacionLogistica from '../../models/observacion_logistica.js';
+import ObservacionLogistica from '../../models/particularidad_logistica.js';
 
 /**
  * Crea una observación de logística y su vínculo en logisticas_observaciones
