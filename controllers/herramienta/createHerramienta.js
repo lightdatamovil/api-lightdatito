@@ -1,8 +1,8 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import PuestoUsuario from '../../models/puesto_usuario.js';
+import Herramienta from '../../models/herramienta.js';
 
-export async function createPuesto(nombre) {
+export async function createHerramienta(nombre) {
     try {
 
         //verificar si ya existe herramienta

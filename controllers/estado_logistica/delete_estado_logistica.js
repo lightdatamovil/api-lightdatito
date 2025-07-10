@@ -23,7 +23,7 @@ export async function deleteEstadoLogistica(id) {
 
         // 2) Eliminarlo
         await executeQuery(
-            `DELETE FROM estados_logistica WHERE id = ?`,
+            `UPDATE estados_logistica SET eliminado = 1 WHERE id = ?`,
             [id]
         );
 

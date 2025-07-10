@@ -18,7 +18,7 @@ export async function deleteProyecto(id) {
 
         // 2) Eliminar el proyecto
         await executeQuery(
-            'DELETE FROM proyectos WHERE id = ?',
+            'UPDATE proyectos SET eliminado = 1 WHERE id = ?',
             [id]
         );
 

@@ -1,21 +1,21 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 
-export async function deleteEstadoReporte(id) {
+export async function deleteHerramienta(id) {
     try {
         const [row] = await executeQuery(
-            `SELECT * FROM estados_reporte WHERE id = ?`,
+            `SELECT * FROM herramienta WHERE id = ? AND eliminado = 0`,
             [id]
         );
 
         if (!row) {
             throw new CustomException({
-                title: 'Estado reporte no encontrado',
-                message: `No existe un estado_reporte con id=${id}`
+                title: 'Herramienta no encontrado',
+                message: `No existe una herramienta con id=${id}`
             });
         }
 
-        await executeQuery('UPDATE estados_reporte SET eliminado = 1 WHERE id = ?', [id]);
+        await executeQuery('UPDATE herramienta SET eliminado = 1 WHERE id = ?', [id]);
 
         return { id };
     } catch (error) {

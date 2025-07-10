@@ -17,7 +17,7 @@ export async function deleteTipoReporte(id) {
 
         // 2) Eliminar el registro
         await executeQuery(
-            'DELETE FROM tipo_reporte WHERE id = ?',
+            'UPDATE tipo_reporte SET eliminado = 1 WHERE id = ?',
             [id]
         );
 
