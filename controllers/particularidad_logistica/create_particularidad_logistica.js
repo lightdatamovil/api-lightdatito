@@ -7,13 +7,13 @@ import ParticularidadLogisticaLogistica from '../../models/particularidad_logist
  * @param {number} logisticaId - El ID de la logística a la que pertenece
  * @param {string} nombre - El nombre de la observación
  */
-export async function createParticularidadLogistica(logisticaId, particularidad, es_pago, tipo_de_particularidad_id) {
+export async function createParticularidadLogistica(logisticaId, particularidad, es_pago, tipo_particularidad_id) {
     try {
 
         // 1) Insertar en la tabla de particularidades
         const result = await executeQuery(
-            `INSERT INTO particularidades (logistica_id, particularidad, es_pago, tipo_de_particularidad_id) VALUES (?, ?, ?, ?)`,
-            [logisticaId, particularidad, es_pago, tipo_de_particularidad_id]
+            `INSERT INTO particularidades (logistica_id, particularidad, es_pago, tipo_particularidad_id) VALUES (?, ?, ?, ?)`,
+            [logisticaId, particularidad, es_pago, tipo_particularidad_id]
         );
         const newId = result.insertId;
         if (!newId) {
