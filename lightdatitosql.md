@@ -434,7 +434,6 @@ CREATE TABLE IF NOT EXISTS `historial_estados_reporte` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
 -- USE `lightdatito`;
 
 -- -----------------------------------------------------
@@ -3523,15 +3522,13 @@ TRUNCATE TABLE `comentarios`;
 
   TRUNCATE TABLE `usuarios`;
   TRUNCATE TABLE `tipo_usuario`;
-
-  -- 3) Reactivar las FKs
-  SET FOREIGN_KEY_CHECKS = 1;
-END$$
-
-SET
+  
+  SET
     FOREIGN_KEY_CHECKS = 1;
 
-END $$
+END$$
+
+
 DELIMITER ;
 SET
     SQL_MODE = @OLD_SQL_MODE;

@@ -8,17 +8,18 @@ import { updateComentario } from "../controllers/comentarios/edit_comentario.js"
 import { deleteComentario } from "../controllers/comentarios/delete_comentario.js";
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { getAllComentariosForReport } from "../controllers/comentarios/get_all_comentarios_for_reporte.js";
 
 const router = Router();
 
 // Crear comentario
 router.post("/", async (req, res) => {
   const start = performance.now();
-  const requiredBodyFields = ["reporte_id", "comentario"];
+  const requiredBodyFields = ["usuario_id", "reporte_id", "comentario"];
   if (!verificarTodo(req, res, requiredBodyFields)) return;
   try {
-    const { reporte_id, comentario } = req.body;
-    const newItem = await createComentario(reporte_id, comentario);
+    const { usuario_id, reporte_id, comentario } = req.body;
+    const newItem = await createComentario(usuario_id, reporte_id, comentario);
     res.status(201).json({ body: newItem, message: "Creado correctamente" });
     logGreen(
       `POST /api/comentarios: éxito al crear comentario ID ${newItem.id}`
@@ -32,7 +33,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Obtener todos
+// Obtener todos los comentarios 
 router.get("/", async (req, res) => {
   const start = performance.now();
 
@@ -49,7 +50,30 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Obtener por ID
+
+// Obtener todos los comentarios de un reporte 
+router.get("/reporte_id/:id", async (req, res) => {
+  const start = performance.now();
+
+  try {
+    const list = await getAllComentariosForReport(req.params.id);
+    if (list.length === 0) {
+      res.status(404).json({ message: "No se encontraron comentarios" });
+      logGreen(`GET /api/comentarios/reporte_id/${req.params.id}: sin comentarios`);
+      return;
+    }
+    res.status(200).json({ body: list, message: "Comentarios obtenidos" });
+    logGreen("GET /api/comentarios: éxito al listar comentarios");
+  } catch (err) {
+    return handleError(req, res, err);
+  } finally {
+    logPurple(
+      `GET /api/comentarios ejecutado en ${performance.now() - start} ms`
+    );
+  }
+});
+
+// coemntario por ID
 router.get("/:id", async (req, res) => {
   const start = performance.now();
   if (!verificarTodo(req, res, ['id'])) return;
