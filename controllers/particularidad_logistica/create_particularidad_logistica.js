@@ -7,13 +7,13 @@ import ParticularidadLogisticaLogistica from '../../models/particularidad_logist
  * @param {number} logisticaId - El ID de la logística a la que pertenece
  * @param {string} nombre - El nombre de la observación
  */
-export async function createParticularidadLogistica(logisticaId, nombre) {
+export async function createParticularidadLogistica(logisticaId, particularidad, es_pago, tipo_de_particularidad_id) {
     try {
 
         // 1) Insertar en la tabla de particularidades
         const result = await executeQuery(
-            `INSERT INTO particularidades (nombre) VALUES (?)`,
-            [nombre]
+            `INSERT INTO particularidades (logistica_id, particularidad, es_pago, tipo_de_particularidad_id) VALUES (?, ?, ?, ?)`,
+            [logisticaId, particularidad, es_pago, tipo_de_particularidad_id]
         );
         const newId = result.insertId;
         if (!newId) {
@@ -23,27 +23,7 @@ export async function createParticularidadLogistica(logisticaId, nombre) {
             });
         }
 
-        // 2) Insertar vínculo en logisticas_observaciones
-        await executeQuery(
-            `INSERT INTO logisticas_particularidades 
-           (logisticas_id, particularidades_logistica_id)
-         VALUES (?, ?)`,
-            [logisticaId, newId]
-        );
-
-        // 3) Recuperar y devolver la observación recién creada
-        const [row] = await executeQuery(
-            `SELECT * FROM observaciones_logistica WHERE id = ?`,
-            [newId]
-        );
-        if (!row) {
-            throw new CustomException({
-                title: 'Error al crear observacion_logistica',
-                message: `No se pudo recuperar el registro con id=${newId}`
-            });
-        }
-
-        return ParticularidadLogisticaLogistica.fromJson(row);
+        return ParticularidadLogisticaLogistica.fromJson(result);
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

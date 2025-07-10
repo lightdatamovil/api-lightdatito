@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `tipo_particularidad` (
 -- Table `particularidades`
 CREATE TABLE IF NOT EXISTS `particularidades` (
   `id`                     INT(11)     NOT NULL AUTO_INCREMENT,
-  `logisticas_id`          INT(11)     NOT NULL,
+  `logistica_id`          INT(11)     NOT NULL,
   `es_pago`                TINYINT(1)  NOT NULL DEFAULT 0,
   `particularidad`         VARCHAR(256),
   `tipo_particularidad_id` INT(11)     NOT NULL,
