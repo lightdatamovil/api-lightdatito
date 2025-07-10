@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { getTipoParticularidadById } from './get_tipo_particularidad_by_id.js';
 
 
 /**
