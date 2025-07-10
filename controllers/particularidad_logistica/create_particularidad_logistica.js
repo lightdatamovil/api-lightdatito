@@ -1,33 +1,32 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import ObservacionLogistica from '../../models/particularidad_logistica.js';
+import ParticularidadLogisticaLogistica from '../../models/particularidad_logistica.js';
 
 /**
  * Crea una observación de logística y su vínculo en logisticas_observaciones
  * @param {number} logisticaId - El ID de la logística a la que pertenece
  * @param {string} nombre - El nombre de la observación
  */
-export async function createObservacionLogistica(logisticaId, nombre) {
+export async function createParticularidadLogistica(logisticaId, nombre) {
     try {
 
-        // 1) Insertar en la tabla de observaciones
+        // 1) Insertar en la tabla de particularidades
         const result = await executeQuery(
-            `INSERT INTO observaciones_logistica (nombre)
-         VALUES (?)`,
+            `INSERT INTO particularidades (nombre) VALUES (?)`,
             [nombre]
         );
         const newId = result.insertId;
         if (!newId) {
             throw new CustomException({
-                title: 'Error al crear observacion_logistica',
+                title: 'Error al crear particularidad de logistica',
                 message: 'No se obtuvo el ID del registro insertado'
             });
         }
 
         // 2) Insertar vínculo en logisticas_observaciones
         await executeQuery(
-            `INSERT INTO logisticas_observaciones
-           (logisticas_id, observaciones_logistica_id)
+            `INSERT INTO logisticas_particularidades 
+           (logisticas_id, particularidades_logistica_id)
          VALUES (?, ?)`,
             [logisticaId, newId]
         );
@@ -44,7 +43,7 @@ export async function createObservacionLogistica(logisticaId, nombre) {
             });
         }
 
-        return ObservacionLogistica.fromJson(row);
+        return ParticularidadLogisticaLogistica.fromJson(row);
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

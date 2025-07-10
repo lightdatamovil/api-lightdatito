@@ -22,16 +22,6 @@ DROP SCHEMA IF EXISTS `lightdatito`;
 CREATE SCHEMA IF NOT EXISTS `lightdatito` DEFAULT CHARACTER SET utf8;
 USE `lightdatito`;
 
--- -----------------------------------------------------
--- Table `tipo_usuario`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `tipo_usuario` (
-  `id`            INT(11)      NOT NULL AUTO_INCREMENT,
-  `nombre`        VARCHAR(45)  NOT NULL,
-  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  `eliminado`     TINYINT(4)   NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Table `usuarios`
@@ -42,14 +32,9 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `email`          VARCHAR(45) NULL,
   `password`       VARCHAR(256)NOT NULL,
   `url_imagen`     VARCHAR(256)NULL,
-  `tipo_usuario_id` INT(11)    NOT NULL,
   `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`      TINYINT(4)  NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  INDEX `idx_usuarios_tipo_usuario` (`tipo_usuario_id`),
-  CONSTRAINT `fk_usuarios_tipo_usuario`
-    FOREIGN KEY (`tipo_usuario_id`) REFERENCES `tipo_usuario` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
@@ -139,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `modulo` (
   `id`       INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`   VARCHAR(45) NOT NULL,
   `menu_id`  INT(11)     NOT NULL,
-  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  `eliminado`     TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_mod_menu` (`menu_id`),
   CONSTRAINT `fk_mod_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -152,16 +137,17 @@ CREATE TABLE IF NOT EXISTS `modulo` (
 CREATE TABLE IF NOT EXISTS `herramienta` (
   `id`         INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`     VARCHAR(45) NOT NULL,
-  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
+  `modulo_principal`  INT(11)  NOT NULL DEFAULT 0,
+  `eliminado`     TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  INDEX `idx_her_mod` (`id`)
+  INDEX `idx_her_mod` (`modulo_principal`),
+  CONSTRAINT `fk_mod_herramienta` FOREIGN KEY (`modulo_principal`) REFERENCES `modulo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Junction `modulo_herramienta`
 -- Relaciona N menus ↔ N planes
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `modulo_herramienta` (
+CREATE TABLE IF NOT EXISTS `modulo_herramipoblar_tipo_usuarioenta` (
   `id`         INT(11)     NOT NULL AUTO_INCREMENT,
   `modulo_id` INT(11) NOT NULL,
   `herramienta_id` INT(11) NOT NULL,
@@ -188,18 +174,14 @@ CREATE TABLE IF NOT EXISTS `particularidades` (
   `id`                     INT(11)     NOT NULL AUTO_INCREMENT,
   `logisticas_id`          INT(11)     NOT NULL,
   `es_pago`                TINYINT(1)  NOT NULL DEFAULT 0,
-  `tipo_observacion`       TINYINT(1)  NOT NULL DEFAULT 0,
+  `particularidad`         VARCHAR(256),
   `tipo_particularidad_id` INT(11)     NOT NULL,
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_part_logistica` (`logisticas_id`),
   INDEX `idx_part_tipo`      (`tipo_particularidad_id`),
-  CONSTRAINT `fk_part_logistica`
-    FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_part_tipo`
-    FOREIGN KEY (`tipo_particularidad_id`) REFERENCES `tipo_particularidad` (`id`)
-      ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_part_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_part_tipo` FOREIGN KEY (`tipo_particularidad_id`) REFERENCES `tipo_particularidad` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Table `historial_particularidades`
@@ -671,6 +653,14 @@ BEGIN
     ('GRAN LOGISTICA','2F0073', 0);
 END$$
 
+DROP PROCEDURE IF EXISTS poblar_planes$$
+CREATE PROCEDURE poblar_tipo_usuario()
+BEGIN
+  INSERT INTO plan (nombre, color, eliminado) VALUES
+    ('admin',        'E4D1FF', 0),
+    ('user',          'C093FF', 0),
+    ('normal',      '7B2CEB', 0);
+END$$
 DROP PROCEDURE IF EXISTS poblar_estados_reporte$$
 CREATE PROCEDURE poblar_estados_reporte()
 BEGIN
