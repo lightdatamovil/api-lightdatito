@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 CREATE TABLE IF NOT EXISTS `proyectos` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -68,6 +69,7 @@ CREATE TABLE IF NOT EXISTS `tipo_reporte` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
+   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -78,6 +80,7 @@ CREATE TABLE IF NOT EXISTS `estados_logistica` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
+`eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -108,6 +111,7 @@ CREATE TABLE IF NOT EXISTS `plan` (
 CREATE TABLE IF NOT EXISTS `menu` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -119,6 +123,7 @@ CREATE TABLE IF NOT EXISTS `menu_plan` (
   `id` INT(11) NOT NULL,
   `menu_id` INT(11) NOT NULL,
   `plan_id` INT(11) NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_mp_plan` (`plan_id`),
   INDEX `idx_mp_menu` (`menu_id`),
@@ -134,22 +139,22 @@ CREATE TABLE IF NOT EXISTS `modulo` (
   `id`       INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`   VARCHAR(45) NOT NULL,
   `menu_id`  INT(11)     NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_mod_menu` (`menu_id`),
   CONSTRAINT `fk_mod_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Tabla `herramientas`
+-- Tabla `herramienta`
 -- Cada herramienta pertenece a un único módulo (1–N)
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `herramienta` (
   `id`         INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`     VARCHAR(45) NOT NULL,
-  `modulo_id`  INT(11)     NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  INDEX `idx_her_mod` (`modulo_id`),
-  CONSTRAINT `fk_her_mod` FOREIGN KEY (`modulo_id`) REFERENCES `modulo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  INDEX `idx_her_mod` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
@@ -160,6 +165,7 @@ CREATE TABLE IF NOT EXISTS `modulo_herramienta` (
   `id`         INT(11)     NOT NULL AUTO_INCREMENT,
   `modulo_id` INT(11) NOT NULL,
   `herramienta_id` INT(11) NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_mp_modulo` (`modulo_id`),
   INDEX `idx_mp_herramienta` (`herramienta_id`),
@@ -173,6 +179,7 @@ CREATE TABLE IF NOT EXISTS `tipo_particularidad` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -183,6 +190,7 @@ CREATE TABLE IF NOT EXISTS `particularidades` (
   `es_pago`                TINYINT(1)  NOT NULL DEFAULT 0,
   `tipo_observacion`       TINYINT(1)  NOT NULL DEFAULT 0,
   `tipo_particularidad_id` INT(11)     NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_part_logistica` (`logisticas_id`),
   INDEX `idx_part_tipo`      (`tipo_particularidad_id`),
@@ -351,6 +359,7 @@ CREATE TABLE IF NOT EXISTS `puestos` (
 CREATE TABLE IF NOT EXISTS `puestos_usuario` (
   `usuario_id` INT(11) NOT NULL,
   `puesto_id`  INT(11) NOT NULL,
+  `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`usuario_id`,`puesto_id`),
   INDEX `idx_pu_usuario` (`usuario_id`),
   INDEX `idx_pu_puesto`  (`puesto_id`),
