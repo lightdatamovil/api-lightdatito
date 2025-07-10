@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import ObservacionLogistica from '../../models/observacion_logistica.js';
+import ParticularidadLogistica from '../../models/partiularidad_logistica.js';
 
 /**
  * Elimina una observación de logística y su vínculo en logisticas_observaciones
@@ -8,27 +8,22 @@ import ObservacionLogistica from '../../models/observacion_logistica.js';
  */
 export async function deleteObservacionLogistica(id) {
     try {
-        // 1) Verificar que exista la observación
+        // 1) Verificar que exista la particularidad
         const [row] = await executeQuery(
-            'SELECT * FROM observaciones_logistica WHERE id = ?',
+            'SELECT * FROM particularidades WHERE id = ?',
             [id]
         );
         if (!row) {
             throw new CustomException({
-                title: 'Observación no encontrada',
-                message: `No existe una observación de logística con id=${id}`
+                title: 'Particularidad no encontrada',
+                message: `No existe una particularidad de logística con id=${id}`
             });
         }
 
-        // 2) Eliminar los vínculos en logisticas_observaciones
-        await executeQuery(
-            'DELETE FROM logisticas_observaciones WHERE observaciones_logistica_id = ?',
-            [id]
-        );
 
-        // 3) Eliminar la observación
+        // 3) Eliminar la particularidad
         await executeQuery(
-            'DELETE FROM observaciones_logistica WHERE id = ?',
+            'UPDATE particularidades SET eliminado = 1 WHERE id = ?',
             [id]
         );
 
@@ -36,7 +31,7 @@ export async function deleteObservacionLogistica(id) {
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Error al eliminar observación de logística',
+            title: 'Error al eliminar particularidad de logística',
             message: err.message,
             stack: err.stack
         });

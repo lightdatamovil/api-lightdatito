@@ -3,11 +3,11 @@ import { performance } from 'perf_hooks';
 import { logRed, logPurple, logGreen } from '../src/funciones/logsCustom.js';
 import { verifyAll } from '../src/funciones/verifyParameters.js';
 import CustomException from '../models/custom_exception.js';
-import { createObservacionLogistica } from '../controllers/observacion_logistica/create_observacion_logistica.js';
-import { getAllObservacionesLogisticas } from '../controllers/observacion_logistica/get_all_observaciones_logistica.js';
-import { getObservacionLogisticaById } from '../controllers/observacion_logistica/get_observaciones_logistica_by_id.js';
-import { updateObservacionLogistica } from '../controllers/observacion_logistica/edit_observacion_logistica.js';
-import { deleteObservacionLogistica } from '../controllers/observacion_logistica/delete_observacion_logistica.js';
+import { createParticularidadLogistica } from '../controllers/observacion_logistica/create_particularidad_logistica.js';
+import { getAllParticularidadesLogisticas } from '../controllers/observacion_logistica/get_all_particularidades_logistica.js';
+import { getParticularidadLogisticaById } from '../controllers/observacion_logistica/get_partcularidad_logistica_by_id.js';
+import { updateParticularidadLogistica } from '../controllers/observacion_logistica/edit_paricularidad_logistica.js';
+import { deleteParticularidadLogistica } from '../controllers/observacion_logistica/delete_particularidad_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 
@@ -16,91 +16,77 @@ const router = Router();
 // Crear particularidad a logística
 router.post('/:logisticaId', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = ['logisticaId', 'nombre'];
+    const requiredBodyFields = ['particularidad', 'es_pago', 'tipo_particularidad_id'];
     if (!verificarTodo(req, res, requiredBodyFields)) return;
 
     try {
         const { logisticaId } = req.params;
-        const { nombre } = req.body;
-        const newItem = await createObservacionLogistica(logisticaId, nombre);
+        const { particularidad, es_pago, tipo_particularidad_id } = req.body;
+        const newItem = await createParticularidadLogistica(logisticaId, particularidad, es_pago, tipo_particularidad_id);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(
-            `POST /api/observaciones-logistica: éxito al crear observación con ID ${newItem.id}`
+            `POST /api/particularidades-logistica: éxito al crear particularidad con ID ${newItem.id}`
         );
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(
-            `POST /api/observaciones-logistica ejecutado en ${performance.now() - start} ms`
+            `POST /api/particularidades-logistica ejecutado en ${performance.now() - start} ms`
         );
     }
 });
 
-// Listar todas las observaciones de logística
+// Listar todas las particularidades 
 router.get('/', async (req, res) => {
     const start = performance.now();
     try {
-        const list = await getAllObservacionesLogisticas();
+        const list = await getAllParticularidadesLogisticas();
         res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
-        logGreen('GET /api/observaciones-logistica: éxito al listar observaciones');
+        logGreen('GET /api/particularidades-logistica: éxito al listar particularidades');
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(
-            `GET /api/observaciones-logistica ejecutado en ${performance.now() - start} ms`
+            `GET /api/particularidades-logistica ejecutado en ${performance.now() - start} ms`
         );
     }
 });
 
-// Obtener una observación de logística por ID
+// Obtener una particularidad de logística por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
 
     try {
-        const item = await getObservacionLogisticaById(req.params.id);
+        const item = await getParticularidadLogisticaById(req.params.id);
         res.status(200).json({ body: item, message: 'Registro obtenido' });
         logGreen(
-            `GET /api/observaciones-logistica/${req.params.id}: éxito al obtener observación`
+            `GET /api/particularidad-logistica/${req.params.id}: éxito al obtener particularidad`
         );
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(
-            `GET /api/observaciones-logistica/:id ejecutado en ${performance.now() - start} ms`
+            `GET /api/particularidad-logistica/:id ejecutado en ${performance.now() - start} ms`
         );
     }
 });
 
-// Actualizar una observación de logística
+// Actualizar una observación de logística u otros  campos ver como
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    const missing = verifyAll(req, ['id'], ['nombre']);
-    if (missing.length) {
-        const ex = new CustomException({
-            title: 'Faltan campos',
-            message: `Faltan campos: ${missing.join(', ')}`
-        });
-        logRed(
-            `Error 400 PUT /api/observaciones-logistica/${req.params.id}:`,
-            ex.toJSON()
-        );
-        return res.status(400).json(ex.toJSON());
-    }
+    if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const updated = await updateObservacionLogistica(
-            req.params.id,
-            { nombre: req.body.nombre }
-        );
+        const updated = await updateParticularidadLogistica(req.params.id, { nombre: req.body.nombre });
         res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(
-            `PUT /api/observaciones-logistica/${req.params.id}: éxito al actualizar observación`
+            `PUT /api/particularidades-logistica/${req.params.id}: éxito al actualizar particularidad`
         );
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(
-            `PUT /api/observaciones-logistica/:id ejecutado en ${performance.now() - start} ms`
+            `PUT /api/particularidades-logistica/:id ejecutado en ${performance.now() - start} ms`
         );
     }
 });
@@ -111,18 +97,21 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
 
     try {
-        await deleteObservacionLogistica(req.params.id);
+        await deleteParticularidadLogistica(req.params.id);
         res.status(200).json({ message: 'Eliminado correctamente' });
         logGreen(
-            `DELETE /api/observaciones-logistica/${req.params.id}: éxito al eliminar observación`
+            `DELETE /api/particularidad-logistica/${req.params.id}: éxito al eliminar observación`
         );
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(
-            `DELETE /api/observaciones-logistica/:id ejecutado en ${performance.now() - start} ms`
+            `DELETE /api/particularidad-logistica/:id ejecutado en ${performance.now() - start} ms`
         );
     }
 });
+
+//  Listar todas las particularidades de una logistica
+
 
 export default router;
