@@ -1,5 +1,7 @@
 import { executeQuery } from '../../db.js';
 import Usuario from '../../models/usuario.js';
+import CustomException from "../../models/custom_exception.js";
+
 
 /**
  * Retrieve a usuario by ID.

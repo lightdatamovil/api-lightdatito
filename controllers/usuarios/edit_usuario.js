@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Usuario from '../../models/usuario.js';
+import { getUsuarioById } from './getUsuarioById.js';
 
 /**
  * Update an existing usuario by ID.
