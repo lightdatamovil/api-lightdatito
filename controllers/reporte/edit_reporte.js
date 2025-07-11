@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Reporte from '../../models/Reporte.js';
+import { getTipoReporteById } from '../tipo_reporte/get_tipo_reporte_by_id.js';
+
 
 export async function updateReporte(id, data) {
     try {
@@ -11,7 +12,7 @@ export async function updateReporte(id, data) {
             `UPDATE reportes SET ${setClause} WHERE id = ?`,
             [...Object.values(data), id]
         );
-        return getReporteById(id);
+        return getTipoReporteById(id);
     } catch (error) {
         throw new CustomException(
             'Error creating estado_logistica',

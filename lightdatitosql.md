@@ -188,9 +188,9 @@ CREATE TABLE IF NOT EXISTS `particularidades` (
   `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`     TINYINT(4)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  INDEX `idx_part_logistica` (`logisticas_id`),
+  INDEX `idx_part_logistica` (`logistica_id`),
   INDEX `idx_part_tipo`      (`tipo_particularidad_id`),
-  CONSTRAINT `fk_part_logistica` FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_part_logistica` FOREIGN KEY (`logistica_id`) REFERENCES `logisticas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_part_tipo` FOREIGN KEY (`tipo_particularidad_id`) REFERENCES `tipo_particularidad` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

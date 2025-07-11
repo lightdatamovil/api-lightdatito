@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 // Obtener un tipo de reporte por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
 
     try {
         const item = await getTipoReporteById(req.params.id);
@@ -45,7 +45,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     const start = performance.now();
     const requiredBodyFields = ['nombre', 'color'];
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const { nombre, color } = req.body;
         const newItem = await createTipoReporte(nombre, color);
@@ -77,7 +77,7 @@ router.put('/:id', async (req, res) => {
 // Eliminar un tipo de reporte
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         await deleteTipoReporte(req.params.id);
         res.status(200).json({ message: 'Eliminado correctamente' });
