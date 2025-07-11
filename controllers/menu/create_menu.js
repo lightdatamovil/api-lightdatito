@@ -13,7 +13,7 @@ export async function createMenu(nombre) {
     try {
         // Verificar duplicado
         const [{ count }] = await executeQuery(
-            'SELECT COUNT(*) AS count FROM menu WHERE LOWER(nombre) = ? AND eliminado = 0',
+            'SELECT COUNT(*) AS count FROM menus WHERE LOWER(nombre) = ? AND eliminado = 0',
             [nombre_limpio],
             true,
             0
@@ -28,7 +28,7 @@ export async function createMenu(nombre) {
 
         // Insertar nuevo menú
         const result = await executeQuery(
-            'INSERT INTO menu (nombre) VALUES (?)',
+            'INSERT INTO menus (nombre) VALUES (?)',
             [nombre_limpio]
         );
         const newId = result.insertId;
@@ -41,7 +41,7 @@ export async function createMenu(nombre) {
 
         // Recuperar registro recién creado
         const [row] = await executeQuery(
-            'SELECT * FROM menu WHERE id = ? AND eliminado = 0',
+            'SELECT * FROM menus WHERE id = ? AND eliminado = 0',
             [newId]
         );
         return Menu.fromJson(row);

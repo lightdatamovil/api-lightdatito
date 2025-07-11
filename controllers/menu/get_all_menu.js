@@ -10,7 +10,7 @@ import { executeQuery } from '../../db.js';
 export async function getAllMenu() {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM menu WHERE eliminado = 0',
+            'SELECT * FROM menus WHERE eliminado = 0',
             []
         );
         return rows.map(r => Menu.fromJson(r));

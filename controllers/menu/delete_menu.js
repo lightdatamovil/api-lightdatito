@@ -10,7 +10,7 @@ import CustomException from '../../models/custom_exception.js';
 export async function deleteMenu(id) {
     try {
         await executeQuery(
-            'UPDATE menu SET eliminado = 1 WHERE id = ?',
+            'UPDATE menus SET eliminado = 1 WHERE id = ?',
             [id]
         );
     } catch (err) {

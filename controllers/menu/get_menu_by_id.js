@@ -11,7 +11,7 @@ import { executeQuery } from '../../db.js';
 export async function getMenuById(id) {
     try {
         const [row] = await executeQuery(
-            'SELECT * FROM menu WHERE id = ? AND eliminado = 0',
+            'SELECT * FROM menus WHERE id = ? AND eliminado = 0',
             [id]
         );
         if (!row) {

@@ -21,7 +21,7 @@ export async function editMenu(id, data) {
     const values = fields.map(f => data[f]);
     try {
         await executeQuery(
-            `UPDATE menu SET ${setClause} WHERE id = ?`,
+            `UPDATE menus SET ${setClause} WHERE id = ?`,
             [...values, id]
         );
         return await getMenuById(id);
