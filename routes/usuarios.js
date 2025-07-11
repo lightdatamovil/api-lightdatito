@@ -12,7 +12,7 @@ import { getReportesUltimaSemana } from '../controllers/usuarios/get_reportes_da
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 import CustomException from '../models/custom_exception.js';
-import { updatePuestoUsuario } from '../controllers/usuarios/edit_puesto_usuario.js';
+import { updatePuestoUsuario } from '../controllers/usuarios/puesto_usuario/edit_puesto_usuario.js';
 import { asignarPuestoUsuario } from '../controllers/usuarios/asignar_puesto_usuario.js';
 
 const router = Router();

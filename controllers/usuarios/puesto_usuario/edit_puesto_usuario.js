@@ -1,6 +1,6 @@
 // controllers/usuarios/update_puesto_usuario.js
-import { executeQuery } from '../../db.js';
-import CustomException from '../../models/custom_exception.js';
+import { executeQuery } from '../../../db.js';
+import CustomException from '../../../models/custom_exception.js';
 
 export async function updatePuestoUsuario(usuarioId, puestoId) {
     // 1) Verificar que el puesto exista
