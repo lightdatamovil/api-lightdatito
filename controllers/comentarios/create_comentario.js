@@ -21,6 +21,7 @@ export async function createComentario(usuario_id, reporte_id, texto) {
         const [row] = await executeQuery(
             `SELECT * FROM comentarios WHERE id = ?`,
             [newId]
+
         );
         return Comentario.fromJson(row);
     } catch (err) {

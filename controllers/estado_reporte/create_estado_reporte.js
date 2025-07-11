@@ -7,16 +7,16 @@ export async function createEstadoReporte(nombre, color) {
         const nombre_limpio = nombre.trim().toLowerCase();
         const color_limpio = color.trim().toLowerCase();
         //verificar si ya existe tipo_usuario
-        const [{ count }] = await executeQuery( `SELECT COUNT(*) AS count FROM estados_reporte WHERE nombre = ? and color= ?`,
+        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM estados_reporte WHERE nombre = ? and color= ?`,
             [nombre_limpio, color_limpio],
             true, 0
         );
         if (count > 0) {
             throw new CustomException({
-            title:   'Estado reporte duplicado',
-            message: `Ya existe un estado con nombre "${nombre_limpio}" y  color "${color_limpio}`,
-            status:  400
-        });
+                title: 'Estado reporte duplicado',
+                message: `Ya existe un estado con nombre "${nombre_limpio}" y  color "${color_limpio}`,
+                status: 400
+            });
         }
 
 
