@@ -7,7 +7,7 @@ export async function createHerramienta(nombre) {
 
         //verificar si ya existe herramienta
         const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM herramienta WHERE LOWER(nombre) = LOWER(?)`,
+            `SELECT COUNT(*) AS count FROM herramientas WHERE LOWER(nombre) = LOWER(?)`,
             [nombre]
         );
         if (count > 0) {
@@ -17,7 +17,7 @@ export async function createHerramienta(nombre) {
                 status: 400
             });
         }
-        const result = await executeQuery(`INSERT INTO herramienta (nombre) VALUES (lower(?))`, nombre, true);
+        const result = await executeQuery(`INSERT INTO herramientas (nombre) VALUES (lower(?))`, nombre, true);
         const newId = result.insertId;
         if (!newId) {
             throw new CustomException({
@@ -27,7 +27,7 @@ export async function createHerramienta(nombre) {
         }
 
         const [row] = await executeQuery(
-            `SELECT * FROM puestos WHERE id = ?`,
+            `SELECT * FROM herramientas WHERE id = ?`,
             [newId]
         );
         if (!row) {

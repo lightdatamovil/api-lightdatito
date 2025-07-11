@@ -5,7 +5,7 @@ import Herramienta from '../../models/herramienta.js';
 export async function getHerramientaById(id) {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM herramienta WHERE id = ?',
+            'SELECT * FROM herramientas WHERE id = ?',
             [id]
         );
 

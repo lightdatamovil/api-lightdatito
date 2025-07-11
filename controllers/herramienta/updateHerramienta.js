@@ -8,7 +8,7 @@ export async function updateHerramienta(id, data) {
         if (!fields.length) throw new CustomException('No data provided for updateHerramienta');
         const setClause = fields.map(f => `${f} = ?`).join(', ');
         await executeQuery(
-            `UPDATE herramienta SET ${setClause} WHERE id = ?`,
+            `UPDATE herramientas SET ${setClause} WHERE id = ?`,
             [...Object.values(data), id]
         );
         return getHerramientaById(id);

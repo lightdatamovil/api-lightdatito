@@ -4,7 +4,7 @@ import CustomException from '../../models/custom_exception.js';
 export async function deleteHerramienta(id) {
     try {
         const [row] = await executeQuery(
-            `SELECT * FROM herramienta WHERE id = ? AND eliminado = 0`,
+            `SELECT * FROM herramientas WHERE id = ? AND eliminado = 0`,
             [id]
         );
 
@@ -15,7 +15,7 @@ export async function deleteHerramienta(id) {
             });
         }
 
-        await executeQuery('UPDATE herramienta SET eliminado = 1 WHERE id = ?', [id]);
+        await executeQuery('UPDATE herramientas SET eliminado = 1 WHERE id = ?', [id]);
 
         return { id };
     } catch (error) {
