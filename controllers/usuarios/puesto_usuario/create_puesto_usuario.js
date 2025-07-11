@@ -7,7 +7,7 @@ import CustomException from '../../../models/custom_exception.js';
  * @param {number} usuarioId - ID del usuario
  * @param {number} tipoPuestoId - ID del puesto a asignar
  */
-export async function asignarPuestoUsuario(usuarioId, tipoPuestoId) {
+export async function asignarPuestoAUsuario(usuarioId, tipoPuestoId) {
     // 1) Verificar existencia del usuario
     const [user] = await executeQuery(
         'SELECT id FROM usuarios WHERE id = ?',

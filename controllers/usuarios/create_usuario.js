@@ -19,7 +19,7 @@ export async function createUsuario(nombre, email, password, urlImagen, tipoPues
         if (count > 0) {
             throw new CustomException({
                 title: 'usuario duplicado',
-                message: `Ya existe un usuario con nombre"${nombre}" o email "${email}"`,
+                message: `Ya existe un usuario con email ${email}`,
                 status: 400
             });
         }

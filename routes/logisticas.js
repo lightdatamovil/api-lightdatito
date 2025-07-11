@@ -8,6 +8,10 @@ import { updateLogistica } from '../controllers/logisticas/edit_logistica.js';
 import { deleteLogistica } from '../controllers/logisticas/delete_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { getAllLogisticaPlan } from '../controllers/logisticas/logistica_plan/get_all_logistica_plan.js';
+import { getPlanesByLogistica } from '../controllers/logisticas/logistica_plan/get_all_plan_by_logistica.js';
+import { createLogisticaPlan } from '../controllers/logisticas/logistica_plan/create_logistica_plan.js';
+import { deleteLogisticaPlan } from '../controllers/logisticas/logistica_plan/delete_logistica_plan.js';
 
 const router = Router();
 
@@ -110,5 +114,79 @@ router.delete('/:id', async (req, res) => {
         );
     }
 });
+
+/**
+ * GET /api/logistica/plan
+ * Lista todas las asignaciones activas de logística↔plan
+ */
+router.get('/plan', async (req, res) => {
+    const start = performance.now();
+    try {
+        const list = await getAllLogisticaPlan();
+        res.status(200).json({ body: list, message: 'Asignaciones obtenidas' });
+        logGreen('GET /api/logistica/plan');
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(`GET /api/logistica/plan ejecutado en ${performance.now() - start} ms`);
+    }
+});
+
+/**
+ * GET /api/logistica/:logisticaId/planes
+ * Lista los planes asignados a una logística específica
+ */
+router.get('/:logisticaId/planes', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['logisticaId'], [])) return;
+    try {
+        const planes = await getPlanesByLogistica(+req.params.logisticaId);
+        res.status(200).json({ body: planes, message: 'Planes obtenidos' });
+        logGreen(`GET /api/logistica/${req.params.logisticaId}/planes`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(`GET /api/logistica/:logisticaId/planes ejecutado en ${performance.now() - start} ms`);
+    }
+});
+
+/**
+ * POST /api/logistica/:logisticaId/planes
+ * Asigna un plan a una logística
+ * Body: { planId: number }
+ */
+router.post('/:logisticaId/planes', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['logisticaId'], ['planId'])) return;
+    try {
+        const { planId } = req.body;
+        await createLogisticaPlan(+req.params.logisticaId, +planId);
+        res.status(201).json({ message: 'Plan asignado a logística' });
+        logGreen(`POST /api/logistica/${req.params.logisticaId}/planes`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(`POST /api/logistica/:logisticaId/planes ejecutado en ${performance.now() - start} ms`);
+    }
+});
+
+/**
+ * DELETE /api/logistica/:logisticaId/planes/:planId
+ * Desasigna (soft-delete) un plan de una logística
+ */
+router.delete('/:logisticaId/planes/:planId', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['logisticaId', 'planId'], [])) return;
+    try {
+        await deleteLogisticaPlan(+req.params.logisticaId, +req.params.planId);
+        res.status(200).json({ message: 'Plan desasignado de logística' });
+        logGreen(`DELETE /api/logistica/${req.params.logisticaId}/planes/${req.params.planId}`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(`DELETE /api/logistica/:logisticaId/planes/:planId ejecutado en ${performance.now() - start} ms`);
+    }
+});
+
 
 export default router;

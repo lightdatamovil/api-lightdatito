@@ -1,6 +1,6 @@
 // controllers/logistica_plan/delete_logistica_plan.js
-import { executeQuery } from '../../db.js';
-import CustomException from '../../models/custom_exception.js';
+import { executeQuery } from '../../../db.js';
+import CustomException from '../../../models/custom_exception.js';
 
 /**
  * Desasigna (soft delete) un plan de un menú en la tabla intermedia menu_plan.

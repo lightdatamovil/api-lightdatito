@@ -1,6 +1,6 @@
 // controllers/logistica_plan/get_all_logistica_plan.js
-import { executeQuery } from '../../db.js';
-import CustomException from '../../models/custom_exception.js';
+import { executeQuery } from '../../../db.js';
+import CustomException from '../../../models/custom_exception.js';
 
 /**
  * Devuelve todas las asignaciones activas de menu_plan (soft delete = 0).

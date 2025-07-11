@@ -1,6 +1,6 @@
 // controllers/logistica_plan/create_logistica_plan.js
-import { executeQuery } from '../../db.js';
-import CustomException from '../../models/custom_exception.js';
+import { executeQuery } from '../../../db.js';
+import CustomException from '../../../models/custom_exception.js';
 
 /**
  * Asigna un plan a un menú (inserta en tabla menu_plan).

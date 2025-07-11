@@ -1,7 +1,7 @@
 // routes/usuarios.js
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
-import { logRed, logPurple, logGreen } from '../src/funciones/logsCustom.js';
+import { logRed, logPurple, logGreen, logCyan } from '../src/funciones/logsCustom.js';
 import { createUsuario } from '../controllers/usuarios/create_usuario.js';
 import { getAllUsuarios } from '../controllers/usuarios/get_all_usuarios.js';
 import { getUsuarioById } from '../controllers/usuarios/get_user_by_id.js';
@@ -14,22 +14,23 @@ import { verificarTodo } from '../src/funciones/verificarAllt.js';
 import CustomException from '../models/custom_exception.js';
 import { deletePuestoUsuario } from '../controllers/usuarios/puesto_usuario/delete_puesto_usuario.js';
 import { getAllPuestosUsuario } from '../controllers/usuarios/puesto_usuario/get_all_puestos_usuario.js';
-import { asignarPuestoUsuario } from '../controllers/usuarios/puesto_usuario/create_puesto_usuario.js';
+import { asignarPuestoAUsuario } from '../controllers/usuarios/puesto_usuario/create_puesto_usuario.js';
 import { getPuestosByUsuario } from '../controllers/usuarios/puesto_usuario/get_all_puestos_by_usuario.js';
+import Campos from '../src/helpers/campos.js';
 
 const router = Router();
 
 // Crear un nuevo usuario
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = ['nombre', 'email', 'password', 'urlImagen', 'tipoPuestoId',];
-    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
+    if (!verificarTodo(req, res, [], Campos.usuarios)) return;
     try {
-        const { nombre, email, password, urlImagen, tipoPuestoId } = req.body;
-        const newItem = await createUsuario(nombre, email, password, urlImagen, tipoPuestoId);
-        res.status(201).json({ body: newItem, message: 'Creado correctamente' });
-        logGreen(`POST /api/usuarios: éxito al crear usuario con ID ${newItem.id}`);
+        const { nombre, email, password, urlImagen } = req.body;
+        const newUser = await createUsuario(nombre, email, password, urlImagen);
+        res.status(201).json({ body: newUser, message: 'Creado correctamente' });
+        logGreen(`POST /api/usuarios: éxito al crear usuario con ID ${newUser.id}`);
     } catch (err) {
+        logCyan(`Error en POST /api/usuarios: ${err.message}`);
         return handleError(req, res, err);
     } finally {
         logPurple(`POST /api/usuarios ejecutado en ${performance.now() - start} ms`);
@@ -64,6 +65,7 @@ router.get('/:id', async (req, res) => {
         logPurple(`GET /api/usuarios/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
+
 // Obtener un usuario por ID
 router.get('/:id/informe-dashboard', async (req, res) => {
     const start = performance.now();
@@ -85,6 +87,7 @@ router.get('/:id/informe-dashboard', async (req, res) => {
         logPurple(`GET /api/usuarios/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
+
 router.get("/:userId/ultima-semana", async (req, res) => {
     const start = performance.now();
     const userId = Number(req.params.userId);
@@ -124,28 +127,13 @@ router.get("/:userId/ultima-semana", async (req, res) => {
     }
 });
 
-
-// Actualizar un usuario
-const ALLOWED_PUT_FIELDS = ['nombre', 'email', 'password', 'url_imagen', 'tipoPuestoId'];
-
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], [])) return;
+    if (!verificarTodo(req, res, ['id'], Campos.usuarios)) return;
     try {
-        const usuarioId = Number(req.params.id);
-        const receivedFields = Object.keys(req.body);
+        const usuarioId = req.params.id;
 
-        // 1) Verificar si TODOS los campos recibidos están permitidos
-        const unknownFields = receivedFields.filter(
-            field => !ALLOWED_PUT_FIELDS.includes(field)
-        );
-        if (unknownFields.length > 0) {
-            logRed(`PUT /api/usuarios/${usuarioId}: campos no permitidos → ${unknownFields.join(', ')}`);
-            return res.status(400).json({
-                title: 'Campos inválidos',
-                message: `No se permiten estos campos: ${unknownFields.join(', ')}`
-            });
-        }
+
         // 2) Separar tipoPuestoId del resto de los campos
         const { ...userFields } = req.body;
         let updated;
@@ -188,7 +176,7 @@ router.post('/:id/puestos', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], ['puestoId'])) return;
     try {
-        await asignarPuestoUsuario(+req.params.id, req.body.puestoId);
+        await asignarPuestoAUsuario(+req.params.id, req.body.puestoId);
         res.status(201).json({ message: 'Puesto asignado correctamente' });
         logGreen(`POST /api/usuarios/${req.params.id}/puestos: asignado`);
     } catch (err) {

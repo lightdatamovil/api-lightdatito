@@ -1,7 +1,7 @@
 // controllers/logistica_plan/get_planes_by_logistica.js
-import { executeQuery } from '../../db.js';
-import CustomException from '../../models/custom_exception.js';
-import Plan from '../../models/plan.js';
+import { executeQuery } from '../../../db.js';
+import CustomException from '../../../models/custom_exception.js';
+import Plan from '../../../models/plan.js';
 
 /**
  * Devuelve todos los planes asignados a una logística.
