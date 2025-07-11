@@ -1,6 +1,6 @@
 // controllers/usuarios/asignar_puesto_usuario.js
-import { executeQuery } from '../../db.js';
-import CustomException from '../../models/custom_exception.js';
+import { executeQuery } from '../../../db.js';
+import CustomException from '../../../models/custom_exception.js';
 
 /**
  * Inserta una relación usuario↔puesto en la tabla intermedia puestos_usuario.

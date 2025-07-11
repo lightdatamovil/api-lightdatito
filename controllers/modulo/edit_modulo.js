@@ -20,7 +20,7 @@ export async function editModulo(id, data) {
     const values = fields.map(f => data[f]);
     try {
         await executeQuery(
-            `UPDATE modulo SET ${setClause} WHERE id = ?`,
+            `UPDATE modulos SET ${setClause} WHERE id = ?`,
             [...values, id]
         );
         return await getModuloById(id);

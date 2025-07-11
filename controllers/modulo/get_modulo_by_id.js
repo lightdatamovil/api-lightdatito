@@ -10,7 +10,7 @@ import { executeQuery } from '../../db.js';
 export async function getModuloById(id) {
     try {
         const [row] = await executeQuery(
-            'SELECT * FROM modulo WHERE id = ? AND eliminado = 0',
+            'SELECT * FROM modulos WHERE id = ? AND eliminado = 0',
             [id], true, 0
         );
         if (!row) {

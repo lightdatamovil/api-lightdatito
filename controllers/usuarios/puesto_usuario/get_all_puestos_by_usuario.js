@@ -1,7 +1,8 @@
 // controllers/usuarios/puesto_usuario.js
 import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
-import Puesto from '../../../models/puesto.js';
+import PuestoUsuario from '../../../models/puesto_usuario.js';
+
 
 /**
  * Devuelve todos los puestos asignados a un usuario.
@@ -14,7 +15,7 @@ export async function getPuestosByUsuario(usuarioId) {
             `SELECT p.* FROM puestos p JOIN puestos_usuario pu ON pu.puesto_id = p.id  WHERE pu.usuario_id = ? AND p.eliminado = 0`,
             [usuarioId]
         );
-        return rows.map(r => Puesto.fromJson(r));
+        return rows.map(r => PuestoUsuario.fromJson(r));
     } catch (err) {
         throw new CustomException({
             title: 'Error obteniendo puestos de usuario',

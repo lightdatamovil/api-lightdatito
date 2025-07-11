@@ -9,7 +9,7 @@ import { executeQuery } from '../../db.js';
 export async function getAllModulo() {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM modulo WHERE eliminado = 0',
+            'SELECT * FROM modulos WHERE eliminado = 0',
             [], true, 0
         );
         return rows.map(r => Modulo.fromJson(r));

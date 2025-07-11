@@ -27,7 +27,7 @@ export async function createModulo(nombre, menu_id) {
 
     // Verificar existencia del menú padre
     const [menu] = await executeQuery(
-        'SELECT id FROM menu WHERE id = ?',
+        'SELECT id FROM menus WHERE id = ?',
         [menu_id], true, 0
     );
     if (!menu) {
@@ -40,7 +40,7 @@ export async function createModulo(nombre, menu_id) {
 
     // Insertar nuevo módulo
     const result = await executeQuery(
-        'INSERT INTO modulo (nombre, menu_id) VALUES (?, ?)',
+        'INSERT INTO modulos (nombre, menu_id) VALUES (?, ?)',
         [nombre.trim(), menu_id],
         true
     );

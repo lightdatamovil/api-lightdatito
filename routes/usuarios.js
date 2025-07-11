@@ -12,10 +12,10 @@ import { getReportesUltimaSemana } from '../controllers/usuarios/get_reportes_da
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 import CustomException from '../models/custom_exception.js';
-import { getPuestosByUsuario } from '../controllers/usuarios/puesto_usuario/asignar_puesto_usuario.js';
 import { deletePuestoUsuario } from '../controllers/usuarios/puesto_usuario/delete_puesto_usuario.js';
 import { getAllPuestosUsuario } from '../controllers/usuarios/puesto_usuario/get_all_puestos_usuario.js';
 import { asignarPuestoUsuario } from '../controllers/usuarios/puesto_usuario/create_puesto_usuario.js';
+import { getPuestosByUsuario } from '../controllers/usuarios/puesto_usuario/get_all_puestos_by_usuario.js';
 
 const router = Router();
 
