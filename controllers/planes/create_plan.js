@@ -7,20 +7,20 @@ export async function createPlan(nombre, color) {
     //verificar si ya existe plan
 
     const [{ count }] = await executeQuery(
-        `SELECT COUNT(*) AS count FROM plan WHERE nombre = ? and color = ?`,
+        `SELECT COUNT(*) AS count FROM planes WHERE nombre = ? and color = ?`,
         [nombre, color],
         true, 0
     );
     if (count > 0) {
         throw new CustomException({
             title: 'Plan duplicado',
-            message: `Ya existe un plan con nombre "${nombre}"`,
+            message: `Ya existe un planes con nombre "${nombre}"`,
             status: 400
         });
     }
 
     // 1) Insertar 
-    const result = await executeQuery(`INSERT INTO plan (nombre, color) VALUES (?, ?)`, [nombre, color], true
+    const result = await executeQuery(`INSERT INTO planes (nombre, color) VALUES (?, ?)`, [nombre, color], true
     );
 
     // 2) Obtener el ID recién insertado
@@ -34,7 +34,7 @@ export async function createPlan(nombre, color) {
 
     // 3) Recuperar el registro completo
     const [row] = await executeQuery(
-        `SELECT * FROM plan WHERE id = ?`,
+        `SELECT * FROM planes WHERE id = ?`,
         [newId]
     );
     if (!row) {

@@ -12,8 +12,10 @@ import { getReportesUltimaSemana } from '../controllers/usuarios/get_reportes_da
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 import CustomException from '../models/custom_exception.js';
-import { updatePuestoUsuario } from '../controllers/usuarios/puesto_usuario/edit_puesto_usuario.js';
-import { asignarPuestoUsuario } from '../controllers/usuarios/asignar_puesto_usuario.js';
+import { getPuestosByUsuario } from '../controllers/usuarios/puesto_usuario/asignar_puesto_usuario.js';
+import { deletePuestoUsuario } from '../controllers/usuarios/puesto_usuario/delete_puesto_usuario.js';
+import { getAllPuestosUsuario } from '../controllers/usuarios/puesto_usuario/get_all_puestos_usuario.js';
+import { asignarPuestoUsuario } from '../controllers/usuarios/puesto_usuario/create_puesto_usuario.js';
 
 const router = Router();
 
@@ -144,28 +146,18 @@ router.put('/:id', async (req, res) => {
                 message: `No se permiten estos campos: ${unknownFields.join(', ')}`
             });
         }
-
         // 2) Separar tipoPuestoId del resto de los campos
-        const { tipoPuestoId, ...userFields } = req.body;
+        const { ...userFields } = req.body;
         let updated;
 
         // 3) Actualizar campos de usuario si existen
         if (Object.keys(userFields).length) {
             updated = await updateUsuario(usuarioId, userFields);
         }
-
-        // 4) Actualizar tipoPuestoId si fue enviado
-        if (tipoPuestoId !== undefined) {
-            await updatePuestoUsuario(usuarioId, tipoPuestoId);
-            // recargar usuario actualizado
-            updated = await getUsuarioById(usuarioId);
-        }
-
         // 5) Si no se actualizó nada, devolver el usuario igualmente
         if (!updated) {
             updated = await getUsuarioById(usuarioId);
         }
-
         res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/usuarios/${usuarioId}: éxito al actualizar usuario`);
     } catch (err) {
@@ -189,35 +181,92 @@ router.delete('/:id', async (req, res) => {
         logPurple(`DELETE /api/usuarios/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
-
-// Asignar o reasignar puesto a un usuario
-router.post('/:id/puesto', async (req, res) => {
+/**
+ * ASIGNAR un puesto a un usuario
+ */
+router.post('/:id/puestos', async (req, res) => {
     const start = performance.now();
-
-    // Validar que venga ID en params y tipoPuestoId en body
-    if (!verificarTodo(req, res, ['id'], ['tipoPuestoId'])) return;
-
+    if (!verificarTodo(req, res, ['id'], ['puestoId'])) return;
     try {
-        const usuarioId = Number(req.params.id);
-        const { tipoPuestoId } = req.body;
-
-        // Invocamos la nueva función
-        await asignarPuestoUsuario(usuarioId, tipoPuestoId);
-
-        // Recargamos y devolvemos el usuario con su puesto actualizado
-        const updated = await getUsuarioById(usuarioId);
-        res
-            .status(200)
-            .json({ body: updated, message: 'Puesto asignado correctamente' });
-
-        logGreen(`POST /api/usuarios/${usuarioId}/puesto: puesto asignado`);
+        await asignarPuestoUsuario(+req.params.id, req.body.puestoId);
+        res.status(201).json({ message: 'Puesto asignado correctamente' });
+        logGreen(`POST /api/usuarios/${req.params.id}/puestos: asignado`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(
-            `POST /api/usuarios/:id/puesto ejecutado en ${performance.now() - start} ms`
+            `POST /api/usuarios/:id/puestos ejecutado en ${performance.now() - start
+            } ms`
         );
     }
 });
+
+
+/**
+ * ELIMINAR asignación de puesto (soft-delete)
+ */
+router.delete('/:id/puestos/:puestoId', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id', 'puestoId'], [])) return;
+    try {
+        await deletePuestoUsuario(+req.params.id, +req.params.puestoId);
+        res.status(200).json({ message: 'Asignación de puesto eliminada' });
+        logGreen(
+            `DELETE /api/usuarios/${req.params.id}/puestos/${req.params.puestoId}: borrado suave`
+        );
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `DELETE /api/usuarios/:id/puestos/:puestoId ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+/**
+ * LISTAR los puestos de un usuario
+ */
+router.get('/:id/puestos', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id'], [])) return;
+    try {
+        const puestos = await getPuestosByUsuario(+req.params.id);
+        res
+            .status(200)
+            .json({ body: puestos, message: 'Puestos obtenidos correctamente' });
+        logGreen(`GET /api/usuarios/${req.params.id}/puestos: ok`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `GET /api/usuarios/:id/puestos ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+/**
+ * LISTAR todas las asignaciones activas (soft-delete = 0)
+ */
+router.get('/puestos_usuario', async (req, res) => {
+    const start = performance.now();
+    try {
+        const rows = await getAllPuestosUsuario();
+        res
+            .status(200)
+            .json({ body: rows, message: 'Asignaciones obtenidas correctamente' });
+        logGreen('GET /api/usuarios/puestos_usuario: listado completo');
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `GET /api/usuarios/puestos_usuario ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+
 
 export default router;

@@ -30,7 +30,7 @@ export async function createLogistica(body) {
 
         // 1) Validar claves foráneas
         const [plan] = await executeQuery(
-            'SELECT id FROM plan WHERE id = ?',
+            'SELECT id FROM planes WHERE id = ?',
             [plan_id]
         );
         if (!plan) {
