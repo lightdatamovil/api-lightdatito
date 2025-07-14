@@ -415,9 +415,9 @@ CREATE TABLE IF NOT EXISTS `historial_plan_logistica` (
   CONSTRAINT `fk_hpl_log`
     FOREIGN KEY (`logisticas_id`) REFERENCES `logisticas` (`id`),
   CONSTRAINT `fk_hpl_pant`
-    FOREIGN KEY (`plan_anterior_id`) REFERENCES `plan` (`id`),
+    FOREIGN KEY (`plan_anterior_id`) REFERENCES `planes` (`id`),
   CONSTRAINT `fk_hpl_pnew`
-    FOREIGN KEY (`plan_nuevo_id`) REFERENCES `plan` (`id`)
+    FOREIGN KEY (`plan_nuevo_id`) REFERENCES `planes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- historial_estados_ticket
@@ -441,6 +441,9 @@ CREATE TABLE IF NOT EXISTS `historial_estados_ticket` (
 
 
 -- USE `lightdatito`;
+SET
+  @OLD_FOREIGN_KEY_CHECKS  = @@FOREIGN_KEY_CHECKS,
+  FOREIGN_KEY_CHECKS       = 0;
 
 -- -----------------------------------------------------
 -- procedure poblar_paises
@@ -3551,3 +3554,4 @@ SET
 
 SET
     UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
+    
