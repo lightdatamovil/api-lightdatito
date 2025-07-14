@@ -14,7 +14,8 @@ export async function createComentario(usuario_id, ticket_id, texto) {
         if (!newId) {
             throw new CustomException({
                 title: "Error al crear comentario",
-                message: "No se obtuvo el ID del comentario insertado"
+                message: "No se obtuvo el ID del comentario insertado",
+                status: 404
             });
         }
 

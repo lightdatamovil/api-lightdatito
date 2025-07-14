@@ -12,7 +12,8 @@ export async function getticketById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'ticket no encontrado',
-                message: `No existe un ticket con id=${id}`
+                message: `No existe un ticket con id=${id}`,
+                status: 404
             });
         }
 

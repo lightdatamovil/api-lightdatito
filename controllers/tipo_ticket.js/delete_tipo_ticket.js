@@ -10,7 +10,8 @@ export async function deleteTipoticket(id) {
         if (!row) {
             throw new CustomException({
                 title: 'Tipoticket no encontrado',
-                message: `No existe un tipo_ticket con id=${id}`
+                message: `No existe un tipo_ticket con id=${id}`,
+                status: 404
             });
         }
 

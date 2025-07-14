@@ -36,6 +36,7 @@ export async function getticketsUltimaSemana(userId) {
       throw new CustomException({
         title: "Usuario no encontrado",
         message: `No existe un usuario con id=${userId}`,
+        status: 404
       });
     }
     const isAdmin = userRow.tipo_usuario_id === 1;

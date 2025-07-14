@@ -13,7 +13,8 @@ export async function editModulo(id, data) {
     if (!fields.length) {
         throw new CustomException({
             title: 'Sin datos',
-            message: 'No se proporcionaron campos para actualizar'
+            message: 'No se proporcionaron campos para actualizar',
+            status: 500
         });
     }
     const setClause = fields.map(f => `${f} = ?`).join(', ');

@@ -11,7 +11,8 @@ export async function getComentarioById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: "Comentario no encontrado",
-                message: `No existe un comentario con id=${id}`
+                message: `No existe un comentario con id=${id}`,
+                status: 404
             });
         }
         return Comentario.fromJson(rows[0]);

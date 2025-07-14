@@ -12,7 +12,8 @@ export async function editTipoParticularidad(id, data) {
         if (!fields.length) {
             throw new CustomException({
                 title: 'Sin datos',
-                message: 'No se proporcionaron campos para actualizar'
+                message: 'No se proporcionaron campos para actualizar',
+                status: 404
             });
         }
         const setClause = fields.map(f => `${f} = ?`).join(', ');

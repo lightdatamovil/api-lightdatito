@@ -34,7 +34,8 @@ export async function createticket(
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear ticket',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 500
             });
         }
 
@@ -46,7 +47,8 @@ export async function createticket(
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear ticket',
-                message: `No se pudo recuperar el ticket con id=${newId}`
+                message: `No se pudo recuperar el ticket con id=${newId}`,
+                status: 500
             });
         }
 

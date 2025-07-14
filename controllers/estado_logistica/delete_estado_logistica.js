@@ -17,7 +17,8 @@ export async function deleteEstadoLogistica(id) {
         if (!row) {
             throw new CustomException({
                 title: 'EstadoLogistica no encontrado',
-                message: `No existe un estado_logistica con id=${id}`
+                message: `No existe un estado_logistica con id=${id}`,
+                status: 404
             });
         }
 

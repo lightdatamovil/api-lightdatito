@@ -22,7 +22,8 @@ export async function updateEstadoLogistica(id, nombre, color) {
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear estado_logistica',
-                message: `No se pudo recuperar el registro con id=${id}`
+                message: `No se pudo recuperar el registro con id=${id}`,
+                status: 404
             });
         }
         return EstadoLogistica.fromJson(row);

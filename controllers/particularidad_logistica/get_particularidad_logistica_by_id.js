@@ -12,7 +12,8 @@ export async function getParticularidadLogisticaById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'ParticularidadLogistica no encontrada',
-                message: `No existe una particularidad_logistica con id=${id}`
+                message: `No existe una particularidad_logistica con id=${id}`,
+                status: 404
             });
         }
 

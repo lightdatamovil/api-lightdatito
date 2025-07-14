@@ -18,7 +18,8 @@ export async function getEstadoLogisticaById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'EstadoLogistica no encontrado',
-                message: `No existe un estado_logistica con id=${id}`
+                message: `No existe un estado_logistica con id=${id}`,
+                status: 404
             });
         }
 

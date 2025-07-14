@@ -11,7 +11,8 @@ export async function deleteComentario(id) {
         if (!existing) {
             throw new CustomException({
                 title: "Comentario no encontrado",
-                message: `No existe un comentario con id=${id}`
+                message: `No existe un comentario con id=${id}`,
+                status: 404
             });
         }
 

@@ -22,7 +22,8 @@ export async function createHerramienta(nombre) {
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear herramienta',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 500
             });
         }
 
@@ -33,7 +34,8 @@ export async function createHerramienta(nombre) {
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear herramienta',
-                message: `No se pudo recuperar el registro con id=${newId}`
+                message: `No se pudo recuperar el registro con id=${newId}`,
+                status: 500
             });
         }
 

@@ -28,7 +28,8 @@ export async function createPlan(nombre, color) {
     if (!newId) {
         throw new CustomException({
             title: 'Error al crear plan',
-            message: 'No se obtuvo el ID del registro insertado'
+            message: 'No se obtuvo el ID del registro insertado',
+            status: 500
         });
     }
 
@@ -40,7 +41,8 @@ export async function createPlan(nombre, color) {
     if (!row) {
         throw new CustomException({
             title: 'Error al crear plan',
-            message: `No se pudo recuperar el registro con id=${newId}`
+            message: `No se pudo recuperar el registro con id=${newId}`,
+            status: 500
         });
     }
 

@@ -12,7 +12,8 @@ export async function getHerramientaById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'Herramienta no encontrada',
-                message: `No existe un Herramienta con id=${id}`
+                message: `No existe un Herramienta con id=${id}`,
+                status: 404
             });
         }
 

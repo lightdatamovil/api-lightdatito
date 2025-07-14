@@ -22,6 +22,7 @@ export async function getInformeDashboard(userId) {
       throw new CustomException({
         title: "Usuario no encontrado",
         message: `No existe un usuario con id=${userId}`,
+        status: 404
       });
     }
     const userType = userRow.tipo_usuario_id;

@@ -20,7 +20,8 @@ export async function createParticularidadLogistica(logisticaId, particularidad,
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear particularidad de logistica',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 500
             });
         }
 

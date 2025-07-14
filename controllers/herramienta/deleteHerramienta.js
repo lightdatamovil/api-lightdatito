@@ -11,7 +11,8 @@ export async function deleteHerramienta(id) {
         if (!row) {
             throw new CustomException({
                 title: 'Herramienta no encontrado',
-                message: `No existe una herramienta con id=${id}`
+                message: `No existe una herramienta con id=${id}`,
+                status: 404
             });
         }
 

@@ -8,7 +8,8 @@ export async function updateEstadoticket(id, nombre, color) {
         if (!row) {
             throw new CustomException({
                 title: 'Error al modificar estado_ticket',
-                message: `No se pudo recuperar el registro con id=${id} o no existe`
+                message: `No se pudo recuperar el registro con id=${id} o no existe`,
+                status: 404
             });
         }
 

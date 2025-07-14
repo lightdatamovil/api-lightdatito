@@ -9,19 +9,19 @@ import EstadoLogistica from '../../models/estado_logistica.js';
  */
 export async function createEstadoLogistica(nombre, color) {
     try {
-        
+
         //verificar si ya existe estadoLogistica -- agregarle toLowerCase() en consulta
-        const [{ count }] = await executeQuery( `SELECT COUNT(*) AS count FROM estados_logistica WHERE LOWER(nombre) = LOWER(?) AND LOWER(color) = LOWER(?)`,
+        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM estados_logistica WHERE LOWER(nombre) = LOWER(?) AND LOWER(color) = LOWER(?)`,
             [nombre, color],
             true, 0
-            );
+        );
         if (count > 0) {
             throw new CustomException({
-                title:   'Estado logistica duplicado',
+                title: 'Estado logistica duplicado',
                 message: `Ya existe un estado logistica con nombre "${nombre}" y  color "${color}`,
-                status:  400
+                status: 400
             });
-            }
+        }
 
         // 1) Inserción sin RETURNING
         const result = await executeQuery(
@@ -35,7 +35,8 @@ export async function createEstadoLogistica(nombre, color) {
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear estado_logistica',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 404
             });
         }
 
@@ -47,7 +48,8 @@ export async function createEstadoLogistica(nombre, color) {
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear estado_logistica',
-                message: `No se pudo recuperar el registro con id=${newId}`
+                message: `No se pudo recuperar el registro con id=${newId}`,
+                status: 404
             });
         }
 

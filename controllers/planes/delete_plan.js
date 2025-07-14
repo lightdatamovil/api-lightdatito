@@ -12,7 +12,8 @@ export async function deletePlan(id) {
         if (!row) {
             throw new CustomException({
                 title: 'Plan no encontrado',
-                message: `No existe un plan activo con id=${id}`
+                message: `No existe un plan activo con id=${id}`,
+                status: 404
             });
         }
 

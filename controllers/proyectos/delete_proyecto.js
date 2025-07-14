@@ -12,7 +12,8 @@ export async function deleteProyecto(id) {
         if (!row) {
             throw new CustomException({
                 title: 'Proyecto no encontrado',
-                message: `No existe un proyecto con id=${id}`
+                message: `No existe un proyecto con id=${id}`,
+                status: 404
             });
         }
 

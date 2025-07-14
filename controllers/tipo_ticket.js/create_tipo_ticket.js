@@ -30,7 +30,8 @@ export async function createTipoTicket(nombre, color) {
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear tipo_ticket',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 500
             });
         }
 
@@ -42,7 +43,8 @@ export async function createTipoTicket(nombre, color) {
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear tipo_ticket',
-                message: `No se pudo recuperar el registro con id=${newId}`
+                message: `No se pudo recuperar el registro con id=${newId}`,
+                status: 500
             });
         }
 

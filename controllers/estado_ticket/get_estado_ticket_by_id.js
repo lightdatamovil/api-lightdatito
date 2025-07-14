@@ -13,7 +13,8 @@ export async function getEstadoticketById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'Estadoticket no encontrado',
-                message: `No existe un estado_ticket con id=${id}`
+                message: `No existe un estado_ticket con id=${id}`,
+                status: 404
             });
         }
         return Estadoticket.fromJson(rows[0]);

@@ -4,26 +4,27 @@ import PuestoUsuario from '../../models/puesto_usuario.js';
 
 export async function createPuesto(nombre) {
     try {
-        
+
         //verificar si ya existe puestos
         const [{ count }] = await executeQuery(
             `SELECT COUNT(*) AS count FROM puestos WHERE LOWER(nombre) = LOWER(?)`,
             [nombre],
             true, 0
-            );
+        );
         if (count > 0) {
             throw new CustomException({
-            title:   'Puesto duplicado',
-            message: `Ya existe un puesto con nombre "${nombre}"`,
-            status:  400
-        });
+                title: 'Puesto duplicado',
+                message: `Ya existe un puesto con nombre "${nombre}"`,
+                status: 400
+            });
         }
-        const result = await executeQuery(`INSERT INTO puestos (nombre) VALUES (lower(?))`, nombre ,true);
+        const result = await executeQuery(`INSERT INTO puestos (nombre) VALUES (lower(?))`, nombre, true);
         const newId = result.insertId;
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear estado_logistica',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 500
             });
         }
 
@@ -34,7 +35,8 @@ export async function createPuesto(nombre) {
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear puesto',
-                message: `No se pudo recuperar el registro con id=${newId}`
+                message: `No se pudo recuperar el registro con id=${newId}`,
+                status: 500
             });
         }
 

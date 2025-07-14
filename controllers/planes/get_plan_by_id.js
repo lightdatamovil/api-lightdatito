@@ -12,7 +12,8 @@ export async function getPlanById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'Plan no encontrado',
-                message: `No existe un plan con id=${id}`
+                message: `No existe un plan con id=${id}`,
+                status: 404
             });
         }
 

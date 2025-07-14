@@ -11,7 +11,8 @@ export async function deleteticket(id) {
         if (!row) {
             throw new CustomException({
                 title: 'ticket no encontrado',
-                message: `No existe un ticket activo con id=${id}`
+                message: `No existe un ticket activo con id=${id}`,
+                status: 404
             });
         }
 

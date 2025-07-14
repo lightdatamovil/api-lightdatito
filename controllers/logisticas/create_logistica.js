@@ -36,7 +36,8 @@ export async function createLogistica(body) {
         if (!plan) {
             throw new CustomException({
                 title: 'Plan inválido',
-                message: `No existe un plan con id=${plan_id}`
+                message: `No existe un plan con id=${plan_id}`,
+                statis: 404
             });
         }
 
@@ -47,7 +48,8 @@ export async function createLogistica(body) {
         if (!estado) {
             throw new CustomException({
                 title: 'EstadoLogistica inválido',
-                message: `No existe un estado_logistica con id=${estado_logistica_id}`
+                message: `No existe un estado_logistica con id=${estado_logistica_id}`,
+                status: 404
             });
         }
 
@@ -58,7 +60,8 @@ export async function createLogistica(body) {
         if (!pais) {
             throw new CustomException({
                 title: 'País inválido',
-                message: `No existe un país con id=${pais_id}`
+                message: `No existe un país con id=${pais_id}`,
+                status: 404
             });
         }
 
@@ -88,7 +91,8 @@ export async function createLogistica(body) {
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear logística',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 500
             });
         }
 
@@ -100,7 +104,8 @@ export async function createLogistica(body) {
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear logística',
-                message: `No se pudo recuperar la logística con id=${newId}`
+                message: `No se pudo recuperar la logística con id=${newId}`,
+                status: 404
             });
         }
 

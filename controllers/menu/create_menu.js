@@ -35,7 +35,8 @@ export async function createMenu(nombre) {
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear menú',
-                message: 'No se obtuvo el ID del menú insertado'
+                message: 'No se obtuvo el ID del menú insertado',
+                status: 500
             });
         }
 

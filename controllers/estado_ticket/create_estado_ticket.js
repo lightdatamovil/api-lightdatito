@@ -31,7 +31,8 @@ export async function createEstadoticket(nombre, color) {
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear estado_ticket',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 500
             });
         }
 

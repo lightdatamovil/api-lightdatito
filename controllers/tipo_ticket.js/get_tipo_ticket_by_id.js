@@ -12,7 +12,8 @@ export async function getTipoticketById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'Tipoticket no encontrado',
-                message: `No existe un tipo_ticket con id=${id}`
+                message: `No existe un tipo_ticket con id=${id}`,
+                status: 404
             });
         }
 

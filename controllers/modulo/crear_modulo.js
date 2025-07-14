@@ -50,7 +50,8 @@ export async function createModulo(nombre, menu_id) {
     if (!newId) {
         throw new CustomException({
             title: 'Error creando módulo',
-            message: 'No se obtuvo el ID del módulo insertado'
+            message: 'No se obtuvo el ID del módulo insertado',
+            status: 500
         });
     }
 

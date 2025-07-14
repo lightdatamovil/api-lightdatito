@@ -16,7 +16,8 @@ export async function deleteParticularidadLogistica(id) {
         if (!row) {
             throw new CustomException({
                 title: 'Particularidad no encontrada',
-                message: `No existe una particularidad de logística con id=${id}`
+                message: `No existe una particularidad de logística con id=${id}`,
+                status: 404
             });
         }
 

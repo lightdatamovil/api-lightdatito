@@ -33,7 +33,8 @@ export async function createProyecto(nombre) {
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear proyecto',
-                message: 'No se obtuvo el ID del registro insertado'
+                message: 'No se obtuvo el ID del registro insertado',
+                status: 500
             });
         }
 
@@ -45,7 +46,8 @@ export async function createProyecto(nombre) {
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear proyecto',
-                message: `No se pudo recuperar el proyecto con id=${newId}`
+                message: `No se pudo recuperar el proyecto con id=${newId}`,
+                status: 500
             });
         }
 
