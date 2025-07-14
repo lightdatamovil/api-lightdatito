@@ -8,7 +8,7 @@ import { getUsuarioById } from '../controllers/usuarios/get_user_by_id.js';
 import { updateUsuario } from '../controllers/usuarios/edit_usuario.js';
 import { deleteUsuario } from '../controllers/usuarios/delete_usuario.js';
 import { getInformeDashboard } from '../controllers/usuarios/get_informe_dashboard.js';
-import { getReportesUltimaSemana } from '../controllers/usuarios/get_reportes_dashboard.js';
+import { getticketsUltimaSemana } from '../controllers/usuarios/get_tickets_dashboard.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 import CustomException from '../models/custom_exception.js';
@@ -93,18 +93,18 @@ router.get("/:userId/ultima-semana", async (req, res) => {
     const userId = Number(req.params.userId);
 
     try {
-        const rows = await getReportesUltimaSemana(userId);
+        const rows = await getticketsUltimaSemana(userId);
         res
             .status(200)
-            .json({ body: rows, message: "Reportes última semana obtenidos" });
+            .json({ body: rows, message: "tickets última semana obtenidos" });
         logGreen(
-            `GET /api/reportes/ultima-semana/${userId}: éxito al listar reportes`
+            `GET /api/tickets/ultima-semana/${userId}: éxito al listar tickets`
         );
     } catch (err) {
         //return handleError(req, res, err);
         if (err instanceof CustomException) {
             logRed(
-                `Error 400 GET /api/reportes/ultima-semana/${userId}:`,
+                `Error 400 GET /api/tickets/ultima-semana/${userId}:`,
                 err.toJSON()
             );
             return res.status(400).json(err.toJSON());
@@ -115,13 +115,13 @@ router.get("/:userId/ultima-semana", async (req, res) => {
             stack: err.stack
         });
         logRed(
-            `Error 500 GET /api/reportes/ultima-semana/${userId}:`,
+            `Error 500 GET /api/tickets/ultima-semana/${userId}:`,
             fatal.toJSON()
         );
         res.status(500).json(fatal.toJSON());
     } finally {
         logPurple(
-            `GET /api/reportes/ultima-semana/:userId ejecutado en ${performance.now() - start
+            `GET /api/tickets/ultima-semana/:userId ejecutado en ${performance.now() - start
             } ms`
         );
     }

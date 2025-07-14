@@ -21,7 +21,7 @@ export async function deleteHerramienta(id) {
     } catch (error) {
         if (error instanceof CustomException) throw error;
         throw new CustomException({
-            title: 'Error al eliminar estado_reporte',
+            title: 'Error al eliminar estado_ticket',
             message: error.message,
             stack: error.stack
         });

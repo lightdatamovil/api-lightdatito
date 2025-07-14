@@ -1,22 +1,22 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-export async function deleteTipoReporte(id) {
+export async function deleteTipoticket(id) {
     try {
-        // 1) Verificar que exista el tipo de reporte
+        // 1) Verificar que exista el tipo de ticket
         const [row] = await executeQuery(
-            'SELECT id FROM tipo_reporte WHERE id = ?',
+            'SELECT id FROM tipo_ticket WHERE id = ?',
             [id]
         );
         if (!row) {
             throw new CustomException({
-                title: 'TipoReporte no encontrado',
-                message: `No existe un tipo_reporte con id=${id}`
+                title: 'Tipoticket no encontrado',
+                message: `No existe un tipo_ticket con id=${id}`
             });
         }
 
         // 2) Eliminar el registro
         await executeQuery(
-            'UPDATE tipo_reporte SET eliminado = 1 WHERE id = ?',
+            'UPDATE tipo_ticket SET eliminado = 1 WHERE id = ?',
             [id]
         );
 
@@ -24,7 +24,7 @@ export async function deleteTipoReporte(id) {
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Error al eliminar tipo_reporte',
+            title: 'Error al eliminar tipo_ticket',
             message: err.message,
             stack: err.stack
         });

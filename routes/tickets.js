@@ -1,12 +1,12 @@
-// routes/reportes.js
+// routes/tickets.js
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
-import { createReporte } from '../controllers/reporte/create_reporte.js';
-import { getAllReportes } from '../controllers/reporte/get_all_reportes.js';
-import { getReporteById } from '../controllers/reporte/get_reporte_by_id.js';
-import { updateReporte } from '../controllers/reporte/edit_reporte.js';
-import { deleteReporte } from '../controllers/reporte/delete_reporte.js';
+import { createticket } from '../controllers/ticket/create_ticket.js';
+import { getAlltickets } from '../controllers/ticket/get_all_tickets.js';
+import { getticketById } from '../controllers/ticket/get_ticket_by_id.js';
+import { updateticket } from '../controllers/ticket/edit_ticket.js';
+import { deleteticket } from '../controllers/ticket/delete_ticket.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 
@@ -14,85 +14,85 @@ import { verificarTodo } from '../src/funciones/verificarAllt.js';
 const router = Router();
 
 
-// Crear un nuevo reporte
+// Crear un nuevo ticket
 router.post('/', async (req, res) => {
     const start = performance.now();
     const requiredBodyFields = [
         'titulo',
         'descripcion',
-        'tipo_reporte_id',
+        'tipo_ticket_id',
         'observador',
         'proyecto_id',
         'logistica_id',];
     if (!verificarTodo(req, res, requiredBodyFields)) return;
     try {
-        const { titulo, descripcion, tipo_reporte_id, observador, proyecto_id, logistica_id } = req.body;
-        const newItem = await createReporte(titulo, descripcion, tipo_reporte_id, observador, proyecto_id, logistica_id);
+        const { titulo, descripcion, tipo_ticket_id, observador, proyecto_id, logistica_id } = req.body;
+        const newItem = await createticket(titulo, descripcion, tipo_ticket_id, observador, proyecto_id, logistica_id);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
-        logGreen(`POST /api/reportes: éxito al crear reporte ID ${newItem.id}`);
+        logGreen(`POST /api/tickets: éxito al crear ticket ID ${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`POST /api/reportes ejecutado en ${performance.now() - start} ms`);
+        logPurple(`POST /api/tickets ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Listar todos los reportes
+// Listar todos los tickets
 router.get('/', async (req, res) => {
     const start = performance.now();
     try {
-        const list = await getAllReportes();
+        const list = await getAlltickets();
         res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
-        logGreen('GET /api/reportes: éxito al listar reportes');
+        logGreen('GET /api/tickets: éxito al listar tickets');
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`GET /api/reportes ejecutado en ${performance.now() - start} ms`);
+        logPurple(`GET /api/tickets ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Obtener un reporte por ID
+// Obtener un ticket por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const item = await getReporteById(req.params.id);
+        const item = await getticketById(req.params.id);
         res.status(200).json({ body: item, message: 'Registro obtenido' });
-        logGreen(`GET /api/reportes/${req.params.id}: éxito al obtener reporte`);
+        logGreen(`GET /api/tickets/${req.params.id}: éxito al obtener ticket`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`GET /api/reportes/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(`GET /api/tickets/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Actualizar un reporte
+// Actualizar un ticket
 router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const updated = await updateReporte(req.params.id, req.body);
+        const updated = await updateticket(req.params.id, req.body);
         res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
-        logGreen(`PUT /api/reportes/${req.params.id}: éxito al actualizar reporte`);
+        logGreen(`PUT /api/tickets/${req.params.id}: éxito al actualizar ticket`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`PUT /api/reportes/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(`PUT /api/tickets/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Eliminar un reporte
+// Eliminar un ticket
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        await deleteReporte(req.params.id);
+        await deleteticket(req.params.id);
         res.status(200).json({ message: 'Eliminado correctamente' });
-        logGreen(`DELETE /api/reportes/${req.params.id}: éxito al eliminar reporte`);
+        logGreen(`DELETE /api/tickets/${req.params.id}: éxito al eliminar ticket`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`DELETE /api/reportes/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(`DELETE /api/tickets/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
 

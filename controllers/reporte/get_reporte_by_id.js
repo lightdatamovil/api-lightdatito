@@ -1,26 +1,26 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Reporte from '../../models/Reporte.js';
+import ticket from '../../models/ticket.js';
 
-export async function getReporteById(id) {
+export async function getticketById(id) {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM reportes WHERE id = ? AND eliminado = 0',
+            'SELECT * FROM tickets WHERE id = ? AND eliminado = 0',
             [id]
         );
 
         if (rows.length === 0) {
             throw new CustomException({
-                title: 'Reporte no encontrado',
-                message: `No existe un reporte con id=${id}`
+                title: 'ticket no encontrado',
+                message: `No existe un ticket con id=${id}`
             });
         }
 
-        return Reporte.fromJson(rows[0]);
+        return ticket.fromJson(rows[0]);
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Error al obtener reporte',
+            title: 'Error al obtener ticket',
             message: err.message,
             stack: err.stack
         });

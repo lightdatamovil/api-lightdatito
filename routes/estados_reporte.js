@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
-import { createEstadoReporte } from '../controllers/estado_reporte/create_estado_reporte.js';
-import { getAllEstadosReporte } from '../controllers/estado_reporte/get_all_estados_reportes.js';
-import { getEstadoReporteById } from '../controllers/estado_reporte/get_estado_reporte_by_id.js';
-import { updateEstadoReporte } from '../controllers/estado_reporte/edit_estado_reporte.js';
-import { deleteEstadoReporte } from '../controllers/estado_reporte/delete_estado_reporte.js';
+import { createEstadoticket } from '../controllers/estado_ticket/create_estado_ticket.js';
+import { getAllEstadosticket } from '../controllers/estado_ticket/get_all_estados_tickets.js';
+import { getEstadoticketById } from '../controllers/estado_ticket/get_estado_ticket_by_id.js';
+import { updateEstadoticket } from '../controllers/estado_ticket/edit_estado_ticket.js';
+import { deleteEstadoticket } from '../controllers/estado_ticket/delete_estado_ticket.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 
@@ -15,13 +15,13 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res)) return;
     try {
-        const list = await getAllEstadosReporte();
+        const list = await getAllEstadosticket();
         res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
-        logGreen('GET /api/estados-reporte: éxito al listar estados de reporte');
+        logGreen('GET /api/estados-ticket: éxito al listar estados de ticket');
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`GET /api/estados-reporte ejecutado en ${performance.now() - start} ms`);
+        logPurple(`GET /api/estados-ticket ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -31,14 +31,14 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
 
     try {
-        const item = await getEstadoReporteById(req.params.id);
+        const item = await getEstadoticketById(req.params.id);
         res.status(200).json({ body: item, message: 'Registro obtenido' });
-        logGreen(`GET /api/estados-reporte/${req.params.id}: éxito al obtener estado de reporte`);
+        logGreen(`GET /api/estados-ticket/${req.params.id}: éxito al obtener estado de ticket`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(
-            `GET /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`
+            `GET /api/estados-ticket/:id ejecutado en ${performance.now() - start} ms`
         );
     }
 });
@@ -51,15 +51,15 @@ router.post('/', async (req, res) => {
 
     try {
         const { nombre, color } = req.body;
-        const newItem = await createEstadoReporte(nombre, color);
+        const newItem = await createEstadoticket(nombre, color);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(
-            `POST /api/estados-reporte: éxito al crear estado de reporte con ID ${newItem.id}`
+            `POST /api/estados-ticket: éxito al crear estado de ticket con ID ${newItem.id}`
         );
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`POST /api/estados-reporte ejecutado en ${performance.now() - start} ms`);
+        logPurple(`POST /api/estados-ticket ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -70,13 +70,13 @@ router.put('/:id', async (req, res) => {
 
     try {
         const { nombre, color } = req.body;
-        const updatedItem = await updateEstadoReporte(req.params.id, nombre, color);
+        const updatedItem = await updateEstadoticket(req.params.id, nombre, color);
         res.status(200).json({ body: updatedItem, message: 'Actualizado correctamente' });
-        logGreen(`PUT /api/estados-reporte/${req.params.id}: éxito al actualizar`);
+        logGreen(`PUT /api/estados-ticket/${req.params.id}: éxito al actualizar`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`PUT /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`);
+        logPurple(`PUT /api/estados-ticket/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -85,14 +85,14 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        await deleteEstadoReporte(req.params.id);
+        await deleteEstadoticket(req.params.id);
         res.status(200).json({ message: 'Eliminado correctamente' });
-        logGreen(`DELETE /api/estados-reporte/${req.params.id}: éxito al eliminar`);
+        logGreen(`DELETE /api/estados-ticket/${req.params.id}: éxito al eliminar`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(
-            `DELETE /api/estados-reporte/:id ejecutado en ${performance.now() - start} ms`
+            `DELETE /api/estados-ticket/:id ejecutado en ${performance.now() - start} ms`
         );
     }
 });

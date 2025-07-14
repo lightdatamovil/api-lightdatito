@@ -1,4 +1,4 @@
-export default class TipoReporte {
+export default class Tipoticket {
     constructor({ id, nombre, color }) {
         this.id = id;
         this.nombre = nombre;
@@ -6,7 +6,7 @@ export default class TipoReporte {
     }
 
     static fromJson(row) {
-        return new TipoReporte({
+        return new Tipoticket({
             id: row.id,
             nombre: row.nombre,
             color: row.color

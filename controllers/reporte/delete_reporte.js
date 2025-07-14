@@ -1,23 +1,23 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 
-export async function deleteReporte(id) {
+export async function deleteticket(id) {
     try {
-        // 1) Verificar que el reporte exista y no esté ya eliminado
+        // 1) Verificar que el ticket exista y no esté ya eliminado
         const [row] = await executeQuery(
-            'SELECT id FROM reportes WHERE id = ? AND eliminado = 0',
+            'SELECT id FROM tickets WHERE id = ? AND eliminado = 0',
             [id]
         );
         if (!row) {
             throw new CustomException({
-                title: 'Reporte no encontrado',
-                message: `No existe un reporte activo con id=${id}`
+                title: 'ticket no encontrado',
+                message: `No existe un ticket activo con id=${id}`
             });
         }
 
         // 2) Soft-delete
         await executeQuery(
-            'UPDATE reportes SET eliminado = 1 WHERE id = ?',
+            'UPDATE tickets SET eliminado = 1 WHERE id = ?',
             [id]
         );
 
@@ -25,7 +25,7 @@ export async function deleteReporte(id) {
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Error al eliminar reporte',
+            title: 'Error al eliminar ticket',
             message: err.message,
             stack: err.stack
         });

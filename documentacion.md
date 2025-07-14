@@ -2,20 +2,20 @@
 
 ## Menú Principal
 
-- [Reportes](#reportes)  
+- [tickets](#tickets)  
 - [Logísticas](#logísticas)  
 - [Gestión](#gestión)  
 - [Gráficos del Dashboard](#gráficos-del-dashboard)  
 
 ---
 
-## Reportes
+## tickets
 
 - **Crear ticket**  
-  _Descripción breve de la funcionalidad para generar un ticket de reporte._
+  _Descripción breve de la funcionalidad para generar un ticket de ticket._
 
 - **Panel**  
-  _Vista general de los reportes existentes y sus estados.
+  _Vista general de los tickets existentes y sus estados.
 
 ---
 
@@ -34,8 +34,8 @@
 - **Estados de logísticas**  
   _Definición y configuración de los distintos estados por los que puede pasar una logística. (BLOQUEADA - ALTA - BAJA)_
 
-- **Estado de reportes**  
-  _Gestión de los posibles estados de un reporte (creado, en progreso, cerrado, etc.)._
+- **Estado de tickets**  
+  _Gestión de los posibles estados de un ticket (creado, en progreso, cerrado, etc.)._
 
 - **Particularidades**  
   _Ajustes especiales o reglas de negocio aplicables a ciertos procesos._
@@ -58,8 +58,8 @@
 - **Puestos**  
   _Listado y configuración de puestos de trabajo o roles dentro del equipo._
 
-- **Tipo de reporte**  
-  _Clasificación de los distintos formatos o categorías de reporte._
+- **Tipo de ticket**  
+  _Clasificación de los distintos formatos o categorías de ticket._
 
 - **Tipo de usuario**  
   _Definición de perfiles y permisos asociados a cada tipo de usuario._

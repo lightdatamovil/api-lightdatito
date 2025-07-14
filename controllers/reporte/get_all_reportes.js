@@ -1,17 +1,17 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Reporte from '../../models/Reporte.js';
+import ticket from '../../models/ticket.js';
 
-export async function getAllReportes() {
+export async function getAlltickets() {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM reportes WHERE eliminado = 0'
+            'SELECT * FROM tickets WHERE eliminado = 0'
         );
-        return rows.map(r => Reporte.fromJson(r));
+        return rows.map(r => ticket.fromJson(r));
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Error al obtener reportes',
+            title: 'Error al obtener tickets',
             message: err.message,
             stack: err.stack
         });
