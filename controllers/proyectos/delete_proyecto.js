@@ -19,7 +19,7 @@ export async function deleteProyecto(id) {
 
         // 2) Eliminar el proyecto
         await executeQuery(
-            'UPDATE proyectos SET eliminado = 1 WHERE id = ?',
+            'UPDATE proyectos SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
             [id]
         );
 

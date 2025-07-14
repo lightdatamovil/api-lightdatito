@@ -23,7 +23,7 @@ export async function deleteParticularidadLogistica(id) {
 
         // 3) Eliminar la particularidad
         await executeQuery(
-            'UPDATE particularidades SET eliminado = 1 WHERE id = ?',
+            'UPDATE particularidades SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
             [id]
         );
 

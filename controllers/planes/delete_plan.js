@@ -19,7 +19,7 @@ export async function deletePlan(id) {
 
         // 2) Marcarlo como eliminado
         await executeQuery(
-            `UPDATE planes SET eliminado = 1 WHERE id = ?`,
+            `UPDATE planes SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?`,
             [id]
         );
 

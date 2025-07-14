@@ -10,7 +10,7 @@ import CustomException from '../../../models/custom_exception.js';
 export async function deleteLogisticaPlan(menuId, planId) {
     try {
         await executeQuery(
-            'UPDATE menu_plan SET eliminado = 1 WHERE menu_id = ? AND plan_id = ?',
+            'UPDATE menu_plan SET eliminado = 1, fecha_eliminado = NOW() WHERE menu_id = ? AND plan_id = ?',
             [menuId, planId]
         );
     } catch (err) {

@@ -8,7 +8,7 @@ import CustomException from '../../models/custom_exception.js';
 export async function deleteTipoParticularidad(id) {
     try {
         await executeQuery(
-            'UPDATE tipo_particularidad SET eliminado = 1 WHERE id = ?',
+            'UPDATE tipo_particularidad SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
             [id]
         );
     } catch (err) {

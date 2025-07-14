@@ -17,7 +17,7 @@ export async function deleteTipoticket(id) {
 
         // 2) Eliminar el registro
         await executeQuery(
-            'UPDATE tipo_ticket SET eliminado = 1 WHERE id = ?',
+            'UPDATE tipo_ticket SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
             [id]
         );
 

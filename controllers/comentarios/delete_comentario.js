@@ -18,9 +18,8 @@ export async function deleteComentario(id) {
 
         // Soft-delete
         await executeQuery(
-            `UPDATE comentarios
-          SET eliminado = 1
-        WHERE id = ?`,
+            `UPDATE comentarios SET eliminado = 1,
+                    fecha_eliminado = NOW() WHERE id = ?`,
             [id]
         );
         return { id };

@@ -12,11 +12,10 @@ export async function deleteEstadoticket(id) {
             throw new CustomException({
                 title: 'Estado ticket no encontrado',
                 message: `No existe un estado_ticket con id=${id}`,
-                status: 404
             });
         }
 
-        await executeQuery('UPDATE estados_ticket SET eliminado = 1 WHERE id = ?', [id]);
+        await executeQuery('UPDATE estados_ticket SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?', [id]);
 
         return { id };
     } catch (error) {

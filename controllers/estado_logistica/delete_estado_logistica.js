@@ -24,7 +24,8 @@ export async function deleteEstadoLogistica(id) {
 
         // 2) Eliminarlo
         await executeQuery(
-            `UPDATE estados_logistica SET eliminado = 1 WHERE id = ?`,
+            `UPDATE estados_logistica SET eliminado = 1,
+                    fecha_eliminado = NOW() WHERE id = ?`,
             [id]
         );
 

@@ -8,7 +8,7 @@ import { executeQuery } from '../../db.js';
 export async function deleteModulo(id) {
     try {
         await executeQuery(
-            'UPDATE modulo SET eliminado = 1 WHERE id = ?',
+            'UPDATE modulo SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
             [id]
         );
     } catch (err) {

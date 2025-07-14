@@ -9,7 +9,7 @@ import CustomException from '../../models/custom_exception.js';
 export async function deleteUsuario(id) {
     try {
         await executeQuery(
-            'UPDATE usuarios SET eliminado = 1 WHERE id = ?',
+            'UPDATE usuarios SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
             [id]
         );
         return { id };

@@ -16,7 +16,7 @@ export async function deleteHerramienta(id) {
             });
         }
 
-        await executeQuery('UPDATE herramientas SET eliminado = 1 WHERE id = ?', [id]);
+        await executeQuery('UPDATE herramientas SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?', [id]);
 
         return { id };
     } catch (error) {

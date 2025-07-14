@@ -18,7 +18,7 @@ export async function deleteticket(id) {
 
         // 2) Soft-delete
         await executeQuery(
-            'UPDATE tickets SET eliminado = 1 WHERE id = ?',
+            'UPDATE tickets SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
             [id]
         );
 
