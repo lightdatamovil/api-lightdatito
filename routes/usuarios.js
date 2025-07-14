@@ -20,6 +20,96 @@ import Campos from '../src/helpers/campos.js';
 
 const router = Router();
 
+/**
+ * LISTAR todas las asignaciones activas 
+ */
+router.get('/puestos-usuario', async (req, res) => {
+    const start = performance.now();
+    try {
+        const rows = await getAllPuestosUsuario();
+        res.status(200).json({ body: rows, message: 'Asignaciones obtenidas correctamente' });
+        logGreen('GET /api/usuarios/puestos_usuario: listado completo');
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `GET /api/usuarios/puestos_usuario ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+
+/**
+ * ASIGNAR un puesto a un usuario
+ */
+router.post('/:id/puestos', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id'], ['puestoId'])) return;
+    try {
+        await asignarPuestoAUsuario(+req.params.id, req.body.puestoId);
+        res.status(201).json({ message: 'Puesto asignado correctamente' });
+        logGreen(`POST /api/usuarios/${req.params.id}/puestos: asignado`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `POST /api/usuarios/:id/puestos ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+
+/**
+ * ELIMINAR asignación de puesto (soft-delete)
+ */
+router.delete('/:id/puestos/:puestoId', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id', 'puestoId'], [])) return;
+    try {
+        await deletePuestoUsuario(+req.params.id, +req.params.puestoId);
+        res.status(200).json({ message: 'Asignación de puesto eliminada' });
+        logGreen(
+            `DELETE /api/usuarios/${req.params.id}/puestos/${req.params.puestoId}: borrado suave`
+        );
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `DELETE /api/usuarios/:id/puestos/:puestoId ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+/**
+ * LISTAR los puestos de un usuario
+ */
+router.get('/:id/puestos', async (req, res) => {
+    const start = performance.now();
+
+    //custom exception 
+    try {
+        const puestos = await getPuestosByUsuario(+req.params.id);
+        res
+            .status(200)
+            .json({ body: puestos, message: 'Puestos obtenidos correctamente' });
+        logGreen(`GET /api/usuarios/${req.params.id}/puestos: ok`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `GET /api/usuarios/:id/puestos ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+
+
+
+
 // Crear un nuevo usuario
 router.post('/', async (req, res) => {
     const start = performance.now();
@@ -167,92 +257,6 @@ router.delete('/:id', async (req, res) => {
         return handleError(req, res, err);
     } finally {
         logPurple(`DELETE /api/usuarios/:id ejecutado en ${performance.now() - start} ms`);
-    }
-});
-/**
- * ASIGNAR un puesto a un usuario
- */
-router.post('/:id/puestos', async (req, res) => {
-    const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], ['puestoId'])) return;
-    try {
-        await asignarPuestoAUsuario(+req.params.id, req.body.puestoId);
-        res.status(201).json({ message: 'Puesto asignado correctamente' });
-        logGreen(`POST /api/usuarios/${req.params.id}/puestos: asignado`);
-    } catch (err) {
-        return handleError(req, res, err);
-    } finally {
-        logPurple(
-            `POST /api/usuarios/:id/puestos ejecutado en ${performance.now() - start
-            } ms`
-        );
-    }
-});
-
-
-/**
- * ELIMINAR asignación de puesto (soft-delete)
- */
-router.delete('/:id/puestos/:puestoId', async (req, res) => {
-    const start = performance.now();
-    if (!verificarTodo(req, res, ['id', 'puestoId'], [])) return;
-    try {
-        await deletePuestoUsuario(+req.params.id, +req.params.puestoId);
-        res.status(200).json({ message: 'Asignación de puesto eliminada' });
-        logGreen(
-            `DELETE /api/usuarios/${req.params.id}/puestos/${req.params.puestoId}: borrado suave`
-        );
-    } catch (err) {
-        return handleError(req, res, err);
-    } finally {
-        logPurple(
-            `DELETE /api/usuarios/:id/puestos/:puestoId ejecutado en ${performance.now() - start
-            } ms`
-        );
-    }
-});
-
-/**
- * LISTAR los puestos de un usuario
- */
-router.get('/:id/puestos', async (req, res) => {
-    const start = performance.now();
-
-    //custom exception 
-    try {
-        const puestos = await getPuestosByUsuario(+req.params.id);
-        res
-            .status(200)
-            .json({ body: puestos, message: 'Puestos obtenidos correctamente' });
-        logGreen(`GET /api/usuarios/${req.params.id}/puestos: ok`);
-    } catch (err) {
-        return handleError(req, res, err);
-    } finally {
-        logPurple(
-            `GET /api/usuarios/:id/puestos ejecutado en ${performance.now() - start
-            } ms`
-        );
-    }
-});
-
-/**
- * LISTAR todas las asignaciones activas (soft-delete = 0)
- */
-router.get('/puestos_usuario', async (req, res) => {
-    const start = performance.now();
-    try {
-        const rows = await getAllPuestosUsuario();
-        res
-            .status(200)
-            .json({ body: rows, message: 'Asignaciones obtenidas correctamente' });
-        logGreen('GET /api/usuarios/puestos_usuario: listado completo');
-    } catch (err) {
-        return handleError(req, res, err);
-    } finally {
-        logPurple(
-            `GET /api/usuarios/puestos_usuario ejecutado en ${performance.now() - start
-            } ms`
-        );
     }
 });
 
