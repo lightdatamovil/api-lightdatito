@@ -7,7 +7,7 @@ import { getEstadoLogisticaById } from '../controllers/estado_logistica/get_esta
 import { updateEstadoLogistica } from '../controllers/estado_logistica/edit_estado_logistica.js';
 import { deleteEstadoLogistica } from '../controllers/estado_logistica/delete_estado_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 
 const router = Router();
 

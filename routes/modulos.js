@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logGreen, logPurple } from '../src/funciones/logsCustom.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { handleError } from '../src/funciones/handle_error.js';
 
 import {

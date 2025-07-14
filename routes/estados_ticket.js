@@ -7,7 +7,7 @@ import { getEstadoticketById } from '../controllers/estado_ticket/get_estado_tic
 import { updateEstadoticket } from '../controllers/estado_ticket/edit_estado_ticket.js';
 import { deleteEstadoticket } from '../controllers/estado_ticket/delete_estado_ticket.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 
 const router = Router();
 

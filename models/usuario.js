@@ -15,7 +15,7 @@ export default class Usuario {
      * @returns {Usuario}
      */
     static fromJson(row) {
-        try {
+
         return new Usuario({
             id: row.id,
             nombre: row.nombre,
@@ -24,11 +24,7 @@ export default class Usuario {
             email: row.email,
             fecha_creacion: row.fecha_creacion,
             eliminado: row.eliminado
-        });    
-        } catch (error) {
-           throw error; 
-        }
-        
+        });
     }
 
     /**

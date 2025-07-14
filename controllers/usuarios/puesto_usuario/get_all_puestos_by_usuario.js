@@ -15,8 +15,17 @@ export async function getPuestosByUsuario(usuarioId) {
             `SELECT p.* FROM puestos p JOIN puestos_usuario pu ON pu.puesto_id = p.id  WHERE pu.usuario_id = ? AND p.eliminado = 0`,
             [usuarioId]
         );
+        if (rows.length === 0) {
+            throw new CustomException({
+                title: 'Puestos no encontrados',
+                message: `No existen puestos asignados al usuario con id=${usuarioId}`,
+                status: 404
+            });
+        }
         return rows.map(r => PuestoUsuario.fromJson(r));
     } catch (err) {
+        //agregar estalinea a todos las funciones 
+        if (err instanceof CustomException) throw err;
         throw new CustomException({
             title: 'Error obteniendo puestos de usuario',
             message: err.message,

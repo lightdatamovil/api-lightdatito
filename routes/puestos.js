@@ -9,7 +9,7 @@ import { getPuestoById } from '../controllers/puestos/get_puesto_by_id.js';
 import { updatePuesto } from '../controllers/puestos/edit_puesto.js';
 import { deletePuesto } from '../controllers/puestos/delete_puesto.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 
 const router = Router();
 

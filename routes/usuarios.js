@@ -10,7 +10,7 @@ import { deleteUsuario } from '../controllers/usuarios/delete_usuario.js';
 import { getInformeDashboard } from '../controllers/usuarios/get_informe_dashboard.js';
 import { getticketsUltimaSemana } from '../controllers/usuarios/get_tickets_dashboard.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 import CustomException from '../models/custom_exception.js';
 import { deletePuestoUsuario } from '../controllers/usuarios/puesto_usuario/delete_puesto_usuario.js';
 import { getAllPuestosUsuario } from '../controllers/usuarios/puesto_usuario/get_all_puestos_usuario.js';
@@ -66,7 +66,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Obtener un usuario por ID
+// Obtener un usuario por ID- DASHBOARD
 router.get('/:id/informe-dashboard', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
@@ -217,7 +217,8 @@ router.delete('/:id/puestos/:puestoId', async (req, res) => {
  */
 router.get('/:id/puestos', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], [])) return;
+
+    //custom exception 
     try {
         const puestos = await getPuestosByUsuario(+req.params.id);
         res

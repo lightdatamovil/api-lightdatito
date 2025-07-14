@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { getTipoticketById } from '../controllers/tipo_ticket.js/get_tipo_ticket_by_id.js';
 import { getAllTipoticket } from '../controllers/tipo_ticket.js/get_all_tipos_tickects.js';
 import { updateTipoticket } from '../controllers/tipo_ticket.js/edit_tipo_ticket.js';

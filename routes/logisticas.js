@@ -7,7 +7,7 @@ import { getLogisticaById } from '../controllers/logisticas/get_logistica_by_id.
 import { updateLogistica } from '../controllers/logisticas/edit_logistica.js';
 import { deleteLogistica } from '../controllers/logisticas/delete_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { getAllLogisticaPlan } from '../controllers/logisticas/logistica_plan/get_all_logistica_plan.js';
 import { getPlanesByLogistica } from '../controllers/logisticas/logistica_plan/get_all_plan_by_logistica.js';
 import { createLogisticaPlan } from '../controllers/logisticas/logistica_plan/create_logistica_plan.js';

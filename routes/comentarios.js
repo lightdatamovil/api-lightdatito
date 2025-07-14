@@ -2,7 +2,7 @@ import { Router } from "express";
 import { performance } from "perf_hooks";
 import { logPurple, logGreen } from "../src/funciones/logsCustom.js";
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { createComentario } from "../controllers/comentarios/create_comentario.js";
 import { updateComentario } from "../controllers/comentarios/edit_comentario.js";
 import { getComentarioById } from "../controllers/comentarios/get_comentario_by_id.js";

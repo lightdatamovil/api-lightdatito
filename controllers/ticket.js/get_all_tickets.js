@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import ticket from '../../models/ticket.js';
+import ticket from '../../models/reporte.js';
 
 export async function getAlltickets() {
     try {

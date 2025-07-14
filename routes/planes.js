@@ -7,7 +7,7 @@ import { getPlanById } from '../controllers/planes/get_plan_by_id.js';
 import { updatePlan } from '../controllers/planes/edit_plan.js';
 import { deletePlan } from '../controllers/planes/delete_plan.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 
 const router = Router();
 

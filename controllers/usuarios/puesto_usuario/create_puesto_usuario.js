@@ -12,7 +12,7 @@ export async function asignarPuestoAUsuario(usuarioId, tipoPuestoId) {
     const [user] = await executeQuery(
         'SELECT id FROM usuarios WHERE id = ?',
         [usuarioId],
-        true, 0
+        true,
     );
     if (!user) {
         throw new CustomException({

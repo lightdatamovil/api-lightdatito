@@ -12,15 +12,16 @@ export function handleError(req, res, err) {
     logCyan(`Error en POST /api/uasdasdassuarios: ${err.message}`);
     if (err instanceof CustomException) {
         // 400 Bad Request para nuestras CustomException
-        logRed(`Error 400 ${req.method} ${req.originalUrl}:${err.toJsonString()}`);
-        return res.status(400).json(err.toJSON());
+        logRed(`Error ${err.status} ${req.method} ${req.originalUrl}:${err.toJsonString()}`);
+        return res.status(err.status).json(err.toJSON());
     }
     // 500 Internal Server Error para TODO lo demás
     const fatal = new CustomException({
         title: 'Internal Server Error',
         message: err.message,
-        stack: err.stack
+        stack: err.stack,
+        status: 500
     });
-    logRed(`Error 500 ${req.method} ${req.originalUrl}:${fatal.toJsonString()}`);
-    return res.status(500).json(fatal.toJSON());
+    logRed(`Error ${fatal.status} ${req.method} ${req.originalUrl}:${fatal.toJsonString()}`);
+    return res.status(fatal.status).json(fatal.toJSON());
 }

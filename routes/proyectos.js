@@ -7,7 +7,7 @@ import { getProyectoById } from '../controllers/proyectos/get_proyecto_by_id.js'
 import { updateProyecto } from '../controllers/proyectos/edit_proyecto.js';
 import { deleteProyecto } from '../controllers/proyectos/delete_proyecto.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 
 
 const router = Router();

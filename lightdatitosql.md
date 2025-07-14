@@ -244,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `logisticas` (
   INDEX `idx_log_pais`   (`pais_id`),
   INDEX `idx_log_particularidad`  (`tipo_particularidad_id`),
   CONSTRAINT `fk_log_plan`
-    FOREIGN KEY (`plan_id`) REFERENCES `plan` (`id`),
+    FOREIGN KEY (`plan_id`) REFERENCES `planes` (`id`),
   CONSTRAINT `fk_log_estado`
     FOREIGN KEY (`estado_logistica_id`) REFERENCES `estados_logistica` (`id`),
   CONSTRAINT `fk_log_pais`

@@ -7,7 +7,7 @@ import { getParticularidadLogisticaById } from '../controllers/particularidad_lo
 import { updateParticularidadLogistica } from '../controllers/particularidad_logistica/edit_particularidad_logistica.js';
 import { deleteParticularidadLogistica } from '../controllers/particularidad_logistica/delete_particularidad_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { getAllParticularidadesForLogistica } from '../controllers/particularidad_logistica/get_all_particularidades_for_logistica.js';
 
 const router = Router();
