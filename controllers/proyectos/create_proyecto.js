@@ -2,22 +2,25 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Proyecto from '../../models/proyecto.js';
 
+
+
+//agregar  fecha inico fecha fin 
 export async function createProyecto(nombre) {
     try {
         //verificar si ya existe proyecto
         const cleanName = nombre.trim().toLowerCase();
-            const [{ count }] = await executeQuery(
-                `SELECT COUNT(*) AS count FROM proyectos WHERE nombre = ?`,
-                [cleanName],
-                true, 0
-            );
-            if (count > 0) {
-                throw new CustomException({
-                title:   'Proyecto duplicado',
+        const [{ count }] = await executeQuery(
+            `SELECT COUNT(*) AS count FROM proyectos WHERE nombre = ?`,
+            [cleanName],
+            true, 0
+        );
+        if (count > 0) {
+            throw new CustomException({
+                title: 'Proyecto duplicado',
                 message: `Ya existe un proyecto con nombre "${nombre}"`,
-                status:  400
+                status: 400
             });
-            }
+        }
 
         // 1) Insertar sin RETURNING
         const result = await executeQuery(

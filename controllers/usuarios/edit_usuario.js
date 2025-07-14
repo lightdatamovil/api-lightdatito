@@ -26,3 +26,5 @@ export async function updateUsuario(id, data) {
         );
     }
 }
+
+

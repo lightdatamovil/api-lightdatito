@@ -42,15 +42,17 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 CREATE TABLE IF NOT EXISTS `proyectos` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
-  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `descripcion` VARCHAR(45) NOT NULL,
+  `fecha_creacion`  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `fecha_finalizado` datetime,
   `eliminado`     TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
--- Table `tipo_reporte`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `tipo_reporte` (
+-------------------------------------------------------
+-- Table `tipo_ticket`
+-------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tipo_ticket` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
@@ -254,9 +256,9 @@ CREATE TABLE IF NOT EXISTS `logisticas` (
 
 
 -- -----------------------------------------------------
--- Table `estados_reporte`
+-- Table `estados_ticket`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `estados_reporte` (
+CREATE TABLE IF NOT EXISTS `estados_ticket` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `color`  VARCHAR(7)  NOT NULL,
@@ -266,33 +268,33 @@ CREATE TABLE IF NOT EXISTS `estados_reporte` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Table `reportes`
+-- Table `tickets`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `reportes` (
+CREATE TABLE IF NOT EXISTS `tickets` (
   `id`               INT(11)      NOT NULL AUTO_INCREMENT,
   `titulo`           VARCHAR(45)  NULL,
   `descripcion`      VARCHAR(45)  NULL,
   `fecha_creacion`   TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP(),
   `fecha_limite`     TIMESTAMP    NULL,
-  `tipo_reporte_id`  INT(11)      NOT NULL,
+  `tipo_ticket_id`  INT(11)      NOT NULL,
   `observador`       INT(11)      NOT NULL,
   `proyecto_id`      INT(11)      NOT NULL,
   `logistica_id`     INT(11)      NOT NULL,
   `eliminado`        TINYINT(1)   NOT NULL DEFAULT 0,
-  `estado_reporte_id` INT(11)     NOT NULL DEFAULT 1,
+  `estado_ticket_id` INT(11)     NOT NULL DEFAULT 1,
   `usuario_asignado_id`    INT(11)     NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `idx_asig_responsable`(`usuario_asignado_id`),
-  INDEX `idx_rep_tipo`    (`tipo_reporte_id`),
+  INDEX `idx_rep_tipo`    (`tipo_ticket_id`),
   INDEX `idx_rep_obs`     (`observador`),
   INDEX `idx_rep_proj`    (`proyecto_id`),
   INDEX `idx_rep_log`     (`logistica_id`),
-  INDEX `idx_rep_estado`  (`estado_reporte_id`),
-  CONSTRAINT `fk_rep_tipo` FOREIGN KEY (`tipo_reporte_id`) REFERENCES `tipo_reporte` (`id`),
+  INDEX `idx_rep_estado`  (`estado_ticket_id`),
+  CONSTRAINT `fk_rep_tipo` FOREIGN KEY (`tipo_ticket_id`) REFERENCES `tipo_ticket` (`id`),
   CONSTRAINT `fk_rep_obs` FOREIGN KEY (`observador`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `fk_rep_proj` FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`id`),
   CONSTRAINT `fk_rep_log` FOREIGN KEY (`logistica_id`) REFERENCES `logisticas` (`id`),
-  CONSTRAINT `fk_rep_estado` FOREIGN KEY (`estado_reporte_id`) REFERENCES `estados_reporte` (`id`),
+  CONSTRAINT `fk_rep_estado` FOREIGN KEY (`estado_ticket_id`) REFERENCES `estados_ticket` (`id`),
   CONSTRAINT `fk_asig_responsable` FOREIGN KEY (`usuario_asignado_id`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -302,15 +304,15 @@ CREATE TABLE IF NOT EXISTS `reportes` (
 CREATE TABLE IF NOT EXISTS `comentarios` (
   `id`             INT(11)      NOT NULL AUTO_INCREMENT,
   `usuario_id`     INT(11)      NOT NULL,
-  `reporte_id`     INT(11)      NOT NULL,
+  `ticket_id`     INT(11)      NOT NULL,
   `fecha_creacion` TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `contenido`      VARCHAR(255) NOT NULL,
   `eliminado`      TINYINT(1)   NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_com_usuario` (`usuario_id`),
-  INDEX `idx_com_reporte` (`reporte_id`),
+  INDEX `idx_com_ticket` (`ticket_id`),
   CONSTRAINT `fk_com_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_com_reporte` FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `fk_com_ticket` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -319,16 +321,16 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `historial_asignaciones` (
   `id`               INT(11)   NOT NULL AUTO_INCREMENT,
-  `reporte_id`    INT(11)   NOT NULL,
+  `ticket_id`    INT(11)   NOT NULL,
   `fecha_cambio`     DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `usuario_anterior_id` INT(11)   NULL,
   `usuario_nuevo_id`    INT(11)   NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `idx_ha_asig` (`reporte_id`),
+  INDEX `idx_ha_asig` (`ticket_id`),
   INDEX `idx_ha_uant`(`usuario_anterior_id`),
   INDEX `idx_ha_unew`(`usuario_nuevo_id`),
   CONSTRAINT `fk_ha_asig`
-    FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`),
+    FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`),
   CONSTRAINT `fk_ha_uant`
     FOREIGN KEY (`usuario_anterior_id`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `fk_ha_unew`
@@ -418,23 +420,23 @@ CREATE TABLE IF NOT EXISTS `historial_plan_logistica` (
     FOREIGN KEY (`plan_nuevo_id`) REFERENCES `plan` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- historial_estados_reporte
-CREATE TABLE IF NOT EXISTS `historial_estados_reporte` (
+-- historial_estados_ticket
+CREATE TABLE IF NOT EXISTS `historial_estados_ticket` (
   `id`                         INT(11)     NOT NULL AUTO_INCREMENT,
-  `reporte_id`                 INT(11)     NOT NULL,
+  `ticket_id`                 INT(11)     NOT NULL,
   `fecha_cambio`               DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `estado_reporte_anterior_id` INT(11)     NULL,
-  `estado_reporte_nuevo_id`    INT(11)     NOT NULL,
+  `estado_ticket_anterior_id` INT(11)     NULL,
+  `estado_ticket_nuevo_id`    INT(11)     NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `idx_herp_rep`           (`reporte_id`),
-  INDEX `idx_herp_eant`          (`estado_reporte_anterior_id`),
-  INDEX `idx_herp_enew`          (`estado_reporte_nuevo_id`),
+  INDEX `idx_herp_rep`           (`ticket_id`),
+  INDEX `idx_herp_eant`          (`estado_ticket_anterior_id`),
+  INDEX `idx_herp_enew`          (`estado_ticket_nuevo_id`),
   CONSTRAINT `fk_herp_rep`
-    FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`),
+    FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`),
   CONSTRAINT `fk_herp_eant`
-    FOREIGN KEY (`estado_reporte_anterior_id`) REFERENCES `estados_reporte` (`id`),
+    FOREIGN KEY (`estado_ticket_anterior_id`) REFERENCES `estados_ticket` (`id`),
   CONSTRAINT `fk_herp_enew`
-    FOREIGN KEY (`estado_reporte_nuevo_id`) REFERENCES `estados_reporte` (`id`)
+    FOREIGN KEY (`estado_ticket_nuevo_id`) REFERENCES `estados_ticket` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -674,10 +676,10 @@ BEGIN
     ('user',          'C093FF', 0),
     ('normal',      '7B2CEB', 0);
 END$$
-DROP PROCEDURE IF EXISTS poblar_estados_reporte$$
-CREATE PROCEDURE poblar_estados_reporte()
+DROP PROCEDURE IF EXISTS poblar_estados_ticket$$
+CREATE PROCEDURE poblar_estados_ticket()
 BEGIN
-  INSERT INTO estados_reporte (nombre, color, eliminado) VALUES
+  INSERT INTO estados_ticket (nombre, color, eliminado) VALUES
     ('pendiente',  'E4D1FF',      0),
     ('en curso',   'C093FF',      0),
     ('realizado',  '7B2CEB',      0);
@@ -3391,32 +3393,32 @@ BEGIN
   END IF;
 END$$
 
--- TRIGGER ESTADOS REPORTES
--- 1) Al insertar un nuevo reporte, registra el estado inicial (por defecto 1)
-CREATE TRIGGER `trg_reportes_estado_ai`
-AFTER INSERT ON `lightdatito`.`reportes`
+-- TRIGGER ESTADOS ticketS
+-- 1) Al insertar un nuevo ticket, registra el estado inicial (por defecto 1)
+CREATE TRIGGER `trg_tickets_estado_ai`
+AFTER INSERT ON `lightdatito`.`tickets`
 FOR EACH ROW
 BEGIN
-  INSERT INTO `lightdatito`.`historial_estados_reporte`
-    (`reporte_id`, `estado_reporte_anterior_id`, `estado_reporte_nuevo_id`,`fecha_cambio`)
+  INSERT INTO `lightdatito`.`historial_estados_ticket`
+    (`ticket_id`, `estado_ticket_anterior_id`, `estado_ticket_nuevo_id`,`fecha_cambio`)
   VALUES
     (NEW.id,
      NULL,                 -- no había estado anterior
-     NEW.estado_reporte_id, now());  -- que por defecto será 1
+     NEW.estado_ticket_id, now());  -- que por defecto será 1
 END$$
 
 
-CREATE TRIGGER `trg_reportes_estado_au`
-AFTER UPDATE ON `lightdatito`.`reportes`
+CREATE TRIGGER `trg_tickets_estado_au`
+AFTER UPDATE ON `lightdatito`.`tickets`
 FOR EACH ROW
 BEGIN
-  IF OLD.estado_reporte_id <> NEW.estado_reporte_id THEN
-    INSERT INTO `lightdatito`.`historial_estados_reporte`
-      (`reporte_id`, `estado_reporte_anterior_id`, `estado_reporte_nuevo_id`,`fecha_cambio`)
+  IF OLD.estado_ticket_id <> NEW.estado_ticket_id THEN
+    INSERT INTO `lightdatito`.`historial_estados_ticket`
+      (`ticket_id`, `estado_ticket_anterior_id`, `estado_ticket_nuevo_id`,`fecha_cambio`)
     VALUES
       (NEW.id,
-       OLD.estado_reporte_id,
-       NEW.estado_reporte_id, now());
+       OLD.estado_ticket_id,
+       NEW.estado_ticket_id, now());
   END IF;
 END$$
 
@@ -3450,11 +3452,11 @@ END$$
 
 -- TRIGGER PARA HISTORIAL ASIGNACIONES
 CREATE TRIGGER `trg_logisticas_asignaciones_ai`
-AFTER INSERT ON `lightdatito`.`reportes`
+AFTER INSERT ON `lightdatito`.`tickets`
 FOR EACH ROW
 BEGIN
   INSERT INTO `lightdatito`.`historial_asignaciones`
-    (`reporte_id`, `usuario_anterior_id`, `usuario_nuevo_id`,`fecha_cambio`)
+    (`ticket_id`, `usuario_anterior_id`, `usuario_nuevo_id`,`fecha_cambio`)
   VALUES
     (NEW.id,
      NULL,
@@ -3463,12 +3465,12 @@ END$$
 
 
 CREATE TRIGGER `trg_logisticas_asignaciones_au`
-AFTER UPDATE ON `lightdatito`.`reportes`
+AFTER UPDATE ON `lightdatito`.`tickets`
 FOR EACH ROW
 BEGIN
   IF OLD.usuario_asignado_id <> NEW.usuario_asignado_id THEN
     INSERT INTO `lightdatito`.`historial_asignaciones`
-      (`reporte_id`,`usuario_anterior_id`, `usuario_nuevo_id`,`fecha_cambio`)
+      (`ticket_id`,`usuario_anterior_id`, `usuario_nuevo_id`,`fecha_cambio`)
     VALUES
       (NEW.id, OLD.usuario_asignado_id, NEW.usuario_asignado_id, now());
   END IF;
@@ -3505,7 +3507,7 @@ TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `historial_estados_logistica`;
   TRUNCATE TABLE `historial_nombre_logistica`;
   TRUNCATE TABLE `historial_plan_logistica`;
-  TRUNCATE TABLE `historial_estados_reporte`;
+  TRUNCATE TABLE `historial_estados_ticket`;
   TRUNCATE TABLE `historial_particularidades`;
 
   TRUNCATE TABLE `logisticas_observaciones`;
@@ -3519,14 +3521,14 @@ TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `menu_plan`;
   TRUNCATE TABLE `menu`;
 
-  TRUNCATE TABLE `reportes`;
-  TRUNCATE TABLE `estados_reporte`;
+  TRUNCATE TABLE `tickets`;
+  TRUNCATE TABLE `estados_ticket`;
   TRUNCATE TABLE `logisticas`;
 
   TRUNCATE TABLE `plan`;
   TRUNCATE TABLE `paises`;
   TRUNCATE TABLE `estados_logistica`;
-  TRUNCATE TABLE `tipo_reporte`;
+  TRUNCATE TABLE `tipo_ticket`;
   TRUNCATE TABLE `proyectos`;
 
   TRUNCATE TABLE `puestos_usuario`;
