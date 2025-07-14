@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Logistica from '../../models/logistica.js';
+
 
 /**
  * Soft-delete an logistica by ID (mark as eliminado).
