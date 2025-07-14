@@ -1,4 +1,4 @@
-import executeQuery from '../../../src/db/executeQuery.js';
+import { executeQuery } from '../../../db.js';
 
 export async function getAllMenuModulo() {
     // Devuelve todos los módulos activos (no eliminados)

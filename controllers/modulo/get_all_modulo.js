@@ -6,7 +6,7 @@ import { executeQuery } from '../../db.js';
  * Obtiene todos los módulos activos
  * @returns {Promise<Modulo[]>}
  */
-export async function getAllModulo() {
+export async function getAllModulos() {
     try {
         const rows = await executeQuery(
             'SELECT * FROM modulos WHERE eliminado = 0',

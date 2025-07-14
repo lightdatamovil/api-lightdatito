@@ -8,8 +8,78 @@ import { updatePlan } from '../controllers/planes/edit_plan.js';
 import { deletePlan } from '../controllers/planes/delete_plan.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
+import { getMenusByPlan } from '../controllers/planes/menu_plan/get_menus_by_plan.js';
+import { addPlanMenu } from '../controllers/planes/menu_plan/add_plan_menu.js';
+import { deletePlanMenu } from '../controllers/planes/menu_plan/delete_plan_menu.js';
 
 const router = Router();
+
+
+
+/**
+ * LISTAR todos los menús de un plan
+ */
+router.get('/:id/menus', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id'])) return;
+    try {
+        const menus = await getMenusByPlan(+req.params.id);
+        res
+            .status(200)
+            .json({ body: menus, message: 'Menús obtenidos correctamente' });
+        logGreen(`GET /api/planes/${req.params.id}/menus: éxito`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `GET /api/planes/:id/menus ejecutado en ${performance.now() - start} ms`
+        );
+    }
+});
+
+/**
+ * ASIGNAR un menú a un plan
+ */
+router.post('/:id/menus', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id'], ['menuId'])) return;
+    try {
+        const newRel = await addPlanMenu(+req.params.id, req.body.menuId);
+        res
+            .status(201)
+            .json({ body: newRel, message: 'Menú asignado al plan correctamente' });
+        logGreen(`POST /api/planes/${req.params.id}/menus: asignado`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `POST /api/planes/:id/menus ejecutado en ${performance.now() - start} ms`
+        );
+    }
+});
+
+/**
+ * ELIMINAR un menú de un plan (soft-delete)
+ */
+router.delete('/:id/menus/:menuId', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id', 'menuId'], [])) return;
+    try {
+        await deletePlanMenu(+req.params.id, +req.params.menuId);
+        res
+            .status(200)
+            .json({ message: 'Asignación de menú eliminada correctamente' });
+        logGreen(
+            `DELETE /api/planes/${req.params.id}/menus/${req.params.menuId}: borrado suave`
+        );
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `DELETE /api/planes/:id/menus/:menuId ejecutado en ${performance.now() - start} ms`
+        );
+    }
+});
 
 // Crear un nuevo plan
 router.post('/', async (req, res) => {

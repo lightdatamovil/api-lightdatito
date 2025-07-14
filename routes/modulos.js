@@ -4,16 +4,100 @@ import { performance } from 'perf_hooks';
 import { logGreen, logPurple } from '../src/funciones/logsCustom.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { handleError } from '../src/funciones/handle_error.js';
-
-import {
-    createModulo,
-    getAllModulo,
-    getModuloById,
-    editModulo,
-    deleteModulo
-} from '../controllers/modulo/index.js';
+import { deleteModuloHerramienta } from '../controllers/modulo/modulo_herramienta/delete_modulo_herramienta.js';
+import { addModuloHerramienta } from '../controllers/modulo/modulo_herramienta/add_modulo_herramienta.js';
+import { getHerramientasByModulo } from '../controllers/modulo/modulo_herramienta/get-herramientas_by_modulo.js';
+import { getAllModuloHerramienta } from '../controllers/modulo/modulo_herramienta/get_all_modulo_herramienta.js';
+import { getAllModulos } from '../controllers/modulo/get_all_modulo.js';
+import { deleteModulo } from '../controllers/modulo/delete_modulo.js';
+import { editModulo } from '../controllers/modulo/edit_modulo.js';
+import { getModuloById } from '../controllers/modulo/get_modulo_by_id.js';
+import { createModulo } from '../controllers/modulo/crear_modulo.js';
 
 const router = Router();
+
+/**
+ * LISTAR todas las asignaciones módulo→herramienta
+ */
+router.get('/modulo-herramienta', async (req, res) => {
+    const start = performance.now();
+    try {
+        const rows = await getAllModuloHerramienta();
+        res.status(200).json({ body: rows, message: 'Asignaciones obtenidas' });
+        logGreen('GET /api/modulos/modulo-herramienta: listado completo');
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `GET /api/modulos/modulo-herramienta ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+/**
+ * LISTAR herramientas de un módulo
+ */
+router.get('/:id/herramientas', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id'])) return;
+    try {
+        const list = await getHerramientasByModulo(+req.params.id);
+        res.status(200).json({ body: list, message: 'Herramientas obtenidas' });
+        logGreen(`GET /api/modulos/${req.params.id}/herramientas: éxito`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `GET /api/modulos/:id/herramientas ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+/**
+ * ASIGNAR herramienta a un módulo
+ */
+router.post('/:id/herramientas', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id'], ['herramientaId'])) return;
+    try {
+        const rel = await addModuloHerramienta(+req.params.id, req.body.herramientaId);
+        res
+            .status(201)
+            .json({ body: rel, message: 'Herramienta asignada correctamente' });
+        logGreen(`POST /api/modulos/${req.params.id}/herramientas: asignado`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `POST /api/modulos/:id/herramientas ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
+
+/**
+ * ELIMINAR asignación (soft-delete)
+ */
+router.delete('/:id/herramientas/:herramientaId', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, ['id', 'herramientaId'], [])) return;
+    try {
+        await deleteModuloHerramienta(+req.params.id, +req.params.herramientaId);
+        res.status(200).json({ message: 'Asignación eliminada correctamente' });
+        logGreen(
+            `DELETE /api/modulos/${req.params.id}/herramientas/${req.params.herramientaId}: borrado suave`
+        );
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(
+            `DELETE /api/modulos/:id/herramientas/:herramientaId ejecutado en ${performance.now() - start
+            } ms`
+        );
+    }
+});
 
 // Crear módulo
 router.post('/', async (req, res) => {
@@ -35,7 +119,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     const start = performance.now();
     try {
-        const list = await getAllModulo();
+        const list = await getAllModulos();
         res.status(200).json({ body: list, message: 'Listado de módulos' });
         logGreen('GET /api/modulo listado');
     } catch (err) {

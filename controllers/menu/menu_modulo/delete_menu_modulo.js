@@ -1,4 +1,4 @@
-import executeQuery from '../../../src/db/executeQuery.js';
+import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
 
 export async function deleteMenuModulo(menuId, moduloId) {
