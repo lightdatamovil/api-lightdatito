@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Estadoticket from '../../models/estado_ticket.js';
+import Estadoticket from '../../models/estado_reporte.js';
 
 export async function updateEstadoticket(id, nombre, color) {
     try {

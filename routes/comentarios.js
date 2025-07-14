@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { performance } from "perf_hooks";
 import { logPurple, logGreen } from "../src/funciones/logsCustom.js";
-import { createComentario } from "../controllers/comentarios/create_comentario.js";
-import { getAllComentarios } from "../controllers/comentarios/get_all_comentarios.js";
-import { getComentarioById } from "../controllers/comentarios/get_comentario_by_id.js";
-import { updateComentario } from "../controllers/comentarios/edit_comentario.js";
-import { deleteComentario } from "../controllers/comentarios/delete_comentario.js";
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
-import { getAllComentariosForReport } from "../controllers/comentarios/get_all_comentarios_for_ticket.js";
+import { createComentario } from "../controllers/comentarios/create_comentario.js";
+import { updateComentario } from "../controllers/comentarios/edit_comentario.js";
+import { getComentarioById } from "../controllers/comentarios/get_comentario_by_id.js";
+import { getAllComentarios } from "../controllers/comentarios/get_all_comentarios.js";
+import { deleteComentario } from "../controllers/comentarios/delete_comentario.js";
+import { getAllComentariosForTicket } from "../controllers/comentarios/get_all_comentarios_for_ticket.js";
 
 const router = Router();
 
@@ -56,7 +56,7 @@ router.get("/ticket_id/:id", async (req, res) => {
   const start = performance.now();
 
   try {
-    const list = await getAllComentariosForReport(req.params.id);
+    const list = await getAllComentariosForTicket(req.params.id);
     if (list.length === 0) {
       res.status(404).json({ message: "No se encontraron comentarios" });
       logGreen(`GET /api/comentarios/ticket_id/${req.params.id}: sin comentarios`);

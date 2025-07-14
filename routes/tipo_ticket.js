@@ -2,13 +2,13 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
-import { createTipoticket } from '../controllers/tipo_ticket/create_tipo_ticket.js';
-import { getTipoticketById } from '../controllers/tipo_ticket/get_tipo_ticket_by_id.js';
-import { getAllTipoticket } from '../controllers/tipo_ticket/get_all_tipos_tickets.js';
-import { updateTipoticket } from '../controllers/tipo_ticket/edit_tipo_ticket.js';
-import { deleteTipoticket } from '../controllers/tipo_ticket/delete_tipo_ticket.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { getTipoticketById } from '../controllers/tipo_ticket.js/get_tipo_ticket_by_id.js';
+import { getAllTipoticket } from '../controllers/tipo_ticket.js/get_all_tipos_tickects.js';
+import { updateTipoticket } from '../controllers/tipo_ticket.js/edit_tipo_ticket.js';
+import { deleteTipoticket } from '../controllers/tipo_ticket.js/delete_tipo_ticket.js';
+import { createTipoTicket } from '../controllers/tipo_ticket.js/create_tipo_ticket.js';
 
 const router = Router();
 
@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const { nombre, color } = req.body;
-        const newItem = await createTipoticket(nombre, color);
+        const newItem = await createTipoTicket(nombre, color);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/tipo-ticket: éxito al crear tipo de ticket con ID ${newItem.id}`);
     } catch (err) {

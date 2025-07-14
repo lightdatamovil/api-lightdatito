@@ -7,7 +7,7 @@ export async function updateComentario(id, { comentario }) {
         // Verificar existencia
         const [existing] = await executeQuery(
             `SELECT id FROM comentarios WHERE id = ? AND eliminado = 0`,
-            [id],true
+            [id], true
         );
         if (!existing) {
             throw new CustomException({
@@ -21,7 +21,7 @@ export async function updateComentario(id, { comentario }) {
             `UPDATE comentarios
          SET contenido = ?
        WHERE id = ?`,
-            [comentario, id],true
+            [comentario, id], true
         );
 
         // Recuperar actualizado

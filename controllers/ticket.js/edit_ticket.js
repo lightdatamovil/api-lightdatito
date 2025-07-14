@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import { getTipoticketById } from '../tipo_ticket/get_tipo_ticket_by_id.js';
+import { getTipoticketById } from '../tipo_ticket.js/get_tipo_ticket_by_id.js';
+
 
 
 export async function updateticket(id, data) {

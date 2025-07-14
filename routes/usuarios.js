@@ -25,8 +25,8 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], Campos.usuarios)) return;
     try {
-        const { nombre, email, password, urlImagen } = req.body;
-        const newUser = await createUsuario(nombre, email, password, urlImagen);
+        const { nombre, email, password, url_imagen } = req.body;
+        const newUser = await createUsuario(nombre, email, password, url_imagen);
         res.status(201).json({ body: newUser, message: 'Creado correctamente' });
         logGreen(`POST /api/usuarios: éxito al crear usuario con ID ${newUser.id}`);
     } catch (err) {

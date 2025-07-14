@@ -3,7 +3,7 @@ import CustomException from "../../models/custom_exception.js";
 import Comentario from "../../models/comentario.js";
 import { logCyan } from "../../src/funciones/logsCustom.js";
 
-export async function getAllComentariosForReport(ticket_id) {
+export async function getAllComentariosForTicket(ticket_id) {
     try {
         const rows = await executeQuery(
             `SELECT * FROM comentarios

@@ -2,7 +2,7 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Tipoticket from '../../models/tipo_ticket.js';
 
-export async function createTipoticket(nombre, color) {
+export async function createTipoTicket(nombre, color) {
     try {
         const clean_name = nombre.trim().toLowerCase();
         //verificar si ya existe tipo_ticket

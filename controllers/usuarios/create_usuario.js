@@ -9,7 +9,7 @@ import { hash256 } from '../../src/funciones/hash.js';
  * @param {Object} data - nombre, url_imagen, tipo_usuario_id, email, etc.
  * @returns {Usuario}
  */
-export async function createUsuario(nombre, email, password, urlImagen, tipoPuestoId) {
+export async function createUsuario(nombre, email, password, url_imagen) {
     try {
 
         const [{ count }] = await executeQuery(
@@ -26,7 +26,7 @@ export async function createUsuario(nombre, email, password, urlImagen, tipoPues
 
         const contra_hash = hash256(password);
         const query = `INSERT INTO usuarios (nombre, email, password, url_imagen) VALUES (?,?,?,?)`;
-        const result = await executeQuery(query, [nombre, email.toLowerCase(), contra_hash, urlImagen, tipoPuestoId], true);
+        const result = await executeQuery(query, [nombre, email.toLowerCase(), contra_hash, url_imagen], true);
         //select de la fila recien creada
         const idNuevo = result.insertId;
         const rows = await executeQuery(`SELECT * FROM usuarios WHERE id = ?`, [idNuevo], true, 0);
@@ -35,11 +35,11 @@ export async function createUsuario(nombre, email, password, urlImagen, tipoPues
         }
 
 
-        //insertar puesto en puesto_usuario
-        await executeQuery(
-            `INSERT INTO puestos_usuario (usuario_id, puesto_id) VALUES (?, ?)`,
-            [idNuevo, tipoPuestoId], true
-        );
+        // //insertar puesto en puesto_usuario
+        // await executeQuery(
+        //     `INSERT INTO puestos_usuario (usuario_id, puesto_id) VALUES (?, ?)`,
+        //     [idNuevo, tipoPuestoId], true
+        // );
 
         return Usuario.fromJson(rows[0]);
     } catch (error) {

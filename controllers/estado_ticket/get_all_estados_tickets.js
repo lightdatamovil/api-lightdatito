@@ -1,5 +1,5 @@
 import { executeQuery } from '../../db.js';
-import Estadoticket from '../../models/estado_ticket.js';
+import Estadoticket from '../../models/estado_reporte.js';
 import CustomException from '../../models/custom_exception.js';
 
 export async function getAllEstadosticket() {

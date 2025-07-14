@@ -2,13 +2,13 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
-import { createticket } from '../controllers/ticket/create_ticket.js';
-import { getAlltickets } from '../controllers/ticket/get_all_tickets.js';
-import { getticketById } from '../controllers/ticket/get_ticket_by_id.js';
-import { updateticket } from '../controllers/ticket/edit_ticket.js';
-import { deleteticket } from '../controllers/ticket/delete_ticket.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { createticket } from '../controllers/ticket.js/create_ticket.js';
+import { getAlltickets } from '../controllers/ticket.js/get_all_tickets.js';
+import { getticketById } from '../controllers/ticket.js/get_ticket_by_id.js';
+import { updateticket } from '../controllers/ticket.js/edit_ticket.js';
+import { deleteticket } from '../controllers/ticket.js/delete_ticket.js';
 
 
 const router = Router();
