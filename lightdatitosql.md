@@ -671,7 +671,7 @@ END$$
 DROP PROCEDURE IF EXISTS poblar_planes$$
 CREATE PROCEDURE poblar_tipo_usuario()
 BEGIN
-  INSERT INTO plan (nombre, color, eliminado) VALUES
+  INSERT INTO planes (nombre, color, eliminado) VALUES
     ('admin',        'E4D1FF', 0),
     ('user',          'C093FF', 0),
     ('normal',      '7B2CEB', 0);
