@@ -2,6 +2,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Modulo from '../../models/modulo.js';
+import { Status } from '../../models/status.js';
 
 /**
  * Crea un nuevo módulo y devuelve el objeto Modulo instanciado.
@@ -10,31 +11,18 @@ import Modulo from '../../models/modulo.js';
  * @returns {Promise<Modulo>}
  */
 export async function createModulo(nombre, menu_id) {
-    if (!nombre || typeof nombre !== 'string') {
-        throw new CustomException({
-            title: 'Datos inválidos',
-            message: 'El campo "nombre" es obligatorio y debe ser texto',
-            status: Status.badRequest
-        });
-    }
-    if (typeof menu_id !== 'number') {
-        throw new CustomException({
-            title: 'Datos inválidos',
-            message: 'El campo "menu_id" es obligatorio y debe ser numérico',
-            status: Status.badRequest
-        });
-    }
+
 
     // Verificar existencia del menú padre
     const [menu] = await executeQuery(
-        'SELECT id FROM menus WHERE id = ?',
+        'SELECT id FROM menus WHERE id = ? and eliminado = 0',
         [menu_id], true, 0
     );
     if (!menu) {
         throw new CustomException({
             title: 'Menu inválido',
-            message: `No existe un menú con id ${menu_id}`,
-            status: Status.badRequest
+            message: `No existe un menú con id: ${menu_id}`,
+            status: Status.notFound
         });
     }
 
@@ -51,7 +39,7 @@ export async function createModulo(nombre, menu_id) {
         throw new CustomException({
             title: 'Error creando módulo',
             message: 'No se obtuvo el ID del módulo insertado',
-            status: 500
+            status: Status.internalServerError
         });
     }
 

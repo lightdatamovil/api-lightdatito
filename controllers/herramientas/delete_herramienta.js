@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 
 export async function deleteHerramienta(id) {
     try {
@@ -12,7 +13,7 @@ export async function deleteHerramienta(id) {
             throw new CustomException({
                 title: 'Herramienta no encontrado',
                 message: `No existe una herramienta con id=${id}`,
-                status: 404
+                status: Status.conflict
             });
         }
 

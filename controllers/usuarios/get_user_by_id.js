@@ -19,7 +19,7 @@ export async function getUsuarioById(id) {
                 status: Status.conflict
             });
         }
-        return Usuario.fromJson(rows);
+        return Usuario.fromJson(rows[0]);
     } catch (error) {
         if (error instanceof CustomException) throw error;
         throw new CustomException(

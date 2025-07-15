@@ -1,19 +1,18 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Herramienta from '../../models/herramienta.js';
+import { Status } from '../../models/status.js';
 
 export async function getHerramientaById(id) {
     try {
-        const rows = await executeQuery(
-            'SELECT * FROM herramientas WHERE id = ?',
-            [id]
+        const [rows] = await executeQuery('SELECT * FROM herramientas WHERE id = ? AND eliminado = 0', [id], true
         );
 
-        if (rows.length === 0) {
+        if (!rows || rows.length === 0) {
             throw new CustomException({
                 title: 'Herramienta no encontrada',
-                message: `No existe un Herramienta con id=${id}`,
-                status: 404
+                message: `No existe un Herramienta con id: ${id}`,
+                status: Status.notFound
             });
         }
 

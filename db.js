@@ -1,51 +1,51 @@
 import dotenv from 'dotenv';
 import mysql2 from 'mysql2';
-import { logRed, logYellow } from './src/funciones/logsCustom.js';
+import { logPurple, logRed, logYellow } from './src/funciones/logsCustom.js';
 
 dotenv.config({ path: process.env.ENV_FILE || '.env' });
 
 const pool = mysql2.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 const poolAplanta = mysql2.createPool({
-    host: process.env.DB_APLANTA_HOST,
-    user: process.env.DB_APLANTA_USER,
-    password: process.env.DB_APLANTA_PASS,
-    database: process.env.DB_APLANTA_NAME,
-    port: process.env.DB_APLANTA_PORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+  host: process.env.DB_APLANTA_HOST,
+  user: process.env.DB_APLANTA_USER,
+  password: process.env.DB_APLANTA_PASS,
+  database: process.env.DB_APLANTA_NAME,
+  port: process.env.DB_APLANTA_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 const poolColecta = mysql2.createPool({
-    host: process.env.DB_COLECTA_HOST,
-    user: process.env.DB_COLECTA_USER,
-    password: process.env.DB_COLECTA_PASS,
-    database: process.env.DB_COLECTA_NAME,
-    port: process.env.DB_COLECTA_PORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+  host: process.env.DB_COLECTA_HOST,
+  user: process.env.DB_COLECTA_USER,
+  password: process.env.DB_COLECTA_PASS,
+  database: process.env.DB_COLECTA_NAME,
+  port: process.env.DB_COLECTA_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 const poolAsignaciones = mysql2.createPool({
-    host: process.env.DB_ASIGNACIONES_HOST,
-    user: process.env.DB_ASIGNACIONES_USER,
-    password: process.env.DB_ASIGNACIONES_PASS,
-    database: process.env.DB_ASIGNACIONES_NAME,
-    port: process.env.DB_ASIGNACIONES_PORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+  host: process.env.DB_ASIGNACIONES_HOST,
+  user: process.env.DB_ASIGNACIONES_USER,
+  password: process.env.DB_ASIGNACIONES_PASS,
+  database: process.env.DB_ASIGNACIONES_NAME,
+  port: process.env.DB_ASIGNACIONES_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 /**
  * Ejecuta una query usando un pool específico (o el por defecto).
@@ -61,6 +61,7 @@ export async function executeQuery(
   log = false,
   whichPool = 0
 ) {
+  const startTime = performance.now();
   // 1) Elige el pool
   const poolId = Number(whichPool);
   let executor;
@@ -82,18 +83,25 @@ export async function executeQuery(
       executor = pool;
   }
 
-    const formattedQuery = mysql2.format(query, values);
+  const formattedQuery = mysql2.format(query, values);
 
-    return new Promise((resolve, reject) => {
-        if (log) logYellow(`Ejecutando query: ${formattedQuery}`);
+  const result = new Promise((resolve, reject) => {
+    if (log) logYellow(`Ejecutando query: ${formattedQuery}`);
 
-        executor.query(formattedQuery, (err, results) => {
-            if (err) {
-                if (log) logRed(`Error en executeQuery: ${err.message} - ${formattedQuery}`);
-                return reject(err);
-            }
-            if (log) logYellow(`Query ejecutada con éxito: ${formattedQuery} - Resultados: ${JSON.stringify(results)}`);
-            resolve(results);
-        });
+    executor.query(formattedQuery, (err, results) => {
+      if (err) {
+        if (log) {
+          logRed(`Error en executeQuery: ${err.message} - ${formattedQuery}`);
+          logPurple(`Query ejecutada en ${performance.now() - startTime} ms`);
+        }
+        return reject(err);
+      }
+      if (log) {
+        logYellow(`Query ejecutada con éxito: ${formattedQuery} - Resultados: ${JSON.stringify(results)}`);
+        logPurple(`Query ejecutada en ${performance.now() - startTime} ms`);
+      }
+      resolve(results);
     });
+  });
+  return result;
 }

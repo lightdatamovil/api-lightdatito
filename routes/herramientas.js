@@ -1,23 +1,22 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { createHerramienta } from '../controllers/herramientas/create_herramienta.js';
 import { getAllHerramientas } from '../controllers/herramientas/get_all_herramientas.js';
 import { getHerramientaById } from '../controllers/herramientas/get_herramienta_by_id.js';
-import { updateHerramienta } from '../controllers/herramientas/edit_herramienta.js';
+import { updateHerramienta } from '../controllers/herramientas/update_herramienta.js';
 import { deleteHerramienta } from '../controllers/herramientas/delete_herramienta.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { Status } from '../models/status.js';
 
 const router = Router();
+const requiredBodyFields = ['nombre', 'modulo_prncipal'];
 
 // Crear nueva herramienta
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = ['nombre'];
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
-
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const { nombre } = req.body;
         const newItem = await createHerramienta(nombre);
@@ -47,7 +46,7 @@ router.get('/', async (req, res) => {
 // Obtener un herramienta por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         const item = await getHerramientaById(req.params.id);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
@@ -62,7 +61,7 @@ router.get('/:id', async (req, res) => {
 // Actualizar una herramienta
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
         const updated = await updateHerramienta(req.params.id, req.body);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });

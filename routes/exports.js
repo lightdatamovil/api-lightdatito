@@ -13,6 +13,9 @@ import ticketsRouter from "./tickets.js";
 import comentariosRouter from "./comentarios.js";
 import graficosRouter from "./graficos.js";
 import paisesRouter from "./paises.js";
+import herramientasRouter from "./herramientas.js";
+import modulosRouter from "./modulos.js";
+import menusRouter from "./menus.js";
 
 const router = express.Router();
 
@@ -29,5 +32,9 @@ router.use("/tickets", ticketsRouter);
 router.use("/comentarios", comentariosRouter);
 router.use("/paises", paisesRouter);
 router.use("/graficos", graficosRouter);
+router.use("/herramientas", herramientasRouter);
+router.use("/modulos", modulosRouter);
+router.use("/menus", menusRouter);
+
 
 export default router;

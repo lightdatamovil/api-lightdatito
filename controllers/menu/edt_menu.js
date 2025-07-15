@@ -2,6 +2,7 @@
 import CustomException from '../../models/custom_exception.js';
 import { getMenuById } from './get_menu_by_id.js';
 import { executeQuery } from '../../db.js';
+import { Status } from '../../models/status.js';
 
 /**
  * Actualiza un menú existente
@@ -9,22 +10,22 @@ import { executeQuery } from '../../db.js';
  * @param {Object} data - { nombre?: string }
  * @returns {Promise<Menu>}
  */
+
+
+//REVISAR ACA
 export async function editMenu(id, data) {
-    const fields = Object.keys(data);
-    if (!fields.length) {
-        throw new CustomException({
-            title: 'Sin datos',
-            message: 'No se proporcionaron campos para actualizar',
-            stats: 500
-        });
-    }
-    const setClause = fields.map(f => `${f} = ?`).join(', ');
-    const values = fields.map(f => data[f]);
     try {
-        await executeQuery(
-            `UPDATE menus SET ${setClause} WHERE id = ?`,
-            [...values, id]
-        );
+        const row = await executeQuery('SELECT id FROM menus WHERE id = ? AND eliminado = 0', [id]);
+        if (!row.length) {
+            throw new CustomException({
+                title: 'Menú no encontrado',
+                message: `No existe un menú con id: "${id}"`,
+                status: Status.conflict
+            });
+        }
+        const fields = Object.keys(data);
+        const setClause = fields.map(f => `${f} = ?`).join(', ');
+        await executeQuery(`UPDATE menus SET ${setClause} WHERE id = ?`, [...Object.values(data), id]);
         return await getMenuById(id);
     } catch (err) {
         throw new CustomException({

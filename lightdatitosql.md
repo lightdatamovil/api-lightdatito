@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `modulos` (
   `fecha_eliminado` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `idx_mod_menu` (`menu_id`),
-  CONSTRAINT `fk_mod_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_mod_menu` FOREIGN KEY (`menu_id`) REFERENCES `menus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------

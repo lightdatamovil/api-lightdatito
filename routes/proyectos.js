@@ -79,7 +79,7 @@ router.put('/:id', async (req, res) => {
 // Eliminar un proyecto
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
 
     try {
         await deleteProyecto(req.params.id);

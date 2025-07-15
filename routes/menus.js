@@ -2,8 +2,7 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logGreen, logPurple } from '../src/funciones/logsCustom.js';
-import { createMenu, getAllMenu, getMenuById, editMenu } from '../controllers/menu';
-import { verificarTodo } from '../src/funciones/verificarAllt.js';
+import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { deleteMenu } from '../controllers/menu/delete_menu.js';
 import { getAllMenuModulo } from '../controllers/menu/menu_modulo/get_all_menu_modulo.js';
@@ -11,11 +10,16 @@ import { getModulosByMenu } from '../controllers/menu/menu_modulo/get_modulos_by
 import { addMenuModulo } from '../controllers/menu/menu_modulo/add_menu_modulo.js';
 import { deleteMenuModulo } from '../controllers/menu/menu_modulo/delete_menu_modulo.js';
 import { Status } from '../models/status.js';
+import { createMenu } from '../controllers/menu/create_menu.js';
+import { getAllMenu } from '../controllers/menu/get_all_menu.js';
+import { getMenuById } from '../controllers/menu/get_menu_by_id.js';
+import { editMenu } from '../controllers/menu/edt_menu.js';
 
 
 
 const router = Router();
 
+const requiredBodyFields = ['nombre'];
 
 /**
  * LISTAR todas las asignaciones módulo–menú
@@ -102,10 +106,10 @@ router.delete('/:id/modulos/:moduloId', async (req, res) => {
 // POST /api/menu
 router.post('/', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, [], ['nombre'])) return;
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const { nombre } = req.body;
-        const newItem = await createMenu(nombre);
+        const newItem = await createMenu(nombre.toLowerCase().trim());
         res.status(201).json({ body: newItem, message: 'Menú creado' });
         logGreen(`POST /api/menu id=${newItem.id}`);
     } catch (err) {
@@ -147,7 +151,7 @@ router.get('/:id', async (req, res) => {
 // PUT /api/menu/:id
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], [])) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
         const updated = await editMenu(Number(req.params.id), req.body);
         res.status(Status.ok).json({ body: updated, message: 'Menú actualizado' });

@@ -2,6 +2,7 @@
 import CustomException from '../../models/custom_exception.js';
 import Menu from '../../models/menu.js';
 import { executeQuery } from '../../db.js';
+import { Status } from '../../models/status.js';
 
 /**
  * Obtiene un menú por ID
@@ -18,7 +19,7 @@ export async function getMenuById(id) {
             throw new CustomException({
                 title: 'No encontrado',
                 message: `No existe menú con id ${id}`,
-                status: 404
+                status: Status.notFound
             });
         }
         return Menu.fromJson(row);

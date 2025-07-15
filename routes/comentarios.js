@@ -15,7 +15,6 @@ const router = Router();
 
 // Crear comentario
 router.post("/", async (req, res) => {
-  const start = performance.now();
   const requiredBodyFields = ["usuario_id", "ticket_id", "comentario"];
   if (!verificarTodo(req, res, requiredBodyFields)) return;
   try {
@@ -27,27 +26,17 @@ router.post("/", async (req, res) => {
     );
   } catch (err) {
     return handleError(req, res, err);
-  } finally {
-    logPurple(
-      `POST /api/comentarios ejecutado en ${performance.now() - start} ms`
-    );
   }
 });
 
 // Obtener todos los comentarios 
 router.get("/", async (req, res) => {
-  const start = performance.now();
-
   try {
     const list = await getAllComentarios();
     res.status(Status.ok).json({ body: list, message: "Comentarios obtenidos" });
     logGreen("GET /api/comentarios: éxito al listar comentarios");
   } catch (err) {
     return handleError(req, res, err);
-  } finally {
-    logPurple(
-      `GET /api/comentarios ejecutado en ${performance.now() - start} ms`
-    );
   }
 });
 

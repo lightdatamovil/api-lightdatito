@@ -5,7 +5,7 @@ import { Status } from '../../models/status.js';
 
 export async function getAllProyectos() {
     try {
-        const [rows] = await executeQuery('SELECT * FROM proyectos where eliminado = 0', [], true);
+        const rows = await executeQuery('SELECT * FROM proyectos where eliminado = 0', [], true);
         if (!rows || rows.length === 0) {
             throw new CustomException({
                 title: 'No hay proyectos',
@@ -13,7 +13,7 @@ export async function getAllProyectos() {
                 status: Status.noContent
             });
         }
-        return Proyecto.fromJson(rows);
+        return rows.map(r => Proyecto.fromJson(r));
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

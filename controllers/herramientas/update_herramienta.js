@@ -1,6 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import { getHerramientaById } from './getHerramientaById.js';
+import { getHerramientaById } from './get_herramienta_by_id.js';
 
 export async function updateHerramienta(id, data) {
     try {

@@ -3,6 +3,7 @@ import cluster from 'cluster';
 import { logBlue, logPurple, logRed } from './src/funciones/logsCustom.js';
 import cors from 'cors';
 import allRoutes from './routes/exports.js';
+import { Status } from './models/status.js';
 
 
 const numCPUs = 2;
