@@ -15,7 +15,7 @@ export async function updateProyecto(id, data) {
             throw new CustomException({
                 title: 'Sin datos válidos',
                 message: 'No hay campos permitidos para actualizar',
-                status: 400
+                status: Status.badRequest
             });
         }
 

@@ -15,7 +15,7 @@ export async function createTipoTicket(nombre, color) {
             throw new CustomException({
                 title: 'Tipo de tipo_ticket duplicado',
                 message: `Ya existe un tipo_ticket con nombre "${nombre}"`,
-                status: 400
+                status: Status.badRequest
             });
         }
 

@@ -35,7 +35,7 @@ if (cluster.isPrimary) {
         const startTime = performance.now();
         const endTime = performance.now();
         logPurple(`Tiempo de ejecución: ${endTime - startTime} ms`)
-        res.status(200).json({ message: 'API funcionando correctamente' });
+        res.status(Status.ok).json({ message: 'API funcionando correctamente' });
     });
 
     (async () => {

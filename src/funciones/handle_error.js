@@ -1,4 +1,5 @@
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 import { logCyan, logRed } from './logsCustom.js';
 
 
@@ -9,9 +10,9 @@ import { logCyan, logRed } from './logsCustom.js';
  * @param {Error}    err  – la excepción capturada
  */
 export function handleError(req, res, err) {
-    logCyan(`Error en POST /api/uasdasdassuarios: ${err.message}`);
+    logCyan(`Error en ${req.method} ${req.originalUrl}: ${err.message}`);
     if (err instanceof CustomException) {
-        // 400 Bad Request para nuestras CustomException
+        // Status.badRequest Bad Request para nuestras CustomException
         logRed(`Error ${err.status} ${req.method} ${req.originalUrl}:${err.toJsonString()}`);
         return res.status(err.status).json(err.toJSON());
     }
@@ -20,7 +21,7 @@ export function handleError(req, res, err) {
         title: 'Internal Server Error',
         message: err.message,
         stack: err.stack,
-        status: 500
+        status: Status.internalServerError
     });
     logRed(`Error ${fatal.status} ${req.method} ${req.originalUrl}:${fatal.toJsonString()}`);
     return res.status(fatal.status).json(fatal.toJSON());

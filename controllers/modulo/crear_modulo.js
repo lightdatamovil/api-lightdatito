@@ -14,14 +14,14 @@ export async function createModulo(nombre, menu_id) {
         throw new CustomException({
             title: 'Datos inválidos',
             message: 'El campo "nombre" es obligatorio y debe ser texto',
-            status: 400
+            status: Status.badRequest
         });
     }
     if (typeof menu_id !== 'number') {
         throw new CustomException({
             title: 'Datos inválidos',
             message: 'El campo "menu_id" es obligatorio y debe ser numérico',
-            status: 400
+            status: Status.badRequest
         });
     }
 
@@ -34,7 +34,7 @@ export async function createModulo(nombre, menu_id) {
         throw new CustomException({
             title: 'Menu inválido',
             message: `No existe un menú con id ${menu_id}`,
-            status: 400
+            status: Status.badRequest
         });
     }
 

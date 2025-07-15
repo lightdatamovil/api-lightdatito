@@ -9,6 +9,7 @@ import { getAllTipoticket } from '../controllers/tipo_ticket.js/get_all_tipos_ti
 import { updateTipoticket } from '../controllers/tipo_ticket.js/edit_tipo_ticket.js';
 import { deleteTipoticket } from '../controllers/tipo_ticket.js/delete_tipo_ticket.js';
 import { createTipoTicket } from '../controllers/tipo_ticket.js/create_tipo_ticket.js';
+import { Status } from '../models/status.js';
 
 const router = Router();
 
@@ -16,7 +17,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllTipoticket();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/tipo-ticket: éxito al listar tipos de ticket');
     } catch (err) {
         return handleError(req, res, err);
@@ -32,7 +33,7 @@ router.get('/:id', async (req, res) => {
 
     try {
         const item = await getTipoticketById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/tipo-ticket/${req.params.id}: éxito al obtener tipo de ticket`);
     } catch (err) {
         return handleError(req, res, err);
@@ -49,7 +50,7 @@ router.post('/', async (req, res) => {
     try {
         const { nombre, color } = req.body;
         const newItem = await createTipoTicket(nombre, color);
-        res.status(201).json({ body: newItem, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/tipo-ticket: éxito al crear tipo de ticket con ID ${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -65,7 +66,7 @@ router.put('/:id', async (req, res) => {
 
     try {
         const updated = await updateTipoticket(req.params.id, req.body);
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/tipo-ticket/${req.params.id}: éxito al actualizar tipo de ticket`);
     } catch (err) {
         return handleError(req, res, err);
@@ -80,7 +81,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         await deleteTipoticket(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/tipo-ticket/${req.params.id}: éxito al eliminar tipo de ticket`);
     } catch (err) {
         return handleError(req, res, err);

@@ -18,7 +18,7 @@ export async function asignarPuestoAUsuario(usuarioId, tipoPuestoId) {
         throw new CustomException({
             title: 'Usuario inválido',
             message: `No existe un usuario con id ${usuarioId}`,
-            status: 400
+            status: Status.badRequest
         });
     }
 
@@ -32,7 +32,7 @@ export async function asignarPuestoAUsuario(usuarioId, tipoPuestoId) {
         throw new CustomException({
             title: 'Puesto inválido',
             message: `No existe un puesto con id ${tipoPuestoId}`,
-            status: 400
+            status: Status.badRequest
         });
     }
 

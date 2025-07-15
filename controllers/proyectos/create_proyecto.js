@@ -18,7 +18,7 @@ export async function createProyecto(nombre) {
             throw new CustomException({
                 title: 'Proyecto duplicado',
                 message: `Ya existe un proyecto con nombre "${nombre}"`,
-                status: 400
+                status: Status.badRequest
             });
         }
 

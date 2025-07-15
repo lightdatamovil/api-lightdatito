@@ -1,6 +1,5 @@
 import { executeQuery } from '../../../db.js';
-import CustomException from '../../models/custom_exception.js';
-
+import CustomException from '../../../models/custom_exception.js';
 export async function deletePlanMenu(planId, menuId) {
     // 1) Verificar que exista la relación activa
     const [existing] = await executeQuery(

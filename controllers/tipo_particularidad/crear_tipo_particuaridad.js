@@ -17,7 +17,7 @@ export async function createTipoParticularidad({ nombre, descripcion }) {
             throw new CustomException({
                 title: 'Duplicado',
                 message: `Ya existe un tipo de particularidad con nombre '${nombre}'`,
-                status: 400
+                status: Status.badRequest
             });
         }
 
@@ -34,6 +34,7 @@ export async function createTipoParticularidad({ nombre, descripcion }) {
         );
         return row;
     } catch (err) {
+        if (err instanceof CustomException) throw err;
         throw new CustomException({
             title: 'Error creando tipo_particularidad',
             message: err.message,

@@ -20,7 +20,7 @@ export async function createUsuario(nombre, email, password, url_imagen) {
             throw new CustomException({
                 title: 'usuario duplicado',
                 message: `Ya existe un usuario con email ${email}`,
-                status: 400
+                status: Status.badRequest
             });
         }
 
@@ -43,6 +43,8 @@ export async function createUsuario(nombre, email, password, url_imagen) {
 
         return Usuario.fromJson(rows[0]);
     } catch (error) {
+
+        if (error instanceof CustomException) throw error;
         throw new CustomException({
             title: 'Error creating usuario',
             message: error.message,

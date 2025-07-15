@@ -17,7 +17,7 @@ export async function createLogisticaPlan(menuId, planId) {
         throw new CustomException({
             title: 'Menú inválido',
             message: `No existe un menú con id ${menuId}`,
-            status: 400
+            status: Status.badRequest
         });
     }
 
@@ -30,7 +30,7 @@ export async function createLogisticaPlan(menuId, planId) {
         throw new CustomException({
             title: 'Plan inválido',
             message: `No existe un plan con id ${planId}`,
-            status: 400
+            status: Status.badRequest
         });
     }
 

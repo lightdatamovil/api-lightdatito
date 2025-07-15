@@ -9,6 +9,7 @@ import { deleteParticularidadLogistica } from '../controllers/particularidad_log
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { getAllParticularidadesForLogistica } from '../controllers/particularidad_logistica/get_all_particularidades_for_logistica.js';
+import { Status } from '../models/status.js';
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router.post('/:logisticaId', async (req, res) => {
         const { logisticaId } = req.params;
         const { particularidad, es_pago, tipo_particularidad_id } = req.body;
         const newItem = await createParticularidadLogistica(logisticaId, particularidad, es_pago, tipo_particularidad_id);
-        res.status(201).json({ body: newItem, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(
             `POST /api/particularidades-logistica: éxito al crear particularidad con ID ${newItem.id}`
         );
@@ -40,7 +41,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllParticularidadesLogisticas();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/particularidades-logistica: éxito al listar particularidades');
     } catch (err) {
         return handleError(req, res, err);
@@ -58,7 +59,7 @@ router.get('/:id', async (req, res) => {
 
     try {
         const item = await getParticularidadLogisticaById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(
             `GET /api/particularidad-logistica/${req.params.id}: éxito al obtener particularidad`
         );
@@ -77,7 +78,7 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const updated = await updateParticularidadLogistica(req.params.id, { nombre: req.body.nombre });
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(
             `PUT /api/particularidades-logistica/${req.params.id}: éxito al actualizar particularidad`
         );
@@ -97,7 +98,7 @@ router.delete('/:id', async (req, res) => {
 
     try {
         await deleteParticularidadLogistica(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(
             `DELETE /api/particularidad-logistica/${req.params.id}: éxito al eliminar observación`
         );
@@ -121,7 +122,7 @@ router.get("/logistica_id/:id", async (req, res) => {
             logGreen(`GET /api/particularidades-logistica/logistica_id/${req.params.id}: sin particularidades`);
             return;
         }
-        res.status(200).json({ body: list, message: "Particularidades obtenidas" });
+        res.status(Status.ok).json({ body: list, message: "Particularidades obtenidas" });
         logGreen("GET /api/particularidades-logistica: éxito al listar particularidades");
     } catch (err) {
         return handleError(req, res, err);

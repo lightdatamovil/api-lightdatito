@@ -22,7 +22,7 @@ export async function createMenu(nombre) {
             throw new CustomException({
                 title: 'Menú duplicado',
                 message: `Ya existe un menú con nombre "${nombre_limpio}"`,
-                status: 400
+                status: Status.badRequest
             });
         }
 

@@ -12,6 +12,7 @@ import {
     editTipoParticularidad,
     deleteTipoParticularidad
 } from '../controllers/tipo_particularidad/index.js';  // o ruta individual
+import { Status } from '../models/status.js';
 
 const router = Router();
 
@@ -24,7 +25,7 @@ router.post(
 
         try {
             const newItem = await createTipoParticularidad(req.body);
-            res.status(201).json({ body: newItem, message: 'Creado correctamente' });
+            res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
             logGreen(`POST /api/tipo_particularidad: creado id ${newItem.id}`);
         } catch (err) {
             return handleError(req, res, err);
@@ -39,7 +40,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllTipoParticularidad();
-        res.status(200).json({ body: list, message: 'Listado OK' });
+        res.status(Status.ok).json({ body: list, message: 'Listado OK' });
         logGreen('GET /api/tipo_particularidad: listado completo');
     } catch (err) {
         return handleError(req, res, err);
@@ -55,7 +56,7 @@ router.get('/:id', async (req, res) => {
 
     try {
         const item = await getTipoParticularidadById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/tipo_particularidad/${req.params.id}: éxito`);
     } catch (err) {
         return handleError(req, res, err);
@@ -71,7 +72,7 @@ router.put('/:id', async (req, res) => {
 
     try {
         const updated = await editTipoParticularidad(req.params.id, req.body);
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/tipo_particularidad/${req.params.id}: éxito`);
     } catch (err) {
         return handleError(req, res, err);
@@ -87,7 +88,7 @@ router.delete('/:id', async (req, res) => {
 
     try {
         await deleteTipoParticularidad(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/tipo_particularidad/${req.params.id}: eliminado`);
     } catch (err) {
         return handleError(req, res, err);

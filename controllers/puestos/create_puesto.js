@@ -15,7 +15,7 @@ export async function createPuesto(nombre) {
             throw new CustomException({
                 title: 'Puesto duplicado',
                 message: `Ya existe un puesto con nombre "${nombre}"`,
-                status: 400
+                status: Status.badRequest
             });
         }
         const result = await executeQuery(`INSERT INTO puestos (nombre) VALUES (lower(?))`, nombre, true);

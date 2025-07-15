@@ -8,6 +8,7 @@ import { updateProyecto } from '../controllers/proyectos/edit_proyecto.js';
 import { deleteProyecto } from '../controllers/proyectos/delete_proyecto.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
+import { Status } from '../models/status.js';
 
 
 const router = Router();
@@ -21,7 +22,7 @@ router.post('/', async (req, res) => {
     try {
         const { nombre } = req.body;
         const newItem = await createProyecto(nombre);
-        res.status(201).json({ body: newItem, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/proyectos: éxito al crear proyecto con ID ${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -35,7 +36,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllProyectos();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/proyectos: éxito al listar proyectos');
     } catch (err) {
         return handleError(req, res, err);
@@ -51,7 +52,7 @@ router.get('/:id', async (req, res) => {
 
     try {
         const item = await getProyectoById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/proyectos/${req.params.id}: éxito al obtener proyecto`);
     } catch (err) {
         return handleError(req, res, err);
@@ -67,7 +68,7 @@ router.put('/:id', async (req, res) => {
 
     try {
         const updated = await updateProyecto(req.params.id, req.body);
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/proyectos/${req.params.id}: éxito al actualizar proyecto`);
     } catch (err) {
         return handleError(req, res, err);
@@ -83,7 +84,7 @@ router.delete('/:id', async (req, res) => {
 
     try {
         await deleteProyecto(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/proyectos/${req.params.id}: éxito al eliminar proyecto`);
     } catch (err) {
         return handleError(req, res, err);

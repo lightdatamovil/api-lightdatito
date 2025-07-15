@@ -15,7 +15,7 @@ export async function createPlan(nombre, color) {
         throw new CustomException({
             title: 'Plan duplicado',
             message: `Ya existe un planes con nombre "${nombre}"`,
-            status: 400
+            status: Status.badRequest
         });
     }
 

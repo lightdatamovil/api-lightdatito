@@ -1,6 +1,7 @@
 
 import { executeQuery } from '../../../db.js';
-import CustomException from '../../models/custom_exception.js';
+import CustomException from '../../../models/custom_exception.js';
+
 
 export async function getMenusByPlan(planId) {
     // 1) Verificar que el plan exista

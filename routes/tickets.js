@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAlltickets();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/tickets: éxito al listar tickets');
     } catch (err) {
         return handleError(req, res, err);
@@ -57,7 +57,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const item = await getticketById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/tickets/${req.params.id}: éxito al obtener ticket`);
     } catch (err) {
         return handleError(req, res, err);
@@ -72,7 +72,7 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const updated = await updateticket(req.params.id, req.body);
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/tickets/${req.params.id}: éxito al actualizar ticket`);
     } catch (err) {
         return handleError(req, res, err);
@@ -87,7 +87,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         await deleteticket(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/tickets/${req.params.id}: éxito al eliminar ticket`);
     } catch (err) {
         return handleError(req, res, err);

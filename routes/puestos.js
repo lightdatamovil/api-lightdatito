@@ -10,6 +10,7 @@ import { updatePuesto } from '../controllers/puestos/edit_puesto.js';
 import { deletePuesto } from '../controllers/puestos/delete_puesto.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
+import { Status } from '../models/status.js';
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.post('/', async (req, res) => {
         }
         const { nombre } = req.body;
         const newItem = await createPuesto(nombre);
-        res.status(201).json({ body: newItem, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/puestos: éxito al crear puesto con ID ${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -44,7 +45,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllPuestos();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/puestos: éxito al listar puestos');
     } catch (err) {
         return handleError(req, res, err);
@@ -59,7 +60,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const item = await getPuestoById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/puestos/${req.params.id}: éxito al obtener puesto`);
     } catch (err) {
         return handleError(req, res, err);
@@ -74,7 +75,7 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const updated = await updatePuesto(req.params.id, req.body);
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/puestos/${req.params.id}: éxito al actualizar puesto`);
     } catch (err) {
         return handleError(req, res, err);
@@ -89,7 +90,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         await deletePuesto(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/puestos/${req.params.id}: éxito al eliminar puesto`);
     } catch (err) {
         return handleError(req, res, err);

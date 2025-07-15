@@ -23,7 +23,7 @@ export async function createLogistica(body) {
             throw new CustomException({
                 title: 'Logistica duplicada',
                 message: `Ya existe una logistica con nombre "${nombre}"`,
-                status: 400
+                status: Status.badRequest
             });
         }
 

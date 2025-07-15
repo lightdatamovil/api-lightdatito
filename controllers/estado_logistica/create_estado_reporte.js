@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Estadoticket from '../../models/estado_ticket.js';
+import { Status } from '../../models/status.js';
 
 export async function createEstadoticket(nombre, color) {
     try {
@@ -15,7 +16,7 @@ export async function createEstadoticket(nombre, color) {
             throw new CustomException({
                 title: 'Estado ticket duplicado',
                 message: `Ya existe un estado con nombre "${nombre_limpio}" y  color "${color_limpio}`,
-                status: 400
+                status: Status.badRequest
             });
         }
 

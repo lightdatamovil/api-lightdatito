@@ -1,22 +1,23 @@
+import { Status } from "./status.js";
+
 export default class CustomException extends Error {
   /**
    * @param {string} title - The title of the error.
    * @param {string} message - The error message.
    * @param {string} [stack] - The stack trace of the error (optional).
    */
-  constructor({ title, message, stack, status }) {
+  constructor({ title, message, stack, status = Status.internalServerError }) {
     super(message);
     this.title = title;
     this.message = message;
-    this.stack = stack; // If no stack is provided, use the default stack trace
-    this.status = status; // Default status code for server errors
+    this.stack = stack;
+    this.status = status;
   }
   toJSON() {
     return {
       title: this.title,
       message: this.message,
       stack: this.stack,
-      status: this.status,
     };
   }
   toJsonString() {
@@ -24,7 +25,6 @@ export default class CustomException extends Error {
       title: this.title,
       message: this.message,
       stack: this.stack,
-      status: this.status,
     });
   }
 }

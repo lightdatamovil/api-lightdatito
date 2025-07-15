@@ -50,7 +50,7 @@ router.get('/', async (req, res) => {
 
     try {
         const list = await getAllLogisticas();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente', success: true });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente', success: true });
         logGreen('GET /api/logisticas: éxito al listar logísticas');
     } catch (err) {
         return handleError(req, res, err);
@@ -65,7 +65,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const item = await getLogisticaById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/logisticas/${req.params.id}: éxito al obtener logística`);
     } catch (err) {
         return handleError(req, res, err);
@@ -85,7 +85,7 @@ router.put('/:id', async (req, res) => {
     try {
         const idLogistica = req.params.id;
         const updated = await updateLogistica(idLogistica, req.body);
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/logisticas/${idLogistica}: éxito al actualizar logística`);
     } catch (err) {
         return handleError(req, res, err);
@@ -104,7 +104,7 @@ router.delete('/:id', async (req, res) => {
 
     try {
         await deleteLogistica(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/logisticas/${req.params.id}: éxito al eliminar logística`);
     } catch (err) {
         return handleError(req, res, err);
@@ -123,7 +123,7 @@ router.get('/plan', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllLogisticaPlan();
-        res.status(200).json({ body: list, message: 'Asignaciones obtenidas' });
+        res.status(Status.ok).json({ body: list, message: 'Asignaciones obtenidas' });
         logGreen('GET /api/logistica/plan');
     } catch (err) {
         return handleError(req, res, err);
@@ -141,7 +141,7 @@ router.get('/:logisticaId/planes', async (req, res) => {
     if (!verificarTodo(req, res, ['logisticaId'], [])) return;
     try {
         const planes = await getPlanesByLogistica(+req.params.logisticaId);
-        res.status(200).json({ body: planes, message: 'Planes obtenidos' });
+        res.status(Status.ok).json({ body: planes, message: 'Planes obtenidos' });
         logGreen(`GET /api/logistica/${req.params.logisticaId}/planes`);
     } catch (err) {
         return handleError(req, res, err);
@@ -179,7 +179,7 @@ router.delete('/:logisticaId/planes/:planId', async (req, res) => {
     if (!verificarTodo(req, res, ['logisticaId', 'planId'], [])) return;
     try {
         await deleteLogisticaPlan(+req.params.logisticaId, +req.params.planId);
-        res.status(200).json({ message: 'Plan desasignado de logística' });
+        res.status(Status.ok).json({ message: 'Plan desasignado de logística' });
         logGreen(`DELETE /api/logistica/${req.params.logisticaId}/planes/${req.params.planId}`);
     } catch (err) {
         return handleError(req, res, err);

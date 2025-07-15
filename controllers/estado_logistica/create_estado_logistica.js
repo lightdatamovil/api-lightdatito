@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import EstadoLogistica from '../../models/estado_logistica.js';
+import { Status } from '../../models/status.js';
 
 /**
  * Create a new estado_logistica and return the inserted record.
@@ -19,7 +20,7 @@ export async function createEstadoLogistica(nombre, color) {
             throw new CustomException({
                 title: 'Estado logistica duplicado',
                 message: `Ya existe un estado logistica con nombre "${nombre}" y  color "${color}`,
-                status: 400
+                status: Status.badRequest
             });
         }
 

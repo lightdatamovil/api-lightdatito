@@ -1,5 +1,5 @@
 import { executeQuery } from '../../../db.js';
-import CustomException from '../../models/custom_exception.js';
+import CustomException from '../../../models/custom_exception.js';
 
 export async function getHerramientasByModulo(moduloId) {
     // 1) Verificar que el módulo exista

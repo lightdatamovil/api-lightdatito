@@ -1,5 +1,6 @@
 import { executeQuery } from '../../../db.js';
-import CustomException from '../../models/custom_exception.js';
+import CustomException from '../../../models/custom_exception.js';
+
 
 export async function addModuloHerramienta(moduloId, herramientaId) {
     // 1) Verificar que el módulo exista (y no esté eliminado)
@@ -8,11 +9,12 @@ export async function addModuloHerramienta(moduloId, herramientaId) {
         [moduloId]
     );
     if (!modulo) {
-        throw new CustomException({
-            title: 'Módulo no encontrado',
-            message: `No existe un módulo con id=${moduloId}`,
-            status: 404
-        });
+        throw new CustomException
+            ({
+                title: 'Módulo no encontrado',
+                message: `No existe un módulo con id=${moduloId}`,
+                status: 404
+            });
     }
 
     // 2) Verificar que la herramienta exista (y no esté eliminada)

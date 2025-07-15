@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllPaises();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/paises: éxito al listar países');
     } catch (err) {
         return handleError(req, res, err);

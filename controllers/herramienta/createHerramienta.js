@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Herramienta from '../../models/herramienta.js';
+import { Status } from '../../models/status.js';
 
 export async function createHerramienta(nombre) {
     try {
@@ -14,7 +15,7 @@ export async function createHerramienta(nombre) {
             throw new CustomException({
                 title: 'Herramienta duplicada',
                 message: `Ya existe una herramienta con nombre "${nombre}"`,
-                status: 400
+                status: Status.internalServerError
             });
         }
         const result = await executeQuery(`INSERT INTO herramientas (nombre) VALUES (lower(?))`, nombre, true);
@@ -23,7 +24,7 @@ export async function createHerramienta(nombre) {
             throw new CustomException({
                 title: 'Error al crear herramienta',
                 message: 'No se obtuvo el ID del registro insertado',
-                status: 500
+                status: Status.crated
             });
         }
 
@@ -35,7 +36,7 @@ export async function createHerramienta(nombre) {
             throw new CustomException({
                 title: 'Error al crear herramienta',
                 message: `No se pudo recuperar el registro con id=${newId}`,
-                status: 500
+                status: Status.internalServerError
             });
         }
 

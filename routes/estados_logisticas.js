@@ -8,6 +8,7 @@ import { updateEstadoLogistica } from '../controllers/estado_logistica/edit_esta
 import { deleteEstadoLogistica } from '../controllers/estado_logistica/delete_estado_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
+import { Status } from '../models/status.js';
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router.post('/', async (req, res) => {
         const { nombre, color } = req.body;
         // suponiendo firma: createEstadoLogistica({ nombre, color })
         const newItem = await createEstadoLogistica(nombre, color);
-        res.status(201).json({ body: newItem, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(
             `POST /api/estados-logistica: éxito al crear estado con ID ${newItem.id}`
         );
@@ -41,7 +42,7 @@ router.get('/', async (req, res) => {
     if (!verificarTodo(req, res)) return;
     try {
         const list = await getAllEstadosLogisticas();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/estados-logistica: éxito al listar estados');
     } catch (err) {
         return handleError(req, res, err);
@@ -58,7 +59,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const item = await getEstadoLogisticaById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/estados-logistica/${req.params.id}: éxito al obtener estado`);
     } catch (err) {
         return handleError(req, res, err);
@@ -76,7 +77,7 @@ router.put('/:id', async (req, res) => {
     try {
         const { nombre, color } = req.body;
         const updated = await updateEstadoLogistica(req.params.id, nombre, color);
-        res.status(200).json({ body: updated.toJson(), message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated.toJson(), message: 'Actualizado correctamente' });
         logGreen(`PUT /api/estados-logistica/${req.params.id}: éxito al actualizar estado`);
     } catch (err) {
         return handleError(req, res, err);
@@ -95,7 +96,7 @@ router.delete('/:id', async (req, res) => {
 
     try {
         await deleteEstadoLogistica(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/estados-logistica/${req.params.id}: éxito al eliminar estado`);
     } catch (err) {
         return handleError(req, res, err);

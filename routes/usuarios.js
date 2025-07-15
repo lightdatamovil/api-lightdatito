@@ -17,6 +17,7 @@ import { getAllPuestosUsuario } from '../controllers/usuarios/puesto_usuario/get
 import { asignarPuestoAUsuario } from '../controllers/usuarios/puesto_usuario/create_puesto_usuario.js';
 import { getPuestosByUsuario } from '../controllers/usuarios/puesto_usuario/get_all_puestos_by_usuario.js';
 import Campos from '../src/helpers/campos.js';
+import { Status } from '../models/status.js';
 
 const router = Router();
 
@@ -27,7 +28,7 @@ router.get('/puestos-usuario', async (req, res) => {
     const start = performance.now();
     try {
         const rows = await getAllPuestosUsuario();
-        res.status(200).json({ body: rows, message: 'Asignaciones obtenidas correctamente' });
+        res.status(Status.ok).json({ body: rows, message: 'Asignaciones obtenidas correctamente' });
         logGreen('GET /api/usuarios/puestos_usuario: listado completo');
     } catch (err) {
         return handleError(req, res, err);
@@ -48,7 +49,7 @@ router.post('/:id/puestos', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], ['puestoId'])) return;
     try {
         await asignarPuestoAUsuario(+req.params.id, req.body.puestoId);
-        res.status(201).json({ message: 'Puesto asignado correctamente' });
+        res.status(Status.created).json({ message: 'Puesto asignado correctamente' });
         logGreen(`POST /api/usuarios/${req.params.id}/puestos: asignado`);
     } catch (err) {
         return handleError(req, res, err);
@@ -69,7 +70,7 @@ router.delete('/:id/puestos/:puestoId', async (req, res) => {
     if (!verificarTodo(req, res, ['id', 'puestoId'], [])) return;
     try {
         await deletePuestoUsuario(+req.params.id, +req.params.puestoId);
-        res.status(200).json({ message: 'Asignación de puesto eliminada' });
+        res.status(Status.ok).json({ message: 'Asignación de puesto eliminada' });
         logGreen(
             `DELETE /api/usuarios/${req.params.id}/puestos/${req.params.puestoId}: borrado suave`
         );
@@ -117,7 +118,7 @@ router.post('/', async (req, res) => {
     try {
         const { nombre, email, password, url_imagen } = req.body;
         const newUser = await createUsuario(nombre, email, password, url_imagen);
-        res.status(201).json({ body: newUser, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newUser, message: 'Creado correctamente' });
         logGreen(`POST /api/usuarios: éxito al crear usuario con ID ${newUser.id}`);
     } catch (err) {
         logCyan(`Error en POST /api/usuarios: ${err.message}`);
@@ -132,7 +133,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllUsuarios();
-        res.status(200).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
         logGreen('GET /api/usuarios: éxito al listar usuarios');
     } catch (err) {
         return handleError(req, res, err);
@@ -147,7 +148,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const item = await getUsuarioById(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/usuarios/${req.params.id}: éxito al obtener usuario`);
     } catch (err) {
         return handleError(req, res, err);
@@ -162,13 +163,13 @@ router.get('/:id/informe-dashboard', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const item = await getInformeDashboard(req.params.id);
-        res.status(200).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/usuarios/${req.params.id}/informe-dashboard: éxito al obtener informe`);
     } catch (error) {
         return handleError(req, res, error);
         // if (error instanceof CustomException) {
-        //     logRed(`Error 400 en usuarios GET/:id/informe-dashboard: ${error}`);
-        //     return res.status(400).json(error);
+        //     logRed(`Error Status.badRequest en usuarios GET/:id/informe-dashboard: ${error}`);
+        //     return res.status(Status.badRequest).json(error);
         // }
         // const customError = new CustomException('Internal Error', error.message, error.stack);
         // logRed(`Error 500 en usuarios GET/:id/informe-dashboard: ${error}`);
@@ -194,10 +195,10 @@ router.get("/:userId/ultima-semana", async (req, res) => {
         //return handleError(req, res, err);
         if (err instanceof CustomException) {
             logRed(
-                `Error 400 GET /api/tickets/ultima-semana/${userId}:`,
+                `Error Status.badRequest GET /api/tickets/ultima-semana/${userId}:`,
                 err.toJSON()
             );
-            return res.status(400).json(err.toJSON());
+            return res.status(Status.badRequest).json(err.toJSON());
         }
         const fatal = new CustomException({
             title: "Internal Server Error",
@@ -236,7 +237,7 @@ router.put('/:id', async (req, res) => {
         if (!updated) {
             updated = await getUsuarioById(usuarioId);
         }
-        res.status(200).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/usuarios/${usuarioId}: éxito al actualizar usuario`);
     } catch (err) {
         return handleError(req, res, err);
@@ -248,10 +249,10 @@ router.put('/:id', async (req, res) => {
 // Eliminar un usuario
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         await deleteUsuario(req.params.id);
-        res.status(200).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/usuarios/${req.params.id}: éxito al eliminar usuario`);
     } catch (err) {
         return handleError(req, res, err);

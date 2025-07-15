@@ -19,7 +19,7 @@ export async function getPlanesByLogistica(logisticaId) {
             throw new CustomException({
                 title: 'Logística inválida',
                 message: `No existe una logística con id ${logisticaId}`,
-                status: 400
+                status: Status.badRequest
             });
         }
 

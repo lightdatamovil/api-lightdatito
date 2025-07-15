@@ -10,6 +10,7 @@ import { getAllMenuModulo } from '../controllers/menu/menu_modulo/get_all_menu_m
 import { getModulosByMenu } from '../controllers/menu/menu_modulo/get_modulos_by_menu.js';
 import { addMenuModulo } from '../controllers/menu/menu_modulo/add_menu_modulo.js';
 import { deleteMenuModulo } from '../controllers/menu/menu_modulo/delete_menu_modulo.js';
+import { Status } from '../models/status.js';
 
 
 
@@ -23,7 +24,7 @@ router.get('/modulos', async (req, res) => {
     const start = performance.now();
     try {
         const rows = await getAllMenuModulo();
-        res.status(200).json({ body: rows, message: 'Módulos listados correctamente' });
+        res.status(Status.ok).json({ body: rows, message: 'Módulos listados correctamente' });
         logGreen('GET /api/menus/modulos: listado completo');
     } catch (err) {
         return handleError(req, res, err);
@@ -84,7 +85,7 @@ router.delete('/:id/modulos/:moduloId', async (req, res) => {
     if (!verificarTodo(req, res, ['id', 'moduloId'], [])) return;
     try {
         await deleteMenuModulo(+req.params.id, +req.params.moduloId);
-        res.status(200).json({ message: 'Módulo eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Módulo eliminado correctamente' });
         logGreen(
             `DELETE /api/menus/${req.params.id}/modulos/${req.params.moduloId}: borrado suave`
         );
@@ -119,7 +120,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllMenu();
-        res.status(200).json({ body: list, message: 'Listado de menús' });
+        res.status(Status.ok).json({ body: list, message: 'Listado de menús' });
         logGreen('GET /api/menu');
     } catch (err) {
         return handleError(req, res, err);
@@ -134,7 +135,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         const item = await getMenuById(Number(req.params.id));
-        res.status(200).json({ body: item, message: 'Menú obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Menú obtenido' });
         logGreen(`GET /api/menu/${req.params.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -149,7 +150,7 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         const updated = await editMenu(Number(req.params.id), req.body);
-        res.status(200).json({ body: updated, message: 'Menú actualizado' });
+        res.status(Status.ok).json({ body: updated, message: 'Menú actualizado' });
         logGreen(`PUT /api/menu/${req.params.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -165,7 +166,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         await deleteMenu(Number(req.params.id));
-        res.status(200).json({ message: 'Menú eliminado correctamente' });
+        res.status(Status.created).json({ message: 'Menú eliminado correctamente' });
         logGreen(`DELETE /api/menu/${req.params.id}`);
     } catch (err) {
         return handleError(req, res, err);

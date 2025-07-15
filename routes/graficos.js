@@ -28,8 +28,8 @@ router.post("/:tipoQr", async (req, res) => {
     logGreen("GET /api/puestos: éxito al listar puestos");
   } catch (error) {
     if (error instanceof CustomException) {
-      logRed(`Error 400 en puestos GET: ${error}`);
-      return res.status(400).json(error);
+      logRed(`Error Status.badRequest en puestos GET: ${error}`);
+      return res.status(Status.badRequest).json(error);
     }
     const customError = new CustomException(
       "Internal Error",
@@ -56,8 +56,8 @@ router.get("/tiempo/:tipoQr", async (req, res) => {
     logGreen("GET /api/puestos: éxito al listar puestos");
   } catch (error) {
     if (error instanceof CustomException) {
-      logRed(`Error 400 en puestos GET: ${error}`);
-      return res.status(400).json(error);
+      logRed(`Error Status.badRequest en puestos GET: ${error}`);
+      return res.status(Status.badRequest).json(error);
     }
     const customError = new CustomException(
       "Internal Error",

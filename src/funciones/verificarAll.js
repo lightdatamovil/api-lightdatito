@@ -13,15 +13,15 @@ export function verificarTodo(req, res, requiredParams = [], requiredBodyFields 
     }
 
     // 2) Si es GET, sólo comparamos params y ya devolvemos
-    if (req.method === 'GET') {
+    if (req.method === 'GET' || req.method === 'DELETE') {
         if (faltantes.length) {
             const ex = new CustomException({
                 title: 'Faltan parámetros',
                 message: `Faltan parámetros: ${faltantes.join(', ')}`,
-                status: 400
+                status: Status.badRequest
             });
-            logRed(`Error 400 ${req.method} ${req.originalUrl}: ${ex.toJsonString()}`);
-            res.status(400).json(ex.toJSON());
+            logRed(`Error Status.badRequest ${req.method} ${req.originalUrl}: ${ex.toJsonString()}`);
+            res.status(Status.badRequest).json(ex.toJSON());
             return false;
         }
         return true;
@@ -38,10 +38,10 @@ export function verificarTodo(req, res, requiredParams = [], requiredBodyFields 
         const ex = new CustomException({
             title: 'Faltan campos',
             message: `Faltan campos: ${faltantes.join(', ')}`,
-            status: 400
+            status: Status.badRequest
         });
-        logRed(`Error 400 ${req.method} ${req.originalUrl}: ${ex.toJsonString()}`);
-        res.status(400).json(ex.toJSON());
+        logRed(`Error Status.badRequest ${req.method} ${req.originalUrl}: ${ex.toJsonString()}`);
+        res.status(Status.badRequest).json(ex.toJSON());
         return false;
     }
 
@@ -51,10 +51,10 @@ export function verificarTodo(req, res, requiredParams = [], requiredBodyFields 
         const ex = new CustomException({
             title: 'Campos inválidos',
             message: `No se permiten estos campos: ${desconocidos.join(', ')}`,
-            status: 400
+            status: Status.badRequest
         });
-        logRed(`Error 400 ${req.method} ${req.originalUrl}: ${ex.toJsonString()}`);
-        res.status(400).json(ex.toJSON());
+        logRed(`Error Status.badRequest ${req.method} ${req.originalUrl}: ${ex.toJsonString()}`);
+        res.status(Status.badRequest).json(ex.toJSON());
         return false;
     }
 
