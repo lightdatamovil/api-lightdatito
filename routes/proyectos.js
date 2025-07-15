@@ -12,13 +12,12 @@ import { Status } from '../models/status.js';
 
 
 const router = Router();
+const requiredBodyFields = ['nombre'];
 
 // Crear un nuevo proyecto
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = ['nombre'];
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
-
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const { nombre } = req.body;
         const newItem = await createProyecto(nombre);
@@ -64,7 +63,7 @@ router.get('/:id', async (req, res) => {
 // Actualizar un proyecto
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
 
     try {
         const updated = await updateProyecto(req.params.id, req.body);

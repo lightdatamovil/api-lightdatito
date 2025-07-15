@@ -1,13 +1,12 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import PuestoUsuario from '../../models/puesto_usuario.js';
+import { Status } from '../../models/status.js';
 
 export async function createPuesto(nombre) {
     try {
-
-        //verificar si ya existe puestos
         const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM puestos WHERE LOWER(nombre) = LOWER(?)`,
+            `SELECT COUNT(*) AS count FROM puestos WHERE nombre = ?`,
             [nombre],
             true, 0
         );
@@ -15,35 +14,31 @@ export async function createPuesto(nombre) {
             throw new CustomException({
                 title: 'Puesto duplicado',
                 message: `Ya existe un puesto con nombre "${nombre}"`,
-                status: Status.badRequest
-            });
-        }
-        const result = await executeQuery(`INSERT INTO puestos (nombre) VALUES (lower(?))`, nombre, true);
-        const newId = result.insertId;
-        if (!newId) {
-            throw new CustomException({
-                title: 'Error al crear estado_logistica',
-                message: 'No se obtuvo el ID del registro insertado',
-                status: 500
+                status: Status.conflict
             });
         }
 
-        const [row] = await executeQuery(
-            `SELECT * FROM puestos WHERE id = ?`,
-            [newId]
+        // Insertar el nuevo puesto
+        const { insertId } = await executeQuery(
+            `INSERT INTO puestos (nombre) VALUES (LOWER(?))`,
+            [nombre]
         );
-        if (!row) {
+        if (!insertId) {
             throw new CustomException({
                 title: 'Error al crear puesto',
-                message: `No se pudo recuperar el registro con id=${newId}`,
-                status: 500
+                message: 'No se obtuvo el ID del registro insertado',
+                status: Status.internalServerError
             });
         }
 
+        // Obtener el puesto recién creado y devolverlo como PuestoUsuario
+        const [row] = await executeQuery(
+            `SELECT * FROM puestos WHERE id = ?`,
+            [insertId]
+        );
         return PuestoUsuario.fromJson(row);
     } catch (err) {
-        if (err instanceof CustomException) throw err;
-        throw new CustomException({
+        throw err instanceof CustomException ? err : new CustomException({
             title: 'Error al crear puesto',
             message: err.message,
             stack: err.stack

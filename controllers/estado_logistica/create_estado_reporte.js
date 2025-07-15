@@ -16,7 +16,7 @@ export async function createEstadoticket(nombre, color) {
             throw new CustomException({
                 title: 'Estado ticket duplicado',
                 message: `Ya existe un estado con nombre "${nombre_limpio}" y  color "${color_limpio}`,
-                status: Status.badRequest
+                status: Status.conflict
             });
         }
 
@@ -32,7 +32,7 @@ export async function createEstadoticket(nombre, color) {
             throw new CustomException({
                 title: 'Error al crear estado_ticket',
                 message: 'No se obtuvo el ID del registro insertado',
-                status: 404
+                status: Status.notFound
             });
         }
 

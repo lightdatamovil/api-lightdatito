@@ -1,11 +1,19 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Proyecto from '../../models/proyecto.js';
+import { Status } from '../../models/status.js';
 
 export async function getAllProyectos() {
     try {
-        const rows = await executeQuery('SELECT * FROM proyectos');
-        return rows.map(row => Proyecto.fromJson(row));
+        const [rows] = await executeQuery('SELECT * FROM proyectos where eliminado = 0', [], true);
+        if (!rows || rows.length === 0) {
+            throw new CustomException({
+                title: 'No hay proyectos',
+                message: 'No se encontraron proyectos activos',
+                status: Status.noContent
+            });
+        }
+        return Proyecto.fromJson(rows);
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

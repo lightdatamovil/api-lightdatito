@@ -12,6 +12,8 @@ import { createTipoTicket } from '../controllers/tipo_ticket.js/create_tipo_tick
 import { Status } from '../models/status.js';
 
 const router = Router();
+const requiredBodyFields = ['nombre', 'color'];
+
 
 router.get('/', async (req, res) => {
     const start = performance.now();
@@ -45,7 +47,6 @@ router.get('/:id', async (req, res) => {
 // Crear un nuevo tipo de ticket
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = ['nombre', 'color'];
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const { nombre, color } = req.body;
@@ -62,7 +63,7 @@ router.post('/', async (req, res) => {
 // Actualizar un tipo de ticket
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
 
     try {
         const updated = await updateTipoticket(req.params.id, req.body);

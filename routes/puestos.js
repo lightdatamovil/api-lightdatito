@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { performance } from 'perf_hooks';
-import { logRed, logPurple, logGreen } from '../src/funciones/logsCustom.js';
-import { verifyAll } from '../src/funciones/verifyParameters.js';
-import CustomException from '../models/custom_exception.js';
+import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
 import { createPuesto } from '../controllers/puestos/create_puesto.js';
 import { getAllPuestos } from '../controllers/puestos/get_all_puestos.js';
 import { getPuestoById } from '../controllers/puestos/get_puesto_by_id.js';
@@ -14,21 +12,15 @@ import { Status } from '../models/status.js';
 
 const router = Router();
 
+
+const requiredBodyFields = ['nombre'];
+
 // Crear un nuevo puesto
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = ['nombre'];
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
 
     try {
-        const errorMessage = verifyAll(req, [], ['nombre']);
-        if (errorMessage.length) {
-            logRed(`Error en create-puesto: ${errorMessage}`);
-            throw new CustomException({
-                title: 'Error en creación de puesto',
-                message: errorMessage
-            });
-        }
         const { nombre } = req.body;
         const newItem = await createPuesto(nombre);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
@@ -57,7 +49,7 @@ router.get('/', async (req, res) => {
 // Obtener un puesto por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         const item = await getPuestoById(req.params.id);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
@@ -69,10 +61,11 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+
 // Actualizar un puesto
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
         const updated = await updatePuesto(req.params.id, req.body);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
@@ -87,7 +80,7 @@ router.put('/:id', async (req, res) => {
 // Eliminar un puesto
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         await deletePuesto(req.params.id);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });

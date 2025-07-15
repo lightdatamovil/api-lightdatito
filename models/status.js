@@ -7,6 +7,9 @@ export class Status {
     // solicitud mal formada, faltan parametros --verificartodo
     static badRequest = 400;
 
+    // conflicto
+    static conflict = 409;
+
     // falta token  de auth 
     static unauthorized = 401;
 

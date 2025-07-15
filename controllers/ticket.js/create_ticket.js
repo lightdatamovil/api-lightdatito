@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import ticket from '../../models/reporte.js';
+import { Status } from '../../models/status.js';
 
 
 export async function createticket(
@@ -12,9 +13,7 @@ export async function createticket(
     logistica_id
 ) {
     try {
-
-
-        // 1) Insertar sin RETURNING
+        // 1) Insertar 
         const result = await executeQuery(
             `INSERT INTO tickets
           (titulo, descripcion, tipo_ticket_id, observador, proyecto_id, logistica_id)
@@ -35,7 +34,7 @@ export async function createticket(
             throw new CustomException({
                 title: 'Error al crear ticket',
                 message: 'No se obtuvo el ID del registro insertado',
-                status: 500
+                status: Status.notFound
             });
         }
 
@@ -48,7 +47,7 @@ export async function createticket(
             throw new CustomException({
                 title: 'Error al crear ticket',
                 message: `No se pudo recuperar el ticket con id=${newId}`,
-                status: 500
+                status: Status.internalServerError
             });
         }
 

@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Proyecto from '../../models/proyecto.js';
+import { Status } from '../../models/status.js';
 
 
 
@@ -18,14 +19,14 @@ export async function createProyecto(nombre) {
             throw new CustomException({
                 title: 'Proyecto duplicado',
                 message: `Ya existe un proyecto con nombre "${nombre}"`,
-                status: Status.badRequest
+                status: Status.conflict
             });
         }
 
-        // 1) Insertar sin RETURNING
+        // 1) Insertar 
         const result = await executeQuery(
             `INSERT INTO proyectos (nombre) VALUES (?)`,
-            [nombre]
+            [nombre], true
         );
 
         // 2) Obtener el ID recién insertado
@@ -34,7 +35,7 @@ export async function createProyecto(nombre) {
             throw new CustomException({
                 title: 'Error al crear proyecto',
                 message: 'No se obtuvo el ID del registro insertado',
-                status: 500
+                status: Status.internalServerError
             });
         }
 
@@ -47,7 +48,7 @@ export async function createProyecto(nombre) {
             throw new CustomException({
                 title: 'Error al crear proyecto',
                 message: `No se pudo recuperar el proyecto con id=${newId}`,
-                status: 500
+                status: Status.internalServerError
             });
         }
 

@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 import Tipoticket from '../../models/tipo_ticket.js';
 
 export async function createTipoTicket(nombre, color) {
@@ -15,7 +16,7 @@ export async function createTipoTicket(nombre, color) {
             throw new CustomException({
                 title: 'Tipo de tipo_ticket duplicado',
                 message: `Ya existe un tipo_ticket con nombre "${nombre}"`,
-                status: Status.badRequest
+                status: Status.conflict
             });
         }
 

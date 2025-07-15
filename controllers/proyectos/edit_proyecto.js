@@ -1,6 +1,7 @@
 // controllers/proyectos/update_proyecto.js
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 import { getProyectoById } from './get_proyecto_by_id.js';
 
 // Define aquí los campos que sí puedes actualizar

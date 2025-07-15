@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 import Usuario from '../../models/usuario.js';
 import { hash256 } from '../../src/funciones/hash.js';
 

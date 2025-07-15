@@ -15,7 +15,7 @@ export async function deleteUsuario(id) {
         throw new CustomException({
             title: 'Usuario inválido',
             message: `No existe un usuario con id ${id}`,
-            status: Status.badRequest
+            status: Status.conflict
         });
     }
     await executeQuery(

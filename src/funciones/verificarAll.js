@@ -1,5 +1,6 @@
 // src/funciones/verificarAll.js
 import CustomException from "../../models/custom_exception.js";
+import { Status } from "../../models/status.js";
 import { logRed } from "./logsCustom.js";
 
 export function verificarTodo(req, res, requiredParams = [], requiredBodyFields = []) {

@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 export async function deleteTipoticket(id) {
     try {
         // 1) Verificar que exista el tipo de ticket
@@ -9,9 +10,9 @@ export async function deleteTipoticket(id) {
         );
         if (!row) {
             throw new CustomException({
-                title: 'Tipoticket no encontrado',
+                title: 'Tipo ticket no encontrado',
                 message: `No existe un tipo_ticket con id=${id}`,
-                status: 404
+                status: Status.notFound
             });
         }
 
