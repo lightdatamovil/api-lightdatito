@@ -2,6 +2,7 @@
 import CustomException from '../../models/custom_exception.js';
 import Modulo from '../../models/modulo.js';
 import { executeQuery } from '../../db.js';
+import { Status } from '../../models/status.js';
 /**
  * Obtiene un módulo por su ID
  * @param {number} id
@@ -17,7 +18,7 @@ export async function getModuloById(id) {
             throw new CustomException({
                 title: 'No encontrado',
                 message: `No existe módulo con id ${id}`,
-                status: 404
+                status: Status.notFound
             });
         }
         return Modulo.fromJson(row);

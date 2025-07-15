@@ -9,29 +9,37 @@ const ALLOWED_FIELDS = ['nombre', 'descripcion', 'fecha_inicio', 'fecha_fin'];
 
 export async function updateProyecto(id, data) {
     try {
-        // 1) Filtrar sólo los campos permitidos
-        const entries = Object.entries(data)
-            .filter(([key]) => ALLOWED_FIELDS.includes(key));
-        if (!entries.length) {
+        // 1) UPDATE directo de los campos permitidos
+        const result = await executeQuery(
+            `UPDATE proyectos
+          SET nombre       = ?,
+              descripcion  = ?,
+              fecha_inicio = ?,
+              fecha_fin    = ?
+        WHERE id = ?
+          AND eliminado = 0`,
+            [
+                data.nombre,
+                data.descripcion,
+                data.fecha_inicio,
+                data.fecha_fin,
+                id
+            ],
+            true
+        );
+
+        // 2) Si no afectó filas, el proyecto no existe o ya está eliminado
+        if (!result || result.affectedRows === 0) {
             throw new CustomException({
-                title: 'Sin datos válidos',
-                message: 'No hay campos permitidos para actualizar',
-                status: Status.badRequest
+                title: 'Proyecto no encontrado',
+                message: `No existe un proyecto con id=${id}`,
+                status: Status.notFound
             });
         }
 
-        // 2) Construir SET dinámico a partir de los entries
-        const setClause = entries.map(([k]) => `${k} = ?`).join(', ');
-        const values = entries.map(([, v]) => v);
+        // 3) Devolver el recurso actualizado
+        return await getProyectoById(id);
 
-        // 3) Ejecutar UPDATE
-        await executeQuery(
-            `UPDATE proyectos SET ${setClause} WHERE id = ?`,
-            [...values, id]
-        );
-
-        // 4) Devolver el recurso actualizado
-        return getProyectoById(id);
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

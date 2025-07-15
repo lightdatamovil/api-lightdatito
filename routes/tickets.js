@@ -8,7 +8,8 @@ import { createticket } from '../controllers/ticket.js/create_ticket.js';
 import { getAlltickets } from '../controllers/ticket.js/get_all_tickets.js';
 import { getticketById } from '../controllers/ticket.js/get_ticket_by_id.js';
 import { updateticket } from '../controllers/ticket.js/edit_ticket.js';
-import { deleteticket } from '../controllers/ticket.js/delete_ticket.js';
+import { deleteTicket } from '../controllers/ticket.js/delete_ticket.js';
+import { Status } from '../models/status.js';
 
 
 const router = Router();
@@ -86,7 +87,7 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        await deleteticket(req.params.id);
+        await deleteTicket(req.params.id);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/tickets/${req.params.id}: éxito al eliminar ticket`);
     } catch (err) {
@@ -95,10 +96,6 @@ router.delete('/:id', async (req, res) => {
         logPurple(`DELETE /api/tickets/:id ejecutado en ${performance.now() - start} ms`);
     }
 });
-
-
-// /api/:id/comentarios
-
 
 
 export default router;

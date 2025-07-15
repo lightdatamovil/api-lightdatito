@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 import { getTipoParticularidadById } from './get_tipo_particularidad_by_id.js';
 
 
@@ -13,7 +14,7 @@ export async function editTipoParticularidad(id, data) {
             throw new CustomException({
                 title: 'Sin datos',
                 message: 'No se proporcionaron campos para actualizar',
-                status: 404
+                status: Status.badRequest
             });
         }
         const setClause = fields.map(f => `${f} = ?`).join(', ');

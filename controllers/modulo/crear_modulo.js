@@ -14,15 +14,16 @@ export async function createModulo(nombre, menu_id) {
 
 
     // Verificar existencia del menú padre
-    const [menu] = await executeQuery(
-        'SELECT id FROM menus WHERE id = ? and eliminado = 0',
-        [menu_id], true, 0
+    // Verificar si ya existe un módulo con el mismo nombre y menu_id
+    const existing = await executeQuery(
+        'SELECT COUNT(*) as count FROM modulos WHERE nombre = ? AND menu_id = ? AND eliminado = 0',
+        [nombre.trim(), menu_id], true, 0
     );
-    if (!menu) {
+    if (existing && existing[0] && existing[0].count > 0) {
         throw new CustomException({
-            title: 'Menu inválido',
-            message: `No existe un menú con id: ${menu_id}`,
-            status: Status.notFound
+            title: 'Módulo ya existe',
+            message: `Ya existe un módulo con el nombre "${nombre}" en el menú con id: ${menu_id}`,
+            status: Status.conflict
         });
     }
 
@@ -45,7 +46,7 @@ export async function createModulo(nombre, menu_id) {
 
     // Recuperar y devolver el registro como Modelo
     const [row] = await executeQuery(
-        'SELECT * FROM modulo WHERE id = ? AND eliminado = 0',
+        'SELECT * FROM modulos WHERE id = ? AND eliminado = 0',
         [newId], true, 0
     );
     return Modulo.fromJson(row);

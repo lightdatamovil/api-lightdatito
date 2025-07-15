@@ -1,7 +1,8 @@
 // controllers/modulo/edit_modulo.js
 import CustomException from '../../models/custom_exception.js';
-import { getModuloById } from './get_modulo_by_id.js';
 import { executeQuery } from '../../db.js';
+import { Status } from '../../models/status.js';
+import { getModuloById } from './get_modulo_by_id.js';
 /**
  * Actualiza campos de un módulo existente
  * @param {number} id
@@ -9,23 +10,32 @@ import { executeQuery } from '../../db.js';
  * @returns {Promise<Modulo>}
  */
 export async function editModulo(id, data) {
-    const fields = Object.keys(data);
-    if (!fields.length) {
-        throw new CustomException({
-            title: 'Sin datos',
-            message: 'No se proporcionaron campos para actualizar',
-            status: 500
-        });
-    }
-    const setClause = fields.map(f => `${f} = ?`).join(', ');
-    const values = fields.map(f => data[f]);
     try {
-        await executeQuery(
-            `UPDATE modulos SET ${setClause} WHERE id = ?`,
-            [...values, id]
+        // 1) UPDATE directo de los dos campos
+        const result = await executeQuery(
+            `UPDATE modulos
+          SET nombre    = ?,
+              menu_id   = ?
+        WHERE id = ? 
+          AND eliminado = 0`,
+            [data.nombre, data.menu_id, id],
+            true
         );
+
+        // 2) Si no encontró filas afectadas, devolvemos “no encontrado”
+        if (!result || result.affectedRows === 0) {
+            throw new CustomException({
+                title: 'Módulo no encontrado',
+                message: `No existe un módulo con id: ${id}`,
+                status: Status.notFound
+            });
+        }
+
+        // 3) Devolvemos el registro ya actualizado
         return await getModuloById(id);
+
     } catch (err) {
+        if (err instanceof CustomException) throw err;
         throw new CustomException({
             title: 'Error actualizando módulo',
             message: err.message,
@@ -33,4 +43,3 @@ export async function editModulo(id, data) {
         });
     }
 }
-

@@ -1,29 +1,32 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-
+import { Status } from '../../models/status.js';
 
 export async function deletePlan(id) {
     try {
-        // 1) Verificar que el plan exista y no esté ya eliminado
-        const [row] = await executeQuery(
-            `SELECT * FROM planes WHERE id = ? AND eliminado = 0`,
-            [id]
+        // UPDATE directo: sólo marcará si existe y aún no está eliminado
+        const result = await executeQuery(
+            `UPDATE planes
+          SET eliminado      = 1,
+              fecha_eliminado = NOW()
+        WHERE id = ?
+          AND eliminado = 0`,
+            [id],
+            true
         );
-        if (!row) {
+
+        // Si no afectó filas, el plan no existía o ya estaba borrado
+        if (!result || result.affectedRows === 0) {
             throw new CustomException({
                 title: 'Plan no encontrado',
                 message: `No existe un plan activo con id=${id}`,
-                status: 404
+                status: Status.notFound
             });
         }
 
-        // 2) Marcarlo como eliminado
-        await executeQuery(
-            `UPDATE planes SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?`,
-            [id]
-        );
-
+        // Éxito: devolvemos el id del plan “eliminado”
         return { id };
+
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

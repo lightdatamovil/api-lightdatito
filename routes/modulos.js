@@ -17,6 +17,8 @@ import { Status } from '../models/status.js';
 
 const router = Router();
 
+const bodyFields = ['nombre', 'menu_id'];
+
 /**
  * LISTAR todas las asignaciones módulo→herramienta
  */
@@ -103,7 +105,7 @@ router.delete('/:id/herramientas/:herramientaId', async (req, res) => {
 // Crear módulo
 router.post('/', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, [], ['nombre', 'menu_id'])) return;
+    if (!verificarTodo(req, res, [],)) return;
     try {
         const { nombre, menu_id } = req.body;
         const newItem = await createModulo(nombre, menu_id);
@@ -147,8 +149,9 @@ router.get('/:id', async (req, res) => {
 
 // Actualizar módulo
 router.put('/:id', async (req, res) => {
+    console.log('Entrando a PUT /api/modulo/:id');
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], [])) return;
+    if (!verificarTodo(req, res, ['id'], bodyFields)) return;
     try {
         const updated = await editModulo(Number(req.params.id), req.body);
         res.status(Status.ok).json({ body: updated, message: 'Módulo actualizado' });
