@@ -13,7 +13,7 @@ export async function getEstadoticketById(id) {
 
         if (rows.length === 0) {
             throw new CustomException({
-                title: 'Estadoticket no encontrado',
+                title: 'Estado ticket no encontrado',
                 message: `No existe un estado_ticket con id: ${id}`,
                 status: Status.notFound
             });
