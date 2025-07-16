@@ -1,29 +1,29 @@
 import { executeQuery } from "../../db.js";
 import CustomException from "../../models/custom_exception.js";
 import Comentario from "../../models/comentario.js";
+import { Status } from "../../models/status.js";
 
-export async function createComentario(usuario_id, ticket_id, texto) {
+
+export async function createComentario(body) {
+    const { usuario_id, ticket_id, texto } = body;
     try {
-        //insertar en comentario
-        const result = await executeQuery(
-            `INSERT INTO comentarios (usuario_id, ticket_id, contenido) VALUES (?, ?, ?)`,
-            [usuario_id, ticket_id, texto]
-        );
+        // Insertar y obtener el comentario en una sola consulta
+        const query = `
+            INSERT INTO comentarios (usuario_id, ticket_id, contenido) VALUES (?, ?, ?); SELECT * FROM comentarios WHERE id = LAST_INSERT_ID();`;
+        const params = [usuario_id, ticket_id, texto];
 
-        const newId = result.insertId;
-        if (!newId) {
+        const results = await executeQuery(query, params);
+
+        // results[1][0] contiene el comentario insertado (puede variar según el driver)
+        const row = Array.isArray(results) && results.length > 1 ? results[1][0] : null;
+        if (!row) {
             throw new CustomException({
                 title: "Error al crear comentario",
-                message: "No se obtuvo el ID del comentario insertado",
-                status: 404
+                message: "No se obtuvo el comentario insertado",
+                status: Status.internalServerError
             });
         }
 
-        const [row] = await executeQuery(
-            `SELECT * FROM comentarios WHERE id = ?`,
-            [newId]
-
-        );
         return Comentario.fromJson(row);
     } catch (err) {
         if (err instanceof CustomException) throw err;
