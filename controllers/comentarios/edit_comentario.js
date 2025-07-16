@@ -9,7 +9,7 @@ export async function updateComentario(params, body) {
     try {
         // Intento directo de UPDATE y compruebo si afectó alguna fila
         const result = await executeQuery(
-            `UPDATE comentarios SET contenido = ?   WHERE id = ?   AND eliminado = 0`, [comentario, id], true
+            `UPDATE comentarios SET contenido = ?  WHERE id = ?  AND eliminado = 0`, [comentario, id], true
         );
 
         if (!result || result.affectedRows === 0) {

@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import ParticularidadLogistica from '../../models/particularidad_logistica.js';
+import { Status } from '../../models/status.js';
 
 /**
  * Crea una observación de logística y su vínculo en logisticas_observaciones
@@ -21,7 +22,7 @@ export async function createParticularidadLogistica(logisticaId, particularidad,
             throw new CustomException({
                 title: 'Error al crear particularidad de logistica',
                 message: 'No se obtuvo el ID del registro insertado',
-                status: 500
+                status: Status.internalServerError
             });
         }
 

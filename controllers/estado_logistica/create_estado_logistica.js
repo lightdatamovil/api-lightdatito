@@ -8,7 +8,8 @@ import { Status } from '../../models/status.js';
  * @param {Object} data - Fields and values for the new estado.
  * @returns {EstadoLogistica} The created EstadoLogistica instance.
  */
-export async function createEstadoLogistica(nombre, color) {
+export async function createEstadoLogistica(body) {
+    const { nombre, color } = body;
     try {
 
         //verificar si ya existe estadoLogistica -- agregarle toLowerCase() en consulta
