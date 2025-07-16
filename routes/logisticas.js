@@ -80,7 +80,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const start = performance.now();
 
-    // if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
 
     try {
         const idLogistica = req.params.id;
