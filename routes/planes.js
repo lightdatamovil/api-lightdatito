@@ -9,10 +9,10 @@ import { deletePlan } from '../controllers/planes/delete_plan.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { getMenusByPlan } from '../controllers/planes/menu_plan/get_menus_by_plan.js';
-import { addPlanMenu } from '../controllers/planes/menu_plan/add_plan_menu.js';
 import { deletePlanMenu } from '../controllers/planes/menu_plan/delete_plan_menu.js';
 import { Status } from '../models/status.js';
 import { getAllMenuPlanes } from '../controllers/planes/menu_plan/get_all_menus_plan.js';
+import { addPlanMenu } from '../controllers/planes/menu_plan/create_plan_menu.js';
 
 const router = Router();
 
@@ -34,8 +34,6 @@ router.get('/menus', async (req, res) => {
         );
     }
 });
-
-
 
 
 /**
@@ -62,10 +60,11 @@ router.get('/:id/menus', async (req, res) => {
  */
 router.post('/:id/menus', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], ['menuId'])) return;
+    const menu_id = req.body.menuId;
+    if (!verificarTodo(req, res, ['id'], ['menu_id'])) return;
     try {
-        const newRel = await addPlanMenu(+req.params.id, req.body.menuId);
-        res.status(Status.ok).json({ body: newRel, message: 'Menú asignado al plan correctamente' });
+        const newRel = await addPlanMenu(req.params.id, menu_id);
+        res.status(Status.created).json({ body: newRel, message: 'Menú asignado al plan correctamente' });
         logGreen(`POST /api/planes/${req.params.id}/menus: asignado`);
     } catch (err) {
         return handleError(req, res, err);
@@ -79,14 +78,14 @@ router.post('/:id/menus', async (req, res) => {
 /**
  * ELIMINAR un menú de un plan (soft-delete)
  */
-router.delete('/:id/menus/:menuId', async (req, res) => {
+router.delete('/:id/menus/:menu_id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id', 'menuId'], [])) return;
+    if (!verificarTodo(req, res, ['id'], ['menu_id'])) return;
     try {
-        await deletePlanMenu(+req.params.id, +req.params.menuId);
+        await deletePlanMenu(+req.params.id, +req.params.menu_id);
         res.status(Status.created).json({ message: 'Asignación de menú eliminada correctamente' });
         logGreen(
-            `DELETE /api/planes/${req.params.id}/menus/${req.params.menuId}: borrado suave`
+            `DELETE /api/planes/${req.params.id}/menus/${req.params.menu_id}: borrado suave`
         );
     } catch (err) {
         return handleError(req, res, err);

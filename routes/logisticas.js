@@ -12,27 +12,27 @@ import { getAllLogisticaPlan } from '../controllers/logisticas/logistica_plan/ge
 import { getPlanesByLogistica } from '../controllers/logisticas/logistica_plan/get_all_plan_by_logistica.js';
 import { createLogisticaPlan } from '../controllers/logisticas/logistica_plan/create_logistica_plan.js';
 import { deleteLogisticaPlan } from '../controllers/logisticas/logistica_plan/delete_logistica_plan.js';
+import { Status } from '../models/status.js';
 
 const router = Router();
+const requiredBodyFields = [
+    'did',
+    'nombre',
+    'url_imagen',
+    'plan_id',
+    'estado_logistica_id',
+    'codigo',
+    'password_soporte',
+    'cuit',
+    'email',
+    'url_sistema',
+    'pais_id',
+];
 
 // Crear logística
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = [
-        'did',
-        'nombre',
-        'url_imagen',
-        'plan_id',
-        'estado_logistica_id',
-        'codigo',
-        'password_soporte',
-        'cuit',
-        'email',
-        'url_sistema',
-        'pais_id',
-    ];
-
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const newItem = await createLogistica(req.body);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
@@ -80,7 +80,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const start = performance.now();
 
-    if (!verificarTodo(req, res, ['id'])) return;
+    // if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
 
     try {
         const idLogistica = req.params.id;

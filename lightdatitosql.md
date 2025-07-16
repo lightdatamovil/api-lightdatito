@@ -112,10 +112,10 @@ CREATE TABLE IF NOT EXISTS `menus` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
+--------------------------------------------------------
 -- Junction `menu_plan`
 -- Relaciona N menus ↔ N planes
--- -----------------------------------------------------
+--------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `menu_plan` (
   `id` INT(11) NOT NULL,
   `menu_id` INT(11) NOT NULL,
@@ -231,7 +231,7 @@ CREATE TABLE IF NOT EXISTS `historial_particularidades` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- -----------------------------------------------------
+--------------------------------------------------------
 -- Table `logisticas`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `logisticas` (
@@ -313,9 +313,9 @@ CREATE TABLE IF NOT EXISTS `tickets` (
   CONSTRAINT `fk_asig_responsable` FOREIGN KEY (`usuario_asignado_id`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
+--------------------------------------------------------
 -- Table comentarios
--- -----------------------------------------------------
+--------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `comentarios` (
   `id`             INT(11)      NOT NULL AUTO_INCREMENT,
   `usuario_id`     INT(11)      NOT NULL,
@@ -681,7 +681,7 @@ END$$
 DROP PROCEDURE IF EXISTS poblar_planes$$
 CREATE PROCEDURE poblar_planes()
 BEGIN
-  INSERT INTO plan (nombre, color, eliminado) VALUES
+  INSERT INTO planes (nombre, color, eliminado) VALUES
     ('BASICO',        'E4D1FF', 0),
     ('PLUS',          'C093FF', 0),
     ('ESTANDAR',      '7B2CEB', 0),
@@ -689,14 +689,6 @@ BEGIN
     ('GRAN LOGISTICA','2F0073', 0);
 END$$
 
-DROP PROCEDURE IF EXISTS poblar_planes$$
-CREATE PROCEDURE poblar_tipo_usuario()
-BEGIN
-  INSERT INTO planes (nombre, color, eliminado) VALUES
-    ('admin',        'E4D1FF', 0),
-    ('user',          'C093FF', 0),
-    ('normal',      '7B2CEB', 0);
-END$$
 DROP PROCEDURE IF EXISTS poblar_estados_ticket$$
 CREATE PROCEDURE poblar_estados_ticket()
 BEGIN
