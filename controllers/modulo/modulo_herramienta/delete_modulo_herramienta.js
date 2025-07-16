@@ -1,5 +1,6 @@
 import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
+import { Status } from '../../../models/status.js';
 
 export async function deleteModuloHerramienta(moduloId, herramientaId) {
     // 1) Verificar que la relación exista y esté activa
@@ -15,7 +16,7 @@ export async function deleteModuloHerramienta(moduloId, herramientaId) {
         throw new CustomException({
             title: 'Relación no encontrada',
             message: `No existe la herramienta id=${herramientaId} en el módulo id=${moduloId}`,
-            status: 404
+            status: Status.notFound
         });
     }
 

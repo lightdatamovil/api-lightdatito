@@ -1,5 +1,6 @@
 import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
+import { Status } from '../../../models/status.js';
 
 
 export async function addModuloHerramienta(moduloId, herramientaId) {
@@ -13,7 +14,7 @@ export async function addModuloHerramienta(moduloId, herramientaId) {
             ({
                 title: 'Módulo no encontrado',
                 message: `No existe un módulo con id=${moduloId}`,
-                status: 404
+                status: Status.notFound
             });
     }
 
@@ -26,7 +27,7 @@ export async function addModuloHerramienta(moduloId, herramientaId) {
         throw new CustomException({
             title: 'Herramienta no encontrada',
             message: `No existe una herramienta con id=${herramientaId}`,
-            status: 404
+            status: Status.notFound
         });
     }
 

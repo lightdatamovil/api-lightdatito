@@ -11,7 +11,7 @@ import { Status } from '../../../models/status.js';
 export async function asignarPuestoAUsuario(usuarioId, tipoPuestoId) {
     // 1) Verificar existencia del usuario
     const [user] = await executeQuery(
-        'SELECT id FROM usuarios WHERE id = ?',
+        'SELECT id FROM usuarios WHERE id = ? AND ELIMINADO = 0',
         [usuarioId],
         true,
     );
