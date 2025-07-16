@@ -6,7 +6,7 @@ import Tipoticket from '../../models/tipo_ticket.js';
 export async function getTipoticketById(id) {
     try {// Aquí rows es el array completo
         const rows = await executeQuery(
-            'SELECT * FROM tipo_ticket WHERE id = ?',
+            'SELECT * FROM tipo_ticket WHERE id = ? AND eliminado = 0 LIMIT 1',
             [id],
             true
         );

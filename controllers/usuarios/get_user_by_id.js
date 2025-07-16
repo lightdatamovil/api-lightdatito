@@ -11,12 +11,12 @@ import { Status } from '../../models/status.js';
  */
 export async function getUsuarioById(id) {
     try {
-        const rows = await executeQuery('SELECT * FROM usuarios WHERE id = ? AND eliminado = 0', [id], true);
+        const rows = await executeQuery('SELECT * FROM usuarios WHERE id = ? AND eliminado = 0 LIMIT 1', [id], true);
         if (!rows || rows.length === 0) {
             throw new CustomException({
                 title: 'Usuario no encontrado',
-                message: `No existe un usuario con id "${id}"`,
-                status: Status.conflict
+                message: `No existe un usuario con id: ${id}`,
+                status: Status.notFound
             });
         }
         return Usuario.fromJson(rows[0]);

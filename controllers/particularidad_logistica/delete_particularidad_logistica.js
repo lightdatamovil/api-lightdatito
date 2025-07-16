@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 
 
 /**
@@ -8,24 +9,23 @@ import CustomException from '../../models/custom_exception.js';
  */
 export async function deleteParticularidadLogistica(id) {
     try {
-        // 1) Verificar que exista la particularidad
-        const [row] = await executeQuery(
-            'SELECT * FROM particularidades WHERE id = ?',
-            [id]
+        const result = await executeQuery(
+            `UPDATE particularidades
+          SET eliminado      = 1,
+              fecha_eliminado = NOW()
+        WHERE id = ?
+          AND eliminado = 0`,
+            [id],
+            true
         );
-        if (!row) {
+
+        if (!result || result.affectedRows === 0) {
             throw new CustomException({
                 title: 'Particularidad no encontrada',
-                message: `No existe una particularidad de logística con id=${id}`,
-                status: 404
+                message: `No existe una particularidad activa con id=${id}`,
+                status: Status.notFound
             });
         }
-
-        // 3) Eliminar la particularidad
-        await executeQuery(
-            'UPDATE particularidades SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
-            [id]
-        );
 
         return { id };
     } catch (err) {

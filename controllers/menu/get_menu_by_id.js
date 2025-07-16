@@ -12,7 +12,7 @@ import { Status } from '../../models/status.js';
 export async function getMenuById(id) {
     try {
         const [row] = await executeQuery(
-            'SELECT * FROM menus WHERE id = ? AND eliminado = 0',
+            'SELECT * FROM menus WHERE id = ? AND eliminado = 0 LIMIT 1',
             [id]
         );
         if (!row) {

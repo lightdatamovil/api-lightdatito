@@ -5,7 +5,7 @@ import Comentario from "../../models/comentario.js";
 export async function getComentarioById(id) {
     try {
         const rows = await executeQuery(
-            `SELECT * FROM comentarios WHERE id = ? AND eliminado = 0`,
+            `SELECT * FROM comentarios WHERE id = ? AND eliminado = 0 LIMIT 1`,
             [id]
         );
         if (rows.length === 0) {

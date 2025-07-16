@@ -5,7 +5,7 @@ import ParticularidadLogistica from '../../models/particularidad_logistica.js';
 export async function getAllParticularidadesLogisticas() {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM particularidades'
+            'SELECT * FROM particularidades WHERE eliminado = 0'
         );
         return rows.map(r => ParticularidadLogistica.fromJson(r));
     } catch (err) {

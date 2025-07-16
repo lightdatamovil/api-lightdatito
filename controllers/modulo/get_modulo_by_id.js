@@ -11,7 +11,7 @@ import { Status } from '../../models/status.js';
 export async function getModuloById(id) {
     try {
         const [row] = await executeQuery(
-            'SELECT * FROM modulos WHERE id = ? AND eliminado = 0',
+            'SELECT * FROM modulos WHERE id = ? AND eliminado = 0 LIMIT 1',
             [id], true, 0
         );
         if (!row) {

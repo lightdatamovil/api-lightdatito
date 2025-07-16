@@ -8,7 +8,7 @@ import EstadoLogistica from '../../models/estado_logistica.js';
  */
 export async function getAllEstadosLogisticas() {
     try {
-        const rows = await executeQuery('SELECT * FROM estados_logistica');
+        const rows = await executeQuery('SELECT * FROM estados_logistica WHERE eliminado = 0');
         return rows.map(r => EstadoLogistica.fromJson(r));
     } catch (error) {
         if (error instanceof CustomException) throw error;

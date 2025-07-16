@@ -5,7 +5,7 @@ import { Status } from '../../models/status.js';
 
 export async function getPuestoById(id) {
     try {
-        const [rows] = await executeQuery('SELECT * FROM puestos WHERE id = ? AND eliminado = 0', id, true);
+        const [rows] = await executeQuery('SELECT * FROM puestos WHERE id = ? AND eliminado = 0 LIMIT 1', id, true);
 
         if (!rows || rows.length === 0) {
             throw new CustomException({

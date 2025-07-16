@@ -10,7 +10,7 @@ import Logistica from '../../models/logistica.js';
 export async function getLogisticaById(id) {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM logisticas WHERE id = ? AND eliminado = 0',
+            'SELECT * FROM logisticas WHERE id = ? AND eliminado = 0 LIMIT 1',
             [id]
         );
 

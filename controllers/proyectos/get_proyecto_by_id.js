@@ -6,7 +6,7 @@ import { Status } from '../../models/status.js';
 export async function getProyectoById(id) {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM proyectos WHERE id = ?',
+            'SELECT * FROM proyectos WHERE id = ? AND ELIMIDADO = 0 LIMIT 1',
             [id]
         );
 

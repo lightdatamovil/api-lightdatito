@@ -6,7 +6,7 @@ import { Status } from '../../models/status.js';
 export async function createPuesto(nombre) {
     try {
         const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM puestos WHERE nombre = ?`,
+            `SELECT COUNT(*) AS count FROM puestos WHERE nombre = ? LIMIT 1`,
             [nombre],
             true, 0
         );

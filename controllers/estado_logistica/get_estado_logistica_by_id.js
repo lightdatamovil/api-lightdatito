@@ -11,7 +11,7 @@ import EstadoLogistica from '../../models/estado_logistica.js';
 export async function getEstadoLogisticaById(id) {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM estados_logistica WHERE id = ?',
+            'SELECT * FROM estados_logistica WHERE id = ? AND ELIMINADO = 0 LIMIT 1',
             [id]
         );
 

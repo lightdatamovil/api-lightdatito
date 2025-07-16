@@ -15,19 +15,30 @@ import { Status } from '../../models/status.js';
 //REVISAR ACA
 export async function editMenu(id, data) {
     try {
-        const row = await executeQuery('SELECT id FROM menus WHERE id = ? AND eliminado = 0', [id]);
-        if (!row.length) {
+        const fields = Object.keys(data);
+        const values = fields.map(f => data[f]);
+        const setClause = fields.map(f => `${f} = ?`).join(', ');
+
+        const result = await executeQuery(
+            `UPDATE menus
+          SET ${setClause}
+        WHERE id = ?
+          AND eliminado = 0`,
+            [...values, id],
+            true
+        );
+
+        if (!result || result.affectedRows === 0) {
             throw new CustomException({
                 title: 'Menú no encontrado',
-                message: `No existe un menú con id: "${id}"`,
-                status: Status.conflict
+                message: `No existe un menú activo con id=${id}`,
+                status: Status.notFound
             });
         }
-        const fields = Object.keys(data);
-        const setClause = fields.map(f => `${f} = ?`).join(', ');
-        await executeQuery(`UPDATE menus SET ${setClause} WHERE id = ?`, [...Object.values(data), id]);
+
         return await getMenuById(id);
     } catch (err) {
+        if (err instanceof CustomException) throw err;
         throw new CustomException({
             title: 'Error actualizando menú',
             message: err.message,

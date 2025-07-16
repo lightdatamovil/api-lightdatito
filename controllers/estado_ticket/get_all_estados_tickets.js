@@ -4,7 +4,7 @@ import CustomException from '../../models/custom_exception.js';
 
 export async function getAllEstadosticket() {
     try {
-        const rows = await executeQuery('SELECT * FROM estados_ticket');
+        const rows = await executeQuery('SELECT * FROM estados_ticket where eliminado = 0');
         return rows.map(r => Estadoticket.fromJson(r));
     } catch (error) {
         if (error instanceof CustomException) throw error;
