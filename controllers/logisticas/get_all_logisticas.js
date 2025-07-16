@@ -7,8 +7,8 @@ import CustomException from '../../models/custom_exception.js';
  * @throws {CustomException} On query error.
  */
 export async function getAllLogisticas() {
-    try {
-        const sql = `
+  try {
+    const sql = `
       SELECT
         l.id,
         l.did,
@@ -47,40 +47,40 @@ export async function getAllLogisticas() {
       LEFT JOIN paises            p  ON l.pais_id             = p.id;
     `;
 
-        const rows = await executeQuery(sql);
+    const rows = await executeQuery(sql);
 
-        // Map y parseo de cada row
-        return rows.map(row => {
-            const plan = typeof row.plan_json === 'string'
-                ? JSON.parse(row.plan_json)
-                : row.plan_json;
-            const estado = typeof row.estado_json === 'string'
-                ? JSON.parse(row.estado_json)
-                : row.estado_json;
-            const pais = typeof row.pais_json === 'string'
-                ? JSON.parse(row.pais_json)
-                : row.pais_json;
+    // Map y parseo de cada row
+    return rows.map(row => {
+      const plan = typeof row.plan_json === 'string'
+        ? JSON.parse(row.plan_json)
+        : row.plan_json;
+      const estado = typeof row.estado_json === 'string'
+        ? JSON.parse(row.estado_json)
+        : row.estado_json;
+      const pais = typeof row.pais_json === 'string'
+        ? JSON.parse(row.pais_json)
+        : row.pais_json;
 
-            return {
-                id: row.id,
-                did: row.did,
-                nombre: row.nombre,
-                url_imagen: row.url_imagen,
-                plan_id: plan,
-                estado_logistica_id: estado,
-                codigo: row.codigo,
-                password_soporte: row.password_soporte,
-                cuit: row.cuit,
-                email: row.email,
-                url_sistema: row.url_sistema,
-                pais: pais
-            };
-        });
-    } catch (err) {
-        throw new CustomException({
-            title: 'Error al obtener logísticas',
-            message: err.message,
-            stack: err.stack
-        });
-    }
+      return {
+        id: row.id,
+        did: row.did,
+        nombre: row.nombre,
+        url_imagen: row.url_imagen,
+        plan: plan,
+        estado_logistica: estado,
+        codigo: row.codigo,
+        password_soporte: row.password_soporte,
+        cuit: row.cuit,
+        email: row.email,
+        url_sistema: row.url_sistema,
+        pais: pais
+      };
+    });
+  } catch (err) {
+    throw new CustomException({
+      title: 'Error al obtener logísticas',
+      message: err.message,
+      stack: err.stack
+    });
+  }
 }
