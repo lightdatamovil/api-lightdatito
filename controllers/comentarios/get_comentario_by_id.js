@@ -1,8 +1,10 @@
 import { executeQuery } from "../../db.js";
 import CustomException from "../../models/custom_exception.js";
 import Comentario from "../../models/comentario.js";
+import { Status } from "../../models/status.js";
 
-export async function getComentarioById(id) {
+export async function getComentarioById(params) {
+    const id = params.id;
     try {
         const rows = await executeQuery(
             `SELECT * FROM comentarios WHERE id = ? AND eliminado = 0 LIMIT 1`,
@@ -11,8 +13,8 @@ export async function getComentarioById(id) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: "Comentario no encontrado",
-                message: `No existe un comentario con id=${id}`,
-                status: 404
+                message: `No existe un comentario con id: ${id}`,
+                status: Status.notFound
             });
         }
         return Comentario.fromJson(rows[0]);

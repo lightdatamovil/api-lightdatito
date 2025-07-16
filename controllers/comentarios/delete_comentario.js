@@ -3,7 +3,6 @@ import CustomException from "../../models/custom_exception.js";
 import { Status } from "../../models/status.js";
 
 export async function deleteComentario(params) {
-
     const id = params.id;
     try {
         // Intento directo de soft-delete y compruebo si afectó alguna fila

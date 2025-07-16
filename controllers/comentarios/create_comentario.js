@@ -8,8 +8,7 @@ export async function createComentario(body) {
     const { usuario_id, ticket_id, texto } = body;
     try {
         // Insertar y obtener el comentario en una sola consulta
-        const query = `
-            INSERT INTO comentarios (usuario_id, ticket_id, contenido) VALUES (?, ?, ?); SELECT * FROM comentarios WHERE id = LAST_INSERT_ID();`;
+        const query = `INSERT INTO comentarios (usuario_id, ticket_id, contenido) VALUES (?, ?, ?)`;
         const params = [usuario_id, ticket_id, texto];
 
         const results = await executeQuery(query, params);

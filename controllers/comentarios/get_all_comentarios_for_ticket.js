@@ -4,7 +4,8 @@ import Comentario from "../../models/comentario.js";
 import { logCyan } from "../../src/funciones/logsCustom.js";
 import { Status } from "../../models/status.js";
 
-export async function getAllComentariosForTicket(ticket_id) {
+export async function getAllComentariosForTicket(params) {
+    const { ticket_id } = params.id;
     try {
         const rows = await executeQuery(
             `SELECT * FROM comentarios WHERE eliminado = 0 AND ticket_id = ?`, [ticket_id]
