@@ -1,11 +1,10 @@
 import { Router } from "express";
 import { performance } from "perf_hooks";
 import { logRed, logPurple, logGreen, logYellow } from "../src/funciones/logsCustom.js";
-
 import CustomException from "../models/custom_exception.js";
-
 import { getHourlyByCompany } from "../controllers/graficos/graficosPorHora.js";
 import { getAverageResponseTime } from "../controllers/graficos/graficoTiempo.js";
+import { Status } from "../models/status.js";
 
 const router = Router();
 
