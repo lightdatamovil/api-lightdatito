@@ -4,7 +4,7 @@ import { logBlue, logPurple, logRed } from './src/funciones/logsCustom.js';
 import cors from 'cors';
 import allRoutes from './routes/exports.js';
 import { Status } from './models/status.js';
-
+import 'dotenv/config';
 
 const numCPUs = 2;
 const PORT = 13000;
