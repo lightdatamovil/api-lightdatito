@@ -2,13 +2,14 @@ import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
 import { Status } from '../../../models/status.js';
 
-// TODO: TERMINAR ACA 
-export async function addPlanMenu(planId, menu_id) {
+// todo : modificar todas las versiones para que reciban body
+export async function addPlanMenu(planId, body) {
+    const { menu_id } = body;
     console.log({ planId, menu_id });
     try {
         // 1) Verificar que el plan exista y no esté eliminado
         const existePlan = await executeQuery(
-            `SELECT 1
+            `SELECT id
          FROM planes
         WHERE id = ?
           AND eliminado = 0
@@ -50,16 +51,16 @@ export async function addPlanMenu(planId, menu_id) {
             true
         );
 
-        return {
-            id: result.insertId,
-            plan_id: planId,
-            menu_id: menu_id
-        };
+        // return {
+        //     id: result.insertId,
+        //     plan_id: planId,
+        //     menu_id: menu_id
+        // };
 
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Error asignando herramienta al módulo',
+            title: 'Error asignando menu al plan',
             message: err.message,
             stack: err.stack
         });
