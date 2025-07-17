@@ -185,9 +185,7 @@ router.get("/:userId/ultima-semana", async (req, res) => {
 
     try {
         const rows = await getticketsUltimaSemana(userId);
-        res
-            .status(200)
-            .json({ body: rows, message: "tickets última semana obtenidos" });
+        res.status(Status.ok).json({ body: rows, message: "tickets última semana obtenidos" });
         logGreen(
             `GET /api/tickets/ultima-semana/${userId}: éxito al listar tickets`
         );
@@ -205,11 +203,9 @@ router.get("/:userId/ultima-semana", async (req, res) => {
             message: err.message,
             stack: err.stack
         });
-        logRed(
-            `Error 500 GET /api/tickets/ultima-semana/${userId}:`,
-            fatal.toJSON()
+        logRed(`Error 500 GET /api/tickets/ultima-semana/${userId}:`, fatal.toJSON()
         );
-        res.status(500).json(fatal.toJSON());
+        res.status(Status.ok).json(fatal.toJSON());
     } finally {
         logPurple(
             `GET /api/tickets/ultima-semana/:userId ejecutado en ${performance.now() - start

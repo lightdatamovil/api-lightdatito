@@ -32,9 +32,8 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
-
     try {
-        const item = await getTipoticketById(req.params.id);
+        const item = await getTipoticketById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/tipo-ticket/${req.params.id}: éxito al obtener tipo de ticket`);
     } catch (err) {
@@ -49,8 +48,7 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const { nombre, color } = req.body;
-        const newItem = await createTipoTicket(nombre, color);
+        const newItem = await createTipoTicket(req);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/tipo-ticket: éxito al crear tipo de ticket con ID ${newItem.id}`);
     } catch (err) {
@@ -64,9 +62,8 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
-
     try {
-        const updated = await updateTipoticket(req.params.id, req.body);
+        const updated = await updateTipoticket(req);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/tipo-ticket/${req.params.id}: éxito al actualizar tipo de ticket`);
     } catch (err) {
@@ -81,7 +78,7 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        await deleteTipoticket(req.params.id);
+        await deleteTipoticket(req);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/tipo-ticket/${req.params.id}: éxito al eliminar tipo de ticket`);
     } catch (err) {

@@ -19,9 +19,8 @@ const requiredBodyFields = ['nombre'];
 router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
-
     try {
-        const newItem = await createPuesto(req.body);
+        const newItem = await createPuesto(req);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/puestos: éxito al crear puesto con ID ${newItem.id}`);
     } catch (err) {

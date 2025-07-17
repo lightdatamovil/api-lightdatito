@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], ['nombre'])) return;
     try {
-        const newItem = await createTipoParticularidad(req.body);
+        const newItem = await createTipoParticularidad(req);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/tipo_particularidad: creado id ${newItem.id}`);
     } catch (err) {
@@ -48,7 +48,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        const item = await getTipoParticularidadById(req.params);
+        const item = await getTipoParticularidadById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/tipo_particularidad/${req.params.id}: éxito`);
     } catch (err) {
@@ -63,7 +63,7 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        const updated = await editTipoParticularidad(req.params, req.body);
+        const updated = await editTipoParticularidad(req);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/tipo_particularidad/${req.params.id}: éxito`);
     } catch (err) {
@@ -79,7 +79,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
 
     try {
-        await deleteTipoParticularidad(req.params);
+        await deleteTipoParticularidad(req);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/tipo_particularidad/${req.params.id}: eliminado`);
     } catch (err) {
