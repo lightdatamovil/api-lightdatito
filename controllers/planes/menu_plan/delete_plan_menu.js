@@ -4,29 +4,17 @@ import { Status } from '../../../models/status.js';
 
 
 
-export async function deletePlanMenu(params) {
-    const { planId, menuId } = params;
+export async function deletePlanMenu(req) {
+    const { planId, menuId } = req.params;
+    // 1) Verificar que exista la relación activa
+    const query = `UPDATE menu_plan SET eliminado = 1, fecha_eliminado = NOW() WHERE plan_id = ? AND menu_id = ? AND eliminado = 0`;
+    const result = await executeQuery(query, [planId, menuId], true);
 
-    try {
-        // 1) Verificar que exista la relación activa
-        const query = `UPDATE menu_plan SET eliminado = 1, fecha_eliminado = NOW() WHERE plan_id = ? AND menu_id = ? AND eliminado = 0`;
-        const result = await executeQuery(query, [planId, menuId], true);
-
-        if (result.affectedRows === 0) {
-            throw new CustomException({
-                title: 'Error update asignacion plan-menu',
-                message: 'La asignacion no existe o ya fue eliminada',
-                status: Status.notFound
-            })
-        }
-
-        return { message: `Asignación de menú: ${menuId} al plan: ${planId} eliminada correctamente ` };
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    if (result.affectedRows === 0) {
         throw new CustomException({
-            title: 'Error eliminando asignación de menú a plan',
-            message: err.message,
-            stack: err.stack
-        });
+            title: 'Error update asignacion plan-menu',
+            message: 'La asignacion no existe o ya fue eliminada',
+            status: Status.notFound
+        })
     }
 }

@@ -43,7 +43,7 @@ router.get('/:id/menus', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const menus = await getMenusByPlan(+req.params.id);
+        const menus = await getMenusByPlan(req);
         res.status(Status.ok).json({ body: menus, message: 'Menús obtenidos correctamente' });
         logGreen(`GET /api/planes/${req.params.id}/menus: éxito`);
     } catch (err) {
@@ -63,7 +63,7 @@ router.post('/:id/menus', async (req, res) => {
     //  const menu_id = req.body.menuId;
     if (!verificarTodo(req, res, ['id'], ['menu_id'])) return;
     try {
-        const newRel = await addPlanMenu(req.params, req.body);
+        const newRel = await addPlanMenu(req);
         res.status(Status.created).json({ body: newRel, message: 'Menú asignado al plan correctamente' });
         logGreen(`POST /api/planes/${req.params.id}/menus: asignado`);
     } catch (err) {
@@ -82,7 +82,7 @@ router.delete('/:id/menus/:menu_id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], ['menu_id'])) return;
     try {
-        await deletePlanMenu(req.params);
+        await deletePlanMenu(req);
         res.status(Status.created).json({ message: 'Asignación de menú eliminada correctamente' });
         logGreen(
             `DELETE /api/planes/${req.params.id}/menus/${req.params.menu_id}: borrado suave`
@@ -102,8 +102,7 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const { nombre, color } = req.body;
-        const newPlan = await createPlan(nombre, color);
+        const newPlan = await createPlan(req);
         res.status(Status.created).json({ body: newPlan, message: 'Creado correctamente' });
         logGreen(`POST /api/planes: éxito al crear plan con ID ${newPlan.id}`);
     } catch (err) {
@@ -132,7 +131,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const plan = await getPlanById(req.params.id);
+        const plan = await getPlanById(req);
         res.status(Status.created).json({ body: plan, message: 'Registro obtenido' });
         logGreen(`GET /api/planes/${req.params.id}: éxito al obtener plan`);
     } catch (err) {
@@ -149,7 +148,7 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
-        const updated = await updatePlan(req.params.id, req.body);
+        const updated = await updatePlan(req);
         res.status(Status.created).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/planes/${req.params.id}: éxito al actualizar plan`);
     } catch (err) {
@@ -165,9 +164,8 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
-
     try {
-        await deletePlan(req.params.id);
+        await deletePlan(req);
         res.status(Status.created).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/planes/${req.params.id}: éxito al eliminar plan`);
     } catch (err) {

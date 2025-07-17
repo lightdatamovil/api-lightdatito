@@ -4,9 +4,8 @@ import { Status } from "../../../models/status.js";
 
 
 export async function getAllMenuPlanes() {
-    try {
-        const rows = await executeQuery(
-            `SELECT 
+    const rows = await executeQuery(
+        `SELECT 
          m.id   AS modulo_id,
          m.nombre AS modulo_nombre,
          h.id   AS herramienta_id,
@@ -19,26 +18,18 @@ export async function getAllMenuPlanes() {
          ON h.id = mh.herramienta_id 
         AND h.eliminado = 0
       WHERE m.eliminado = 0`,
-            [],
-            true
-        );
+        [],
+        true
+    );
 
-        if (!rows || rows.length === 0) {
-            throw new CustomException({
-                title: 'Sin asociaciones módulo–herramienta',
-                message: 'No se encontraron relaciones entre módulos y herramientas',
-                status: Status.noContent
-            });
-        }
-
-        return rows;  // Array de { modulo_id, modulo_nombre, herramienta_id, herramienta_nombre }
-
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    if (!rows || rows.length === 0) {
         throw new CustomException({
-            title: 'Error listando módulo–herramienta',
-            message: err.message,
-            stack: err.stack
+            title: 'Sin asociaciones módulo–herramienta',
+            message: 'No se encontraron relaciones entre módulos y herramientas',
+            status: Status.noContent
         });
     }
+
+    return rows;  // Array de { modulo_id, modulo_nombre, herramienta_id, herramienta_nombre }
+
 }
