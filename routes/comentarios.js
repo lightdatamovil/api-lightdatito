@@ -18,7 +18,7 @@ const requiredBodyFields = ["usuario_id", "ticket_id", "comentario"];
 router.post("/", async (req, res) => {
   if (!verificarTodo(req, res, requiredBodyFields)) return;
   try {
-    const newItem = await createComentario(req.body);
+    const newItem = await createComentario(req);
     res.status(Status.created).json({ body: newItem, message: "Creado correctamente" });
     logGreen(
       `POST /api/comentarios: éxito al crear comentario ID ${newItem.id}`);
@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
 router.get("/ticket_id/:id", async (req, res) => {
   const start = performance.now();
   try {
-    const list = await getAllComentariosForTicket(req.params);
+    const list = await getAllComentariosForTicket(req);
     if (list.length === 0) {
       res.status(Status.notFound).json({ message: "No se encontraron comentarios" });
       logGreen(`GET /api/comentarios/ticket_id/${req.params.id}: sin comentarios`);
@@ -65,7 +65,7 @@ router.get("/:id", async (req, res) => {
   const start = performance.now();
   if (!verificarTodo(req, res, ['id'], [])) return;
   try {
-    const item = await getComentarioById(req.params);
+    const item = await getComentarioById(req);
     res.status(Status.ok).json({ body: item, message: "Comentario obtenido" });
     logGreen(`GET /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
@@ -82,7 +82,7 @@ router.put("/:id", async (req, res) => {
   const start = performance.now();
   if (!verificarTodo(req, res, ['id'])) return;
   try {
-    const updated = await updateComentario(req.params, req.body);
+    const updated = await updateComentario(req);
     res.status(Status.ok).json({ body: updated, message: "Actualizado correctamente" });
     logGreen(`PUT /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
@@ -99,7 +99,7 @@ router.delete("/:id", async (req, res) => {
   const start = performance.now();
   if (!verificarTodo(req, res, ['id'])) return;
   try {
-    await deleteComentario(req.params);
+    await deleteComentario(req);
     res.status(Status.ok).json({ message: "Eliminado correctamente" });
     logGreen(`DELETE /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
