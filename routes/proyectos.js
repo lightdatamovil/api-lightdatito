@@ -12,14 +12,14 @@ import { Status } from '../models/status.js';
 
 
 const router = Router();
-const requiredBodyFields = ['nombre'];
+const requiredBodyFields = ['nombre', 'fecha_inicio', 'fecha_fin', 'descripcion'];
 
 // Crear un nuevo proyecto
 router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const newItem = await createProyecto(req.body);
+        const newItem = await createProyecto(req);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/proyectos: éxito al crear proyecto con ID ${newItem.id}`);
     } catch (err) {
@@ -48,7 +48,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const item = await getProyectoById(req.params);
+        const item = await getProyectoById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/proyectos/${req.params.id}: éxito al obtener proyecto`);
     } catch (err) {
@@ -63,7 +63,7 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
-        const updated = await updateProyecto(req.params, req.body);
+        const updated = await updateProyecto(req);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/proyectos/${req.params.id}: éxito al actualizar proyecto`);
     } catch (err) {
@@ -79,7 +79,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
 
     try {
-        await deleteProyecto(req.params.id);
+        await deleteProyecto(req);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/proyectos/${req.params.id}: éxito al eliminar proyecto`);
     } catch (err) {

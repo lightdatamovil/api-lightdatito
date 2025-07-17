@@ -5,12 +5,11 @@ import { Status } from '../../models/status.js';
 import { getProyectoById } from './get_proyecto_by_id.js';
 
 
-export async function updateProyecto(params, body) {
+export async function updateProyecto(req) {
     try {
-        const { id } = params;
-        const { nombre, descripcion, fecha_inicio, fecha_fin } = body;
+        const id = req.params.id;
+        const { nombre, descripcion, fecha_inicio, fecha_fin } = req.body;
 
-        // 1) UPDATE directo de los campos permitidos
         const query = `UPDATE proyectos SET nombre  = LOWER(?), descripcion  = LOWER(?), fecha_inicio = ?, fecha_fin  = ?  WHERE id = ? AND eliminado = 0`;
         const values = [
             nombre,
@@ -21,7 +20,6 @@ export async function updateProyecto(params, body) {
         ];
         const result = await executeQuery(query, values);
 
-        // 2) Si no afectó filas, el proyecto no existe o ya está eliminado
         if (!result || result.affectedRows === 0) {
             throw new CustomException({
                 title: 'Proyecto no encontrado',
@@ -30,7 +28,6 @@ export async function updateProyecto(params, body) {
             });
         }
 
-        // 3) Devolver el recurso actualizado
         return await getProyectoById(id);
 
     } catch (err) {
