@@ -108,16 +108,16 @@ router.get('/:id/puestos', async (req, res) => {
 });
 
 
-
+const requiredBodyFields = ['nombre', 'email', 'password', 'url_imagen'];
 
 
 // Crear un nuevo usuario
 router.post('/', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, [], Campos.usuarios)) return;
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const { nombre, email, password, url_imagen } = req.body;
-        const newUser = await createUsuario(nombre, email, password, url_imagen);
+
+        const newUser = await createUsuario(req);
         res.status(Status.created).json({ body: newUser, message: 'Creado correctamente' });
         logGreen(`POST /api/usuarios: éxito al crear usuario con ID ${newUser.id}`);
     } catch (err) {
@@ -147,7 +147,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const item = await getUsuarioById(req.params.id);
+        const item = await getUsuarioById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/usuarios/${req.params.id}: éxito al obtener usuario`);
     } catch (err) {
@@ -251,7 +251,7 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        await deleteUsuario(req.params.id);
+        await deleteUsuario(req);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/usuarios/${req.params.id}: éxito al eliminar usuario`);
     } catch (err) {

@@ -14,7 +14,6 @@ import { deleteLogisticaPlan } from '../controllers/logisticas/logistica_plan/de
 import { Status } from '../models/status.js';
 
 const router = Router();
-
 const requiredBodyFields = [
     'did',
     'nombre',

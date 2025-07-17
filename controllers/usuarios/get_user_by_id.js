@@ -9,9 +9,10 @@ import { Status } from '../../models/status.js';
  * @param {number|string} id
  * @returns {Usuario|null}
  */
-export async function getUsuarioById(id) {
+export async function getUsuarioById(req) {
     try {
-        const rows = await executeQuery('SELECT * FROM usuarios WHERE id = ? AND eliminado = 0 LIMIT 1', [id], true);
+        const id = req.params.id;
+        const rows = await executeQuery('SELECT * FROM usuarios WHERE id = ? AND eliminado = 0 LIMIT 1', [id]);
         if (!rows || rows.length === 0) {
             throw new CustomException({
                 title: 'Usuario no encontrado',

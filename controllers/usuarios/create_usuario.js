@@ -10,18 +10,18 @@ import { hash256 } from '../../src/funciones/hash.js';
  * @param {Object} data - nombre, url_imagen, tipo_usuario_id, email, etc.
  * @returns {Usuario}
  */
-export async function createUsuario(nombre, email, password, url_imagen) {
+export async function createUsuario(req) {
+    const { nombre, email, password, url_imagen } = req.body;
     try {
 
-        const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM usuarios WHERE LOWER(email) = LOWER(?)`, (email),
-            true, 0
+        const [{ id }] = await executeQuery(
+            `SELECT id FROM usuarios WHERE LOWER(email) = LOWER(?)`, (email),
         );
-        if (count > 0) {
+        if (id) {
             throw new CustomException({
                 title: 'usuario duplicado',
                 message: `Ya existe un usuario con email ${email}`,
-                status: Status.badRequest
+                status: Status.conflict
             });
         }
 

@@ -7,20 +7,25 @@ import { Status } from '../../models/status.js';
  * @param {number|string} id
  * @returns {{id: number|string}}
  */
-export async function deleteUsuario(id) {
+export async function deleteUsuario(req) {
+    const id = req.params.id;
+    try {
+        const result = await executeQuery('UPDATE usuarios SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?', [id]
+        );
+        if (result.affectedRows === 0) {
+            throw new CustomException({
+                title: 'Usuario no encontrado',
+                message: `No existe un usuario con id: ${id}`,
+                status: Status.notFound
+            });
+        }
 
-    const [user] = await executeQuery('SELECT id FROM usuarios WHERE eliminado = 0 and id = ?', [id], true,
-    );
-    if (!user) {
+    } catch (error) {
+        if (error instanceof CustomException) throw error;
         throw new CustomException({
-            title: 'Usuario inválido',
-            message: `No existe un usuario con id ${id}`,
-            status: Status.conflict
+            title: 'Error al eliminar usuario',
+            message: error.message,
+            stack: error.stack
         });
     }
-    await executeQuery(
-        'UPDATE usuarios SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
-        [id]
-    );
-    return id;
-}
+} 
