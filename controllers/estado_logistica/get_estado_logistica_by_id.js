@@ -11,27 +11,19 @@ import { Status } from '../../models/status.js';
 
 export async function getEstadoLogisticaById(params) {
     const id = params.id;
-    try {
-        const rows = await executeQuery(
-            'SELECT * FROM estados_logistica WHERE id = ? AND ELIMINADO = 0 LIMIT 1',
-            [id]
-        );
+    const rows = await executeQuery(
+        'SELECT * FROM estados_logistica WHERE id = ? AND ELIMINADO = 0 LIMIT 1',
+        [id]
+    );
 
-        if (rows.length === 0) {
-            throw new CustomException({
-                title: 'EstadoLogistica no encontrado',
-                message: `No existe un estado_logistica con id=${id}`,
-                status: Status.notFound
-            });
-        }
-
-        return EstadoLogistica.fromJson(rows[0]);
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    if (rows.length === 0) {
         throw new CustomException({
-            title: 'Error al obtener estado_logistica',
-            message: err.message,
-            stack: err.stack
+            title: 'EstadoLogistica no encontrado',
+            message: `No existe un estado_logistica con id=${id}`,
+            status: Status.notFound
         });
     }
+
+    return EstadoLogistica.fromJson(rows[0]);
+
 }
