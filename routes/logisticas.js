@@ -12,7 +12,6 @@ import { cambiarPlan } from '../controllers/logisticas/logistica_plan/cambiar_pl
 import { Status } from '../models/status.js';
 
 const router = Router();
-
 const requiredBodyFields = [
     'did',
     'nombre',

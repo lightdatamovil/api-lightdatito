@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const newItem = await createHerramienta(req.body);
+        const newItem = await createHerramienta(req);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/herramientas: éxito al crear herramienta con ID ${newItem.id}`);
     } catch (err) {
@@ -47,7 +47,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        const item = await getHerramientaById(req.params);
+        const item = await getHerramientaById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/herramientas/${req.params.id}: éxito al obtener herramienta`);
     } catch (err) {
@@ -62,7 +62,7 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
-        const updated = await updateHerramienta(req.params, req.body);
+        const updated = await updateHerramienta(req);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/herramientas/${req.params.id}: éxito al actualizar herramienta`);
     } catch (err) {
@@ -77,7 +77,7 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        await deleteHerramienta(req.params);
+        await deleteHerramienta(req);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/herramientas/${req.params.id}: éxito al eliminar herramienta`);
     } catch (err) {

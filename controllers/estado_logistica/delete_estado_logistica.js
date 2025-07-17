@@ -10,24 +10,17 @@ import { Status } from '../../models/status.js';
  */
 export async function deleteEstadoLogistica(params) {
     const id = params.id;
-    try {
-        const result = await executeQuery(`UPDATE estados_logistica SET eliminado  = 1,  fecha_eliminado = NOW() WHERE id = ? AND eliminado = 0`, [id], true);
 
-        if (!result || result.affectedRows === 0) {
-            throw new CustomException({
-                title: 'EstadoLogistica no encontrado',
-                message: `No existe un estado_logistica activo con id=${id}`,
-                status: Status.notFound
-            });
-        }
+    const result = await executeQuery(`UPDATE estados_logistica SET eliminado  = 1,  fecha_eliminado = NOW() WHERE id = ? AND eliminado = 0`, [id], true);
 
-        return { id };
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    if (!result || result.affectedRows === 0) {
         throw new CustomException({
-            title: 'Error al eliminar estado_logistica',
-            message: err.message,
-            stack: err.stack
+            title: 'EstadoLogistica no encontrado',
+            message: `No existe un estado_logistica activo con id=${id}`,
+            status: Status.notFound
         });
     }
+
+    return { id };
+
 }
