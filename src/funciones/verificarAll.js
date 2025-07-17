@@ -30,20 +30,22 @@ export function verificarTodo(req, res, requiredParams = [], requiredBodyFields 
 
     // 3) Para POST/PUT/PATCH/etc., validar campos obligatorios de body
     const body = req.body || {};
-    for (const f of requiredBodyFields) {
-        if (body[f] === undefined) {
-            faltantes.push(`Campo de body "${f}" es obligatorio`);
+    if (req.method === 'POST') {
+        for (const f of requiredBodyFields) {
+            if (body[f] === undefined) {
+                faltantes.push(`Campo de body "${f}" es obligatorio`);
+            }
         }
-    }
-    if (faltantes.length) {
-        const ex = new CustomException({
-            title: 'Faltan campos',
-            message: `Faltan campos: ${faltantes.join(', ')}`,
-            status: Status.badRequest
-        });
-        logRed(`Error Status.badRequest ${req.method} ${req.originalUrl}: ${ex.toJsonString()}`);
-        res.status(Status.badRequest).json(ex.toJSON());
-        return false;
+        if (faltantes.length) {
+            const ex = new CustomException({
+                title: 'Faltan campos',
+                message: `Faltan campos: ${faltantes.join(', ')}`,
+                status: Status.badRequest
+            });
+            logRed(`Error Status.badRequest ${req.method} ${req.originalUrl}: ${ex.toJsonString()}`);
+            res.status(Status.badRequest).json(ex.toJSON());
+            return false;
+        }
     }
 
     // 4) Validar que no lleguen campos extra (sólo en métodos con body)

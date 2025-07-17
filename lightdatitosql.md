@@ -405,8 +405,8 @@ CREATE TABLE IF NOT EXISTS `historial_estado_logistica` (
     FOREIGN KEY (`estado_nuevo_id`) REFERENCES `estados_logistica` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- historial_nombre_logistica
-CREATE TABLE IF NOT EXISTS `historial_nombre_logistica` (
+-- historial_nombres_logistica
+CREATE TABLE IF NOT EXISTS `historial_nombres_logistica` (
   `id`                 INT(11)     NOT NULL AUTO_INCREMENT,
   `logisticas_id`      INT(11)     NOT NULL,
   `fecha_cambio`       DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -3385,7 +3385,7 @@ CREATE TRIGGER `trg_logisticas_nombre_ai`
 AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
-  INSERT INTO `lightdatito`.`historial_nombre_logistica`
+  INSERT INTO `lightdatito`.`historial_nombres_logistica`
     (`logisticas_id`, `nombre_anterior`, `nombre_nuevo`,`fecha_cambio`)
   VALUES
     (NEW.id,
@@ -3518,7 +3518,7 @@ SET
 TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `historial_asignaciones`;
   TRUNCATE TABLE `historial_estados_logistica`;
-  TRUNCATE TABLE `historial_nombre_logistica`;
+  TRUNCATE TABLE `historial_nombres_logistica`;
   TRUNCATE TABLE `historial_plan_logistica`;
   TRUNCATE TABLE `historial_estados_ticket`;
   TRUNCATE TABLE `historial_particularidades`;

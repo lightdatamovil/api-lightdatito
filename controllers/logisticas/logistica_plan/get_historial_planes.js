@@ -2,18 +2,14 @@
 import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
 import Plan from '../../../models/plan.js';
+import { Status } from '../../../models/status.js';
 
-/**
- * Devuelve todos los planes asignados a una logística.
- * @param {number} logisticaId - ID de la logística
- * @returns {Promise<Plan[]>}
- */
-export async function getPlanesByLogistica(logisticaId) {
+export async function getHistorialPlanes(req) {
+    const { logisticaId } = req.params;
     try {
-        // Verificar existencia de la logística
         const [logistica] = await executeQuery(
             'SELECT id FROM logistica WHERE id = ? AND eliminado = 0',
-            [logisticaId], true, 0
+            [logisticaId]
         );
         if (!logistica) {
             throw new CustomException({
