@@ -1,47 +1,33 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Logistica from '../../models/logistica.js';
 import { Status } from '../../models/status.js';
-
-/**
- * Create a new logistica (logistica) and return the full inserted record.
- * Uses RETURNING * to fetch the inserted row in one statement.
- * @param {Object} data - Fields and values for the new logistica.
- * @returns {Logistica} The created Logistica instance.
- */
 
 export async function createLogistica(body) {
     try {
         const { did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, password_soporte, cuit, email, url_sistema, pais_id } = body;
 
-        //verificar si ya existe logistica -- porqe parametro verificaria logistica did?
-        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM logisticas WHERE nombre = LOWER(?) AND did =? `, [nombre, did],
-            true, 0
-        );
-        if (count > 0) {
+        const queryVerificarSiExiste = `SELECT id AS count FROM logisticas WHERE cuit=? OR did =? OR email =? LIMIT 1`;
+        const logistica = await executeQuery(queryVerificarSiExiste, [cuit, did, email]);
+        if (logistica.length > 0) {
             throw new CustomException({
                 title: 'Logistica duplicada',
-                message: `Ya existe una logistica con nombre "${nombre}"`,
-                status: Status.badRequest
+                message: `Ya existe una logistica con nombre ${cuit}, did ${did} o email ${email}`,
+                status: Status.conflict
             });
         }
 
-
-        // 1) Validar claves foráneas
-        const [plan] = await executeQuery('SELECT id FROM planes WHERE id = ?', [plan_id]
-        );
+        const queryVerificarPlan = `SELECT id FROM planes WHERE id = ?`;
+        const [plan] = await executeQuery(queryVerificarPlan, [plan_id]);
         if (!plan) {
             throw new CustomException({
                 title: 'Plan inválido',
                 message: `No existe un plan con id=${plan_id}`,
-                status: Status.notFound
+                statis: Status.notFound
             });
         }
 
-        const [estado] = await executeQuery(
-            'SELECT id FROM estados_logistica WHERE id = ?',
-            [estado_logistica_id]
-        );
+        const queryVerificarEstadosLogistica = `SELECT id FROM estados_logistica WHERE id = ?`;
+        const [estado] = await executeQuery(queryVerificarEstadosLogistica, [estado_logistica_id]);
         if (!estado) {
             throw new CustomException({
                 title: 'EstadoLogistica inválido',
@@ -50,10 +36,8 @@ export async function createLogistica(body) {
             });
         }
 
-        const [pais] = await executeQuery(
-            'SELECT id FROM paises WHERE id = ?',
-            [pais_id]
-        );
+        const queryVerificarPais = `SELECT id FROM paises WHERE id = ?`;
+        const [pais] = await executeQuery(queryVerificarPais, [pais_id]);
         if (!pais) {
             throw new CustomException({
                 title: 'País inválido',
@@ -62,57 +46,41 @@ export async function createLogistica(body) {
             });
         }
 
-        // 2) Insertar en logisticas
-        const result = await executeQuery(
-            `INSERT INTO logisticas
+        const queryInsertLogistica = `INSERT INTO logisticas
            (did, nombre, url_imagen, plan_id, estado_logistica_id,
             codigo, password_soporte, cuit, email, url_sistema, pais_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                did,
-                nombre,
-                url_imagen,
-                plan_id,
-                estado_logistica_id,
-                codigo,
-                password_soporte,
-                cuit,
-                email,
-                url_sistema,
-                pais_id
-            ], true
-        );
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const valuesQueryInsertLogistica = [
+            did,
+            nombre,
+            url_imagen,
+            plan_id,
+            estado_logistica_id,
+            codigo,
+            password_soporte,
+            cuit,
+            email,
+            url_sistema,
+            pais_id
+        ];
+        const result = await executeQuery(queryInsertLogistica, valuesQueryInsertLogistica);
 
-        // 3) Obtener el ID generado
         const newId = result.insertId;
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear logística',
                 message: 'No se obtuvo el ID del registro insertado',
-                status: 500
+                status: Status.internalServerError
             });
         }
 
-        // 4) Recuperar y devolver el registro completo
-        const [row] = await executeQuery(
-            'SELECT * FROM logisticas WHERE id = ?',
-            [newId], true
-        );
-        if (!row) {
-            throw new CustomException({
-                title: 'Error al crear logística',
-                message: `No se pudo recuperar la logística con id=${newId}`,
-                status: 404
-            });
-        }
-
-        return Logistica.fromJson(row);
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+        return newId;
+    } catch (error) {
+        if (error instanceof CustomException) throw error;
         throw new CustomException({
             title: 'Error al crear logística',
-            message: err.message,
-            stack: err.stack
+            message: error.message,
+            stack: error.stack
         });
     }
 }

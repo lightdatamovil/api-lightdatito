@@ -8,13 +8,13 @@ import { updateLogistica } from '../controllers/logisticas/edit_logistica.js';
 import { deleteLogistica } from '../controllers/logisticas/delete_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
-import { getAllLogisticaPlan } from '../controllers/logisticas/logistica_plan/get_all_logistica_plan.js';
-import { getPlanesByLogistica } from '../controllers/logisticas/logistica_plan/get_all_plan_by_logistica.js';
-import { createLogisticaPlan } from '../controllers/logisticas/logistica_plan/create_logistica_plan.js';
-import { deleteLogisticaPlan } from '../controllers/logisticas/logistica_plan/delete_logistica_plan.js';
+import { getHistorialPlanes } from '../controllers/logisticas/logistica_plan/get_historial_planes.js';
+import { asignarPlanALogistica } from '../controllers/logisticas/logistica_plan/asignar_plan_a_logistica.js';
+import { deleteLogisticaPlan } from '../controllers/logisticas/logistica_plan/desasignar_plan_a_logistica.js';
 import { Status } from '../models/status.js';
 
 const router = Router();
+
 const requiredBodyFields = [
     'did',
     'nombre',
@@ -29,138 +29,98 @@ const requiredBodyFields = [
     'pais_id',
 ];
 
-// Crear logística
 router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const newItem = await createLogistica(req.body);
-        res.status(201).json({ body: newItem, message: 'Creado correctamente' });
-        logGreen(`POST /api/logisticas: éxito al crear logística con ID ${newItem.id}`);
+        const newId = await createLogistica(req.body);
+        res.status(Status.created).json({ body: newId, message: 'Creado correctamente' });
+        logGreen(`${req.method} ${req.originalUrl}: éxito al crear logística con ID ${newId.id}`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`POST /api/logisticas ejecutado en ${performance.now() - start} ms`);
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Listar todas las logísticas
 router.get('/', async (req, res) => {
     const start = performance.now();
 
     try {
         const list = await getAllLogisticas();
         res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente', success: true });
-        logGreen('GET /api/logisticas: éxito al listar logísticas');
+        logGreen(`${req.method} ${req.originalUrl}: éxito al listar logísticas`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`GET /api/logisticas ejecutado en ${performance.now() - start} ms`);
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Obtener logística por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const item = await getLogisticaById(req.params.id);
+        const item = await getLogisticaById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
-        logGreen(`GET /api/logisticas/${req.params.id}: éxito al obtener logística`);
+        logGreen(`${req.method} ${req.originalUrl}: éxito al obtener logística`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(
-            `GET /api/logisticas/:id ejecutado en ${performance.now() - start} ms`
-        );
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Actualizar logística
 router.put('/:id', async (req, res) => {
     const start = performance.now();
 
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
 
     try {
-        const idLogistica = req.params.id;
-        const updated = await updateLogistica(idLogistica, req.body);
-        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
-        logGreen(`PUT /api/logisticas/${idLogistica}: éxito al actualizar logística`);
+        await updateLogistica(req);
+        res.status(Status.ok).json({ message: 'Actualizado correctamente' });
+        logGreen(`${req.method} ${req.originalUrl}: éxito al actualizar logística`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(
-            `PUT /api/logisticas/:id ejecutado en ${performance.now() - start} ms`
-        );
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-// Eliminar logística
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
 
-
     try {
-        await deleteLogistica(req.params.id);
+        await deleteLogistica(req.params);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
-        logGreen(`DELETE /api/logisticas/${req.params.id}: éxito al eliminar logística`);
+        logGreen(`${req.method} ${req.originalUrl}: éxito al eliminar logística`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(
-            `DELETE /api/logisticas/:id ejecutado en ${performance.now() - start} ms`
-        );
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-/**
- * GET /api/logistica/plan
- * Lista todas las asignaciones activas de logística↔plan
- */
-router.get('/plan', async (req, res) => {
-    const start = performance.now();
-    try {
-        const list = await getAllLogisticaPlan();
-        res.status(Status.ok).json({ body: list, message: 'Asignaciones obtenidas' });
-        logGreen('GET /api/logistica/plan');
-    } catch (err) {
-        return handleError(req, res, err);
-    } finally {
-        logPurple(`GET /api/logistica/plan ejecutado en ${performance.now() - start} ms`);
-    }
-});
-
-/**
- * GET /api/logistica/:logisticaId/planes
- * Lista los planes asignados a una logística específica
- */
 router.get('/:logisticaId/planes', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['logisticaId'], [])) return;
     try {
-        const planes = await getPlanesByLogistica(+req.params.logisticaId);
+        const planes = await getHistorialPlanes(req);
         res.status(Status.ok).json({ body: planes, message: 'Planes obtenidos' });
         logGreen(`GET /api/logistica/${req.params.logisticaId}/planes`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(`GET /api/logistica/:logisticaId/planes ejecutado en ${performance.now() - start} ms`);
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
-/**
- * POST /api/logistica/:logisticaId/planes
- * Asigna un plan a una logística
- * Body: { planId: number }
- */
 router.post('/:logisticaId/planes', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['logisticaId'], ['planId'])) return;
     try {
-        const { planId } = req.body;
-        await createLogisticaPlan(+req.params.logisticaId, +planId);
+        await asignarPlanALogistica(req);
         res.status(201).json({ message: 'Plan asignado a logística' });
         logGreen(`POST /api/logistica/${req.params.logisticaId}/planes`);
     } catch (err) {
@@ -170,10 +130,6 @@ router.post('/:logisticaId/planes', async (req, res) => {
     }
 });
 
-/**
- * DELETE /api/logistica/:logisticaId/planes/:planId
- * Desasigna (soft-delete) un plan de una logística
- */
 router.delete('/:logisticaId/planes/:planId', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['logisticaId', 'planId'], [])) return;

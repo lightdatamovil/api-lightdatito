@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 
 /**
  * Retrieve a single logística by ID.
@@ -7,47 +8,61 @@ import CustomException from '../../models/custom_exception.js';
  * @returns {Object} The plain logística object.
  * @throws {CustomException} If not found or on query error.
  */
-export async function getLogisticaById(id) {
+export async function getLogisticaById(req) {
+  const { id } = req.params;
   try {
     const sql = `
-      SELECT
+        SELECT
         l.id,
         l.did,
         l.nombre,
         l.url_imagen,
-
-        -- Objeto PLAN
-        JSON_OBJECT(
-          'id',     pl.id,
-          'nombre', pl.nombre,
-          'color',  pl.color
-        ) AS plan_json,
-
-        -- Objeto ESTADO
-        JSON_OBJECT(
-          'id',     el.id,
-          'nombre', el.nombre,
-          'color',  el.color
-        ) AS estado_json,
-
         l.codigo,
         l.password_soporte,
         l.cuit,
         l.email,
         l.url_sistema,
 
-        -- Objeto PAÍS
+        JSON_OBJECT(
+          'id',     pl.id,
+          'nombre', pl.nombre,
+          'color',  pl.color
+        ) AS plan_json,
+
+        JSON_OBJECT(
+          'id',     el.id,
+          'nombre', el.nombre,
+          'color',  el.color
+        ) AS estado_json,
+
         JSON_OBJECT(
           'id',        p.id,
           'nombre',    p.nombre,
           'codigo_iso',p.codigo_iso
-        ) AS pais_json
-        FROM logisticas l
-            INNER JOIN planes            pl ON l.plan_id             = pl.id
-            INNER JOIN estados_logistica el ON l.estado_logistica_id  = el.id
-            INNER JOIN paises            p  ON l.pais_id             = p.id
-            WHERE l.id = ?
-            LIMIT 1;
+        ) AS pais_json,
+
+        (
+          SELECT CONCAT(
+            '[',
+            IFNULL(
+              GROUP_CONCAT(
+                JSON_QUOTE(hn.nombre_anterior)
+                ORDER BY hn.fecha_cambio
+                SEPARATOR ','
+              ),
+              ''
+            ),
+            ']'
+          )
+          FROM historial_nombres_logistica hn
+          WHERE hn.logisticas_id = l.id
+        ) AS historial_nombres_json
+      FROM logisticas l
+      LEFT JOIN planes            pl ON l.plan_id             = pl.id
+      LEFT JOIN estados_logistica el ON l.estado_logistica_id  = el.id
+      LEFT JOIN paises            p  ON l.pais_id             = p.id
+      WHERE l.id = ?
+      LIMIT 1
         `;
 
     const rows = await executeQuery(sql, [id]);
@@ -56,28 +71,22 @@ export async function getLogisticaById(id) {
       throw new CustomException({
         title: 'Logística no encontrada',
         message: `No existe una logística con id=${id}`,
-        status: 404
+        status: Status.notFound
       });
     }
 
     const row = rows[0];
 
-    // Parseamos JSON de MySQL si viene como string
-    const plan = typeof row.plan_json === 'string'
-      ? JSON.parse(row.plan_json)
-      : row.plan_json;
-    const estado = typeof row.estado_json === 'string'
-      ? JSON.parse(row.estado_json)
-      : row.estado_json;
-    const pais = typeof row.pais_json === 'string'
-      ? JSON.parse(row.pais_json)
-      : row.pais_json;
+    const plan = JSON.parse(row.plan_json);
+    const estado = JSON.parse(row.estado_json);
+    const pais = JSON.parse(row.pais_json);
+    const historial_nombres = JSON.parse(row.historial_nombres_json);
 
-    // Creamos el objeto plain
     const logistica = {
       id: row.id,
       did: row.did,
       nombre: row.nombre,
+      historial_nombres: historial_nombres,
       url_imagen: row.url_imagen,
       plan: plan,
       estado_logistica: estado,

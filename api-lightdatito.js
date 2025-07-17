@@ -25,13 +25,11 @@ if (cluster.isPrimary) {
     app.use(json({ limit: '50mb' }));
     app.use(urlencoded({ limit: '50mb', extended: true }));
     app.use(json());
-    app.use(
-        cors({
-            origin: "*",
-            methods: ["GET", "POST"],
-            allowedHeaders: ["Content-Type", "Authorization"],
-        })
-    );
+    app.use(cors({
+        origin: "*",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    }));
     app.post('/api/testapi', async (req, res) => {
         const startTime = performance.now();
         const endTime = performance.now();
