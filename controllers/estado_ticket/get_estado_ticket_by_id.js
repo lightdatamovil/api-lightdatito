@@ -4,13 +4,11 @@ import Estadoticket from '../../models/estado_reporte.js';
 import { Status } from '../../models/status.js';
 
 // services/estado_ticket.js
-export async function getEstadoticketById(id) {
+export async function getEstadoticketById(params) {
+    const { id } = params;
     try {
-        const rows = await executeQuery(
-            'SELECT * FROM estados_ticket WHERE id = ? and eliminado = 0 LIMIT 1',
-            [id]
+        const rows = await executeQuery('SELECT * FROM estados_ticket WHERE id = ? and eliminado = 0 LIMIT 1', [id]
         );
-
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'Estado ticket no encontrado',

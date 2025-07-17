@@ -3,7 +3,9 @@ import CustomException from '../../models/custom_exception.js';
 import { getParticularidadLogisticaById } from './get_particularidad_logistica_by_id.js';
 
 
-export async function updateParticularidadLogistica(id, data) {
+export async function updateParticularidadLogistica(params, body) {
+    const { id } = params;
+    const data = body;
     try {
         const fields = Object.keys(data);
         if (!fields.length) throw new CustomException('No data provided for updateParticularidadLogistica');

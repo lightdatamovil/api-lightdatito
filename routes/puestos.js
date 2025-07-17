@@ -21,8 +21,7 @@ router.post('/', async (req, res) => {
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
 
     try {
-        const { nombre } = req.body;
-        const newItem = await createPuesto(nombre);
+        const newItem = await createPuesto(body);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/puestos: éxito al crear puesto con ID ${newItem.id}`);
     } catch (err) {
@@ -51,7 +50,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        const item = await getPuestoById(req.params.id);
+        const item = await getPuestoById(req.params);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/puestos/${req.params.id}: éxito al obtener puesto`);
     } catch (err) {

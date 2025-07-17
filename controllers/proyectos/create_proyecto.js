@@ -1,6 +1,5 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Proyecto from '../../models/proyecto.js';
 import { Status } from '../../models/status.js';
 
 
@@ -11,10 +10,10 @@ export async function createProyecto(nombre) {
         //verificar si ya existe proyecto
         const cleanName = nombre.trim().toLowerCase();
         const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM proyectos WHERE nombre = ?`,
-            [cleanName],
+            `SELECT ID FROM proyectos WHERE nombre = ? AND ELIMINADO = 0 LIMIT 1`, [cleanName],
             true, 0
         );
+        // TODO : TEMINAR ACA  -- AGREGAR A TODOS LOS SELEECT LOWER() -- A LOS DELETE SACAR LOS RETURN
         if (count > 0) {
             throw new CustomException({
                 title: 'Proyecto duplicado',
@@ -23,11 +22,8 @@ export async function createProyecto(nombre) {
             });
         }
 
-        // 1) Insertar 
-        const result = await executeQuery(
-            `INSERT INTO proyectos (nombre) VALUES (?)`,
-            [nombre], true
-        );
+        // 1) Insertar
+        const result = await executeQuery(`INSERT INTO proyectos (nombre) VALUES (?)`, [nombre]);
 
         // 2) Obtener el ID recién insertado
         const newId = result.insertId;
@@ -39,20 +35,7 @@ export async function createProyecto(nombre) {
             });
         }
 
-        // 3) Recuperar el proyecto completo
-        const [row] = await executeQuery(
-            `SELECT * FROM proyectos WHERE id = ?`,
-            [newId]
-        );
-        if (!row) {
-            throw new CustomException({
-                title: 'Error al crear proyecto',
-                message: `No se pudo recuperar el proyecto con id=${newId}`,
-                status: Status.internalServerError
-            });
-        }
-
-        return Proyecto.fromJson(row);
+        return await { id: newId };
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

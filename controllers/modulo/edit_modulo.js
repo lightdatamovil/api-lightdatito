@@ -2,23 +2,21 @@
 import CustomException from '../../models/custom_exception.js';
 import { executeQuery } from '../../db.js';
 import { Status } from '../../models/status.js';
-import { getModuloById } from './get_modulo_by_id.js';
+
 /**
  * Actualiza campos de un módulo existente
  * @param {number} id
  * @param {Object} data
  * @returns {Promise<Modulo>}
  */
-export async function editModulo(id, data) {
+export async function editModulo(params, body) {
     try {
+        const { id } = params;
+        const { nombre, menu_id } = body;
+
         // 1) UPDATE directo de los dos campos
-        const result = await executeQuery(
-            `UPDATE modulos
-          SET nombre    = ?,
-              menu_id   = ?
-        WHERE id = ? 
-          AND eliminado = 0`,
-            [data.nombre, data.menu_id, id],
+        const result = await executeQuery(`UPDATE modulos SET nombre  = ?, menu_id   = ? WHERE id = ?  AND eliminado = 0`,
+            [nombre, menu_id, id],
             true
         );
 
@@ -32,8 +30,7 @@ export async function editModulo(id, data) {
         }
 
         // 3) Devolvemos el registro ya actualizado
-        return await getModuloById(id);
-
+        return await { id };
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

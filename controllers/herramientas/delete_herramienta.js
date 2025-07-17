@@ -2,16 +2,11 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
 
-export async function deleteHerramienta(id) {
+export async function deleteHerramienta(params) {
     try {
+        const id = params.id;
         const result = await executeQuery(
-            `UPDATE herramientas
-          SET eliminado      = 1,
-              fecha_eliminado = NOW()
-        WHERE id = ?
-          AND eliminado = 0`,
-            [id],
-            true
+            `UPDATE herramientas SET eliminado = 1,  fecha_eliminado = NOW() WHERE id = ?  AND eliminado = 0`, [id]
         );
 
         if (!result || result.affectedRows === 0) {

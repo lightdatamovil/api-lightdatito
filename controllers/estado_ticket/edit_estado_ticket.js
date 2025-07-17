@@ -3,7 +3,10 @@ import CustomException from '../../models/custom_exception.js';
 import Estadoticket from '../../models/estado_reporte.js';
 import { Status } from '../../models/status.js';
 
-export async function updateEstadoticket(id, nombre, color) {
+export async function updateEstadoticket(params, body) {
+
+    const { id } = params;
+    const { nombre, color } = body;
     try {
         // 1) Ejecutar UPDATE y comprobar si se afectó alguna fila
         const result = await executeQuery(

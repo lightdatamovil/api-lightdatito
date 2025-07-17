@@ -4,29 +4,22 @@ import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
 import { getProyectoById } from './get_proyecto_by_id.js';
 
-// Define aquí los campos que sí puedes actualizar
-const ALLOWED_FIELDS = ['nombre', 'descripcion', 'fecha_inicio', 'fecha_fin'];
 
-export async function updateProyecto(id, data) {
+export async function updateProyecto(params, body) {
     try {
+        const { id } = params;
+        const { nombre, descripcion, fecha_inicio, fecha_fin } = body;
+
         // 1) UPDATE directo de los campos permitidos
-        const result = await executeQuery(
-            `UPDATE proyectos
-          SET nombre       = ?,
-              descripcion  = ?,
-              fecha_inicio = ?,
-              fecha_fin    = ?
-        WHERE id = ?
-          AND eliminado = 0`,
-            [
-                data.nombre,
-                data.descripcion,
-                data.fecha_inicio,
-                data.fecha_fin,
-                id
-            ],
-            true
-        );
+        const query = `UPDATE proyectos SET nombre  = LOWER(?), descripcion  = LOWER(?), fecha_inicio = ?, fecha_fin  = ?  WHERE id = ? AND eliminado = 0`;
+        const values = [
+            nombre,
+            descripcion,
+            fecha_inicio,
+            fecha_fin,
+            id
+        ];
+        const result = await executeQuery(query, values);
 
         // 2) Si no afectó filas, el proyecto no existe o ya está eliminado
         if (!result || result.affectedRows === 0) {

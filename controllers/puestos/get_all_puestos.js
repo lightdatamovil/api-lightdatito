@@ -14,7 +14,6 @@ export async function getAllPuestos() {
             });
         }
 
-
         return rows.map(r => PuestoUsuario.fromJson(r));
     } catch (error) {
         throw new CustomException(

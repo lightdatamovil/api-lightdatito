@@ -2,6 +2,7 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import EstadoLogistica from '../../models/estado_logistica.js';
 import { Status } from '../../models/status.js';
+import { getEstadoLogisticaById } from './get_estado_logistica_by_id.js';
 
 /**
  * Create a new estado_logistica and return the inserted record.
@@ -11,25 +12,20 @@ import { Status } from '../../models/status.js';
 export async function createEstadoLogistica(body) {
     const { nombre, color } = body;
     try {
-
+        // TERMINAR ACA
         //verificar si ya existe estadoLogistica -- agregarle toLowerCase() en consulta
-        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM estados_logistica WHERE LOWER(nombre) = LOWER(?) AND LOWER(color) = LOWER(?)`,
-            [nombre, color],
-            true, 0
+        const [{ count }] = await executeQuery(`SELECT id FROM estados_logistica WHERE LOWER(nombre) = LOWER(?) LIMIT 1`, [nombre]
         );
         if (count > 0) {
             throw new CustomException({
                 title: 'Estado logistica duplicado',
-                message: `Ya existe un estado logistica con nombre "${nombre}" y  color "${color}`,
-                status: Status.badRequest
+                message: `Ya existe un estado logistica con nombre "${nombre}" `,
+                status: Status.conflict
             });
         }
 
-        // 1) Inserción sin RETURNING
-        const result = await executeQuery(
-            `INSERT INTO estados_logistica (nombre, color)
-         VALUES (?, ?)`,
-            [nombre, color]
+        // 1) Inserción
+        const result = await executeQuery(`INSERT INTO estados_logistica (nombre, color) VALUES (?, ?)`, [nombre, color]
         );
 
         // 2) Obtener el ID recién insertado
@@ -38,20 +34,17 @@ export async function createEstadoLogistica(body) {
             throw new CustomException({
                 title: 'Error al crear estado_logistica',
                 message: 'No se obtuvo el ID del registro insertado',
-                status: 404
+                status: Status.internalServerError
             });
         }
 
         // 3) Recuperar el registro completo
-        const [row] = await executeQuery(
-            `SELECT * FROM estados_logistica WHERE id = ?`,
-            [newId]
-        );
+        const [row] = getEstadoLogisticaById({ id: newId });
         if (!row) {
             throw new CustomException({
                 title: 'Error al crear estado_logistica',
-                message: `No se pudo recuperar el registro con id=${newId}`,
-                status: 404
+                message: `No se pudo recuperar el registro con id: ${newId}`,
+                status: Status.internalServerError
             });
         }
 

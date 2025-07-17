@@ -1,6 +1,5 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import ParticularidadLogistica from '../../models/particularidad_logistica.js';
 import { Status } from '../../models/status.js';
 
 /**
@@ -9,14 +8,28 @@ import { Status } from '../../models/status.js';
  * @param {string} nombre - El nombre de la observación
  */
 
-export async function createParticularidadLogistica(logisticaId, particularidad, es_pago, tipo_particularidad_id) {
+export async function createParticularidadLogistica(body) {
+    const { logisticaId, particularidad, es_pago, tipo_particularidad_id } = body;
     try {
 
-        // 1) Insertar en la tabla de particularidades
-        const result = await executeQuery(
-            `INSERT INTO particularidades (logistica_id, particularidad, es_pago, tipo_particularidad_id) VALUES (?, ?, ?, ?)`,
-            [logisticaId, particularidad, es_pago, tipo_particularidad_id]
+        const ver = await executeQuery('SELECT 1 FROM particularidades WHERE logistica_id = ? AND particularidad = LOWER(?)',
+            [logisticaId, particularidad]
         );
+
+        if (ver && ver.length > 0) {
+            throw new CustomException({
+                title: 'Particularidad duplicada',
+                message: `Ya existe una particularidad "${particularidad}" para la logística con ID ${logisticaId}`,
+                status: Status.conflict
+            });
+        }
+
+        const values = [logisticaId, particularidad, es_pago, tipo_particularidad_id];
+        const query = `INSERT INTO particularidades (logistica_id, particularidad, es_pago, tipo_particularidad_id) VALUES (?, ?, ?, ?)`;
+
+        // 1) Insertar en la tabla de particularidades
+        const result = await executeQuery(query, values);
+
         const newId = result.insertId;
         if (!newId) {
             throw new CustomException({
@@ -26,7 +39,7 @@ export async function createParticularidadLogistica(logisticaId, particularidad,
             });
         }
 
-        return ParticularidadLogistica.fromJson(result);
+        return await { id: newId };
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

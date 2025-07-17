@@ -1,7 +1,7 @@
 import { executeQuery } from "../../db.js";
 import CustomException from "../../models/custom_exception.js";
 import { Status } from "../../models/status.js";
-import { getComentarioById } from "./get_comentario_by_id.js";
+
 
 export async function updateComentario(params, body) {
     const id = params.id;
@@ -19,10 +19,7 @@ export async function updateComentario(params, body) {
                 status: Status.notFound
             });
         }
-
-        // usa getComentarioById
-        const comentarioActualizado = await getComentarioById(id);
-        return comentarioActualizado;
+        return { id }
 
     } catch (err) {
         if (err instanceof CustomException) throw err;

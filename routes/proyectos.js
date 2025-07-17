@@ -19,8 +19,7 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const { nombre } = req.body;
-        const newItem = await createProyecto(nombre);
+        const newItem = await createProyecto(req.body);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/proyectos: éxito al crear proyecto con ID ${newItem.id}`);
     } catch (err) {
@@ -48,9 +47,8 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
-
     try {
-        const item = await getProyectoById(req.params.id);
+        const item = await getProyectoById(req.params);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/proyectos/${req.params.id}: éxito al obtener proyecto`);
     } catch (err) {
@@ -64,9 +62,8 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
-
     try {
-        const updated = await updateProyecto(req.params.id, req.body);
+        const updated = await updateProyecto(req.params, req.body);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/proyectos/${req.params.id}: éxito al actualizar proyecto`);
     } catch (err) {

@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Logistica from '../../models/logistica.js';
+import { Status } from '../../models/status.js';
 
 /**
  * Create a new logistica (logistica) and return the full inserted record.
@@ -14,9 +15,7 @@ export async function createLogistica(body) {
         const { did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, password_soporte, cuit, email, url_sistema, pais_id } = body;
 
         //verificar si ya existe logistica -- porqe parametro verificaria logistica did?
-        const [{ count }] = await executeQuery(
-            `SELECT COUNT(*) AS count FROM logisticas WHERE nombre = LOWER(?) AND did =? `,
-            [nombre, did],
+        const [{ count }] = await executeQuery(`SELECT COUNT(*) AS count FROM logisticas WHERE nombre = LOWER(?) AND did =? `, [nombre, did],
             true, 0
         );
         if (count > 0) {
@@ -29,15 +28,13 @@ export async function createLogistica(body) {
 
 
         // 1) Validar claves foráneas
-        const [plan] = await executeQuery(
-            'SELECT id FROM planes WHERE id = ?',
-            [plan_id]
+        const [plan] = await executeQuery('SELECT id FROM planes WHERE id = ?', [plan_id]
         );
         if (!plan) {
             throw new CustomException({
                 title: 'Plan inválido',
                 message: `No existe un plan con id=${plan_id}`,
-                statis: 404
+                status: Status.notFound
             });
         }
 
@@ -49,7 +46,7 @@ export async function createLogistica(body) {
             throw new CustomException({
                 title: 'EstadoLogistica inválido',
                 message: `No existe un estado_logistica con id=${estado_logistica_id}`,
-                status: 404
+                status: Status.notFound
             });
         }
 
@@ -61,7 +58,7 @@ export async function createLogistica(body) {
             throw new CustomException({
                 title: 'País inválido',
                 message: `No existe un país con id=${pais_id}`,
-                status: 404
+                status: Status.notFound
             });
         }
 

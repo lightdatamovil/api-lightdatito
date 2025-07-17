@@ -5,7 +5,7 @@ import { Status } from '../../models/status.js';
 
 export async function getAllHerramientas() {
     try {
-        const rows = await executeQuery('SELECT * FROM herramientas');
+        const rows = await executeQuery('SELECT * FROM herramientas where eliminado = 0');
 
         if (rows.length === 0) {
             throw new CustomException({

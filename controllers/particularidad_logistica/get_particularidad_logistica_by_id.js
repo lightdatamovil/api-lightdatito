@@ -3,8 +3,9 @@ import CustomException from '../../models/custom_exception.js';
 import ParticularidadLogistica from '../../models/particularidad_logistica.js';
 import { Status } from '../../models/status.js';
 
-export async function getParticularidadLogisticaById(id) {
+export async function getParticularidadLogisticaById(params) {
     try {
+        const { id } = params;
         const rows = await executeQuery(
             'SELECT * FROM particularidades WHERE id = ? and eliminado = 0 LIMIT 1',
             [id]

@@ -8,16 +8,11 @@ import { Status } from '../../models/status.js';
  * Marca un menú como eliminado (soft delete)
  * @param {number} id
  */
-export async function deleteMenu(id) {
+export async function deleteMenu(params) {
+    const id = params.id;
     try {
         const result = await executeQuery(
-            `UPDATE modulos
-          SET eliminado      = 1,
-              fecha_eliminado = NOW()
-        WHERE id = ?
-          AND eliminado = 0`,
-            [id],
-            true
+            `UPDATE modulos SET eliminado  = 1, fecha_eliminado = NOW()  WHERE id = ? AND eliminado = 0`, [id]
         );
 
         if (!result || result.affectedRows === 0) {

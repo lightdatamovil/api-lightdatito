@@ -3,9 +3,10 @@ import CustomException from '../../models/custom_exception.js';
 import PuestoUsuario from '../../models/puesto_usuario.js';
 import { Status } from '../../models/status.js';
 
-export async function getPuestoById(id) {
+export async function getPuestoById(params) {
+    const { id } = params;
     try {
-        const [rows] = await executeQuery('SELECT * FROM puestos WHERE id = ? AND eliminado = 0 LIMIT 1', id, true);
+        const [rows] = await executeQuery('SELECT * FROM puestos WHERE id = ? AND eliminado = 0 LIMIT 1', id);
 
         if (!rows || rows.length === 0) {
             throw new CustomException({

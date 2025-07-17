@@ -1,6 +1,5 @@
 // controllers/menu/edit_menu.js
 import CustomException from '../../models/custom_exception.js';
-import { getMenuById } from './get_menu_by_id.js';
 import { executeQuery } from '../../db.js';
 import { Status } from '../../models/status.js';
 
@@ -13,30 +12,22 @@ import { Status } from '../../models/status.js';
 
 
 //REVISAR ACA
-export async function editMenu(id, data) {
+export async function editMenu(params, body) {
+    const id = params;
+    const nombre = body;
     try {
-        const fields = Object.keys(data);
-        const values = fields.map(f => data[f]);
-        const setClause = fields.map(f => `${f} = ?`).join(', ');
-
-        const result = await executeQuery(
-            `UPDATE menus
-          SET ${setClause}
-        WHERE id = ?
-          AND eliminado = 0`,
-            [...values, id],
-            true
-        );
+        const query = `UPDATE menus SET nombre = ? WHERE id = ? AND eliminado = 0`;
+        const result = await executeQuery(query, [nombre, id]);
 
         if (!result || result.affectedRows === 0) {
             throw new CustomException({
                 title: 'Menú no encontrado',
-                message: `No existe un menú activo con id=${id}`,
+                message: `No existe un menú activo con id: ${id}`,
                 status: Status.notFound
             });
         }
 
-        return await getMenuById(id);
+        return await { id };
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

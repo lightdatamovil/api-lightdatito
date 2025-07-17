@@ -8,8 +8,9 @@ import { Status } from '../../models/status.js';
  * @param {number} id
  * @returns {Promise<Modulo>}
  */
-export async function getModuloById(id) {
+export async function getModuloById(params) {
     try {
+        const { id } = params;
         const [row] = await executeQuery(
             'SELECT * FROM modulos WHERE id = ? AND eliminado = 0 LIMIT 1',
             [id], true, 0

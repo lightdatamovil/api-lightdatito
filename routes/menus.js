@@ -18,9 +18,6 @@ import { editMenu } from '../controllers/menu/edt_menu.js';
 const router = Router();
 const requiredBodyFields = ['nombre'];
 
-/**
- * 1) RUTAS ESPECÍFICAS (sin parámetros “:id” genéricos)
- */
 
 // LISTAR todas las asignaciones módulo–menú
 router.get('/menu-modulos', async (req, res) => {
@@ -35,10 +32,6 @@ router.get('/menu-modulos', async (req, res) => {
         logPurple(`GET /api/menus/menu-modulos ejecutado en ${performance.now() - start} ms`);
     }
 });
-
-/**
- * 2) RUTAS “hijas” de un menú (/api/menus/:id/…)
- */
 
 // LISTAR módulos de un menú
 router.get('/:id/modulos', async (req, res) => {
@@ -85,16 +78,13 @@ router.delete('/:id/modulos/:moduloId', async (req, res) => {
     }
 });
 
-/**
- * 3) CRUD de MENÚ (“/” y “/:id” genéricos)
- */
 
 // Crear menú
 router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const newItem = await createMenu(req.body.nombre.toLowerCase().trim());
+        const newItem = await createMenu(req.body);
         res.status(Status.created).json({ body: newItem, message: 'Menú creado' });
         logGreen(`POST /api/menus id=${newItem.id}`);
     } catch (err) {
@@ -123,7 +113,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        const item = await getMenuById(+req.params.id);
+        const item = await getMenuById(req.params);
         res.status(Status.ok).json({ body: item, message: 'Menú obtenido' });
         logGreen(`GET /api/menus/${req.params.id}`);
     } catch (err) {
@@ -138,7 +128,7 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
-        const updated = await editMenu(+req.params.id, req.body);
+        const updated = await editMenu(req.params, req.body);
         res.status(Status.ok).json({ body: updated, message: 'Menú actualizado' });
         logGreen(`PUT /api/menus/${req.params.id}`);
     } catch (err) {
@@ -153,7 +143,7 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        await deleteMenu(+req.params.id);
+        await deleteMenu(req.params);
         res.sendStatus(Status.noContent);
         logGreen(`DELETE /api/menus/${req.params.id}`);
     } catch (err) {

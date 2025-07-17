@@ -5,9 +5,7 @@ import { logCyan } from "../../src/funciones/logsCustom.js";
 
 export async function getAllParticularidadesForLogistica(ticket_id) {
     try {
-        const rows = await executeQuery(
-            `SELECT * FROM particularidades
-       WHERE eliminado = 0 AND logistica_id = ?`,
+        const rows = await executeQuery(`SELECT * FROM particularidades WHERE eliminado = 0 AND logistica_id = ?`,
             [ticket_id]
         );
 

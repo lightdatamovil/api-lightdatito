@@ -1,7 +1,6 @@
 // controllers/modulo/create_modulo.js
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Modulo from '../../models/modulo.js';
 import { Status } from '../../models/status.js';
 
 /**
@@ -10,45 +9,49 @@ import { Status } from '../../models/status.js';
  * @param {number} menu_id
  * @returns {Promise<Modulo>}
  */
-export async function createModulo(nombre, menu_id) {
+export async function createModulo(body) {
+    const { nombre, menu_id } = body;
+    const nombreLimpio = nombre.trim();
 
+    try {
+        // 1) Verificar duplicado
+        const existing = await executeQuery(
+            'SELECT 1 FROM modulos WHERE LOWER(nombre)=? AND menu_id=? AND eliminado=0 LIMIT 1',
+            [nombreLimpio.toLowerCase(), menu_id],
+            true
+        );
+        if (existing && existing.length > 0) {
+            throw new CustomException({
+                title: 'Módulo duplicado',
+                message: `Ya existe un módulo llamado "${nombreLimpio}" en el menú ${menu_id}`,
+                status: Status.badRequest
+            });
+        }
 
-    // Verificar existencia del menú padre
-    // Verificar si ya existe un módulo con el mismo nombre y menu_id
-    const existing = await executeQuery(
-        'SELECT COUNT(*) as count FROM modulos WHERE nombre = ? AND menu_id = ? AND eliminado = 0',
-        [nombre.trim(), menu_id], true, 0
-    );
-    if (existing && existing[0] && existing[0].count > 0) {
+        // 2) Insertar y obtener insertId
+        const result = await executeQuery(
+            'INSERT INTO modulos (nombre, menu_id) VALUES (?, ?)',
+            [nombreLimpio, menu_id],
+            true
+        );
+        const newId = result.insertId;
+        if (!newId) {
+            throw new CustomException({
+                title: 'Error creando módulo',
+                message: 'No se obtuvo el ID del módulo insertado',
+                status: Status.internalServerError
+            });
+        }
+
+        // 3) Devolver objeto directamente sin SELECT extra
+        return { newId }
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Módulo ya existe',
-            message: `Ya existe un módulo con el nombre "${nombre}" en el menú con id: ${menu_id}`,
-            status: Status.conflict
-        });
-    }
-
-    // Insertar nuevo módulo
-    const result = await executeQuery(
-        'INSERT INTO modulos (nombre, menu_id) VALUES (?, ?)',
-        [nombre.trim(), menu_id],
-        true
-    );
-
-    // Obtener ID insertado
-    const newId = result.insertId;
-    if (!newId) {
-        throw new CustomException({
-            title: 'Error creando módulo',
-            message: 'No se obtuvo el ID del módulo insertado',
+            title: 'Error al crear módulo',
+            message: err.message,
+            stack: err.stack,
             status: Status.internalServerError
         });
     }
-
-    // Recuperar y devolver el registro como Modelo
-    const [row] = await executeQuery(
-        'SELECT * FROM modulos WHERE id = ? AND eliminado = 0',
-        [newId], true, 0
-    );
-    return Modulo.fromJson(row);
 }
-
