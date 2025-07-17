@@ -45,7 +45,7 @@ router.get('/:id/herramientas', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const list = await getHerramientasByModulo(+req.params.id);
+        const list = await getHerramientasByModulo(req);
         res.status(Status.ok).json({ body: list, message: 'Herramientas obtenidas' });
         logGreen(`GET /api/modulos/${req.params.id}/herramientas: éxito`);
     } catch (err) {
@@ -65,7 +65,7 @@ router.post('/:id/herramientas', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], ['herramientaId'])) return;
     try {
-        const rel = await addModuloHerramienta(+req.params.id, req.body.herramientaId);
+        const rel = await addModuloHerramienta(req);
         res
             .status(201)
             .json({ body: rel, message: 'Herramienta asignada correctamente' });
@@ -87,10 +87,9 @@ router.delete('/:id/herramientas/:herramientaId', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id', 'herramientaId'], [])) return;
     try {
-        await deleteModuloHerramienta(+req.params.id, +req.params.herramientaId);
+        await deleteModuloHerramienta(req);
         res.status(Status.ok).json({ message: 'Asignación eliminada correctamente' });
-        logGreen(
-            `DELETE /api/modulos/${req.params.id}/herramientas/${req.params.herramientaId}: borrado suave`
+        logGreen(`DELETE /api/modulos/${req.params.id}/herramientas/${req.params.herramientaId}: borrado suave`
         );
     } catch (err) {
         return handleError(req, res, err);
@@ -153,7 +152,7 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], bodyFields)) return;
     try {
-        const updated = await editModulo(Number(req.params.id), req.body);
+        const updated = await editModulo(req);
         res.status(Status.ok).json({ body: updated, message: 'Módulo actualizado' });
         logGreen(`PUT /api/modulo/${req.params.id} ok`);
     } catch (err) {
@@ -168,7 +167,7 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        await deleteModulo(Number(req.params.id));
+        await deleteModulo(req);
         res.status(Status.ok).json({ message: 'Módulo eliminado' });
         logGreen(`DELETE /api/modulo/${req.params.id} ok`);
     } catch (err) {

@@ -9,34 +9,27 @@ import { Status } from '../../models/status.js';
  * @param {Object} data
  * @returns {Promise<Modulo>}
  */
-export async function editModulo(params, body) {
-    try {
-        const { id } = params;
-        const { nombre, menu_id } = body;
+export async function editModulo(req) {
 
-        // 1) UPDATE directo de los dos campos
-        const result = await executeQuery(`UPDATE modulos SET nombre  = ?, menu_id   = ? WHERE id = ?  AND eliminado = 0`,
-            [nombre, menu_id, id],
-            true
-        );
+    const { id } = req.params;
+    const { nombre, menu_id } = req.body;
 
-        // 2) Si no encontró filas afectadas, devolvemos “no encontrado”
-        if (!result || result.affectedRows === 0) {
-            throw new CustomException({
-                title: 'Módulo no encontrado',
-                message: `No existe un módulo con id: ${id}`,
-                status: Status.notFound
-            });
-        }
+    // 1) UPDATE directo de los dos campos
+    const result = await executeQuery(`UPDATE modulos SET nombre  = ?, menu_id   = ? WHERE id = ?  AND eliminado = 0`,
+        [nombre, menu_id, id],
+        true
+    );
 
-        // 3) Devolvemos el registro ya actualizado
-        return await { id };
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    // 2) Si no encontró filas afectadas, devolvemos “no encontrado”
+    if (!result || result.affectedRows === 0) {
         throw new CustomException({
-            title: 'Error actualizando módulo',
-            message: err.message,
-            stack: err.stack
+            title: 'Módulo no encontrado',
+            message: `No existe un módulo con id: ${id}`,
+            status: Status.notFound
         });
     }
+
+    // 3) Devolvemos el registro ya actualizado
+    return await id;
+
 }
