@@ -19,8 +19,6 @@ export async function deleteParticularidadLogistica(params) {
                 status: Status.notFound
             });
         }
-
-        return { id };
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
 
     try {
-        const newItem = await createPuesto(body);
+        const newItem = await createPuesto(req.body);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/puestos: éxito al crear puesto con ID ${newItem.id}`);
     } catch (err) {
@@ -66,7 +66,7 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
-        const updated = await updatePuesto(req.params.id, req.body);
+        const updated = await updatePuesto(req.params, req.body);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/puestos/${req.params.id}: éxito al actualizar puesto`);
     } catch (err) {
@@ -81,7 +81,7 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        await deletePuesto(req.params.id);
+        await deletePuesto(req.params);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/puestos/${req.params.id}: éxito al eliminar puesto`);
     } catch (err) {

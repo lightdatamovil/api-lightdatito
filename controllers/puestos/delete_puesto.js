@@ -12,7 +12,7 @@ export async function deletePuesto(params) {
         if (!result || result.affectedRows === 0) {
             throw new CustomException({
                 title: 'Puesto no encontrado',
-                message: `No existe un puesto con id=${id}`,
+                message: `No existe un puesto con id: ${id} o ya fue eliminado`,
                 status: Status.notFound
             });
         }

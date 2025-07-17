@@ -1,20 +1,27 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import { getParticularidadLogisticaById } from './get_particularidad_logistica_by_id.js';
+import { Status } from '../../models/status.js';
 
 
 export async function updateParticularidadLogistica(params, body) {
     const { id } = params;
-    const data = body;
+    const { particularidad, es_pago, tipo_particularidad_id } = body;
     try {
-        const fields = Object.keys(data);
-        if (!fields.length) throw new CustomException('No data provided for updateParticularidadLogistica');
-        const setClause = fields.map(f => `${f} = ?`).join(', ');
-        await executeQuery(`UPDATE particularidades SET ${setClause} WHERE id = ?`, [...Object.values(data), id]);
-        return getParticularidadLogisticaById(id);
+
+        const query = `UPDATE particularidades SET particularidad = ?, es_pago = ?, tipo_particularidad_id = ? WHERE id = ? AND eliminado = 0 `;
+        const values = [particularidad, es_pago, tipo_particularidad_id, id];
+        const result = await executeQuery(query, values);
+
+        if (result.affectedRows === 0) {
+            throw new CustomException({
+                title: 'Particularidad no encontrada',
+                message: `No se encontró una particularidad con ID: ${id} o ya ha sido eliminada`,
+                statusCode: Status.notFound
+            })
+        }
     } catch (error) {
         throw new CustomException(
-            'Error creating particularidad de logistica',
+            'Error updating particularidad de logistica',
             error.message,
             error.stack
         );

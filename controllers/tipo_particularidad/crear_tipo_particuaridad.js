@@ -7,7 +7,8 @@ import { Status } from '../../models/status.js';
  * Crea un nuevo tipo de particularidad y devuelve el registro insertado.
  * @param {{ nombre: string, descripcion?: string }} data
  */
-export async function createTipoParticularidad({ nombre, descripcion }) {
+export async function createTipoParticularidad({ body }) {
+    const { nombre, descripcion } = body;
     try {
         // Evitar duplicados por nombre
         const [{ count }] = await executeQuery(

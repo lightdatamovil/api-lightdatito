@@ -3,15 +3,7 @@ import { Router } from 'express';
 import { performance } from 'perf_hooks';
 import { logGreen, logPurple } from '../src/funciones/logsCustom.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
-import { handleError } from '../src/funciones/handle_error.js';
-
-import {
-    createTipoParticularidad,
-    getAllTipoParticularidad,
-    getTipoParticularidadById,
-    editTipoParticularidad,
-    deleteTipoParticularidad
-} from '../controllers/tipo_particularidad/index.js';  // o ruta individual
+import { handleError } from '../src/funciones/handle_error.js'; // o ruta individual
 import { Status } from '../models/status.js';
 
 const router = Router();
