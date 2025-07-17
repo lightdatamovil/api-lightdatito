@@ -4,7 +4,7 @@ import ParticularidadLogistica from '../../models/particularidad_logistica.js';
 import { Status } from '../../models/status.js';
 
 export async function getParticularidadLogisticaById(req) {
-    const { id } = req.params;
+    const { id } = req.params.id;
     const rows = await executeQuery(
         'SELECT * FROM particularidades WHERE id = ? and eliminado = 0 LIMIT 1',
         [id]

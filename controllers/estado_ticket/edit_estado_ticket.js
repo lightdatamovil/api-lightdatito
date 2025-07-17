@@ -5,7 +5,7 @@ import { Status } from '../../models/status.js';
 
 export async function updateEstadoticket(req) {
 
-    const { id } = req.params;
+    const { id } = req.params.id;
     const { nombre, color } = req.body;
 
     // 1) Ejecutar UPDATE y comprobar si se afectó alguna fila

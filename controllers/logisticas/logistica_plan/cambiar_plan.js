@@ -1,7 +1,7 @@
 import { executeQuery } from '../../../db.js';
 
 export async function cambiarPlan(req) {
-    const { logisticaId } = req.params;
+    const { logisticaId } = req.params.id;
     const { planId } = req.body;
 
     const queryVerficar = `SELECT id FROM logistica WHERE id = ? AND eliminado = 0 LIMIT 1`;

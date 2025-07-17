@@ -3,7 +3,7 @@ import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
 
 export async function deleteEstadoticket(req) {
-    const { id } = req.params;
+    const id = req.params.id;
     // 1) Intento directo de soft-delete y compruebo cuántas filas afectó
     const result = await executeQuery(`UPDATE estados_ticket SET eliminado = 1, fecha_eliminado = NOW()  WHERE id = ? AND eliminado = 0`, [id]);
 

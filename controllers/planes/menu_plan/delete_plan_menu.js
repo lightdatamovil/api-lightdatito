@@ -5,7 +5,7 @@ import { Status } from '../../../models/status.js';
 
 
 export async function deletePlanMenu(req) {
-    const { planId, menuId } = req.params;
+    const { planId, menuId } = req.params.id;
     // 1) Verificar que exista la relación activa
     const query = `UPDATE menu_plan SET eliminado = 1, fecha_eliminado = NOW() WHERE plan_id = ? AND menu_id = ? AND eliminado = 0`;
     const result = await executeQuery(query, [planId, menuId], true);

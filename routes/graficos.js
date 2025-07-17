@@ -14,16 +14,11 @@ const router = Router();
 router.post("/:tipoQr", async (req, res) => {
   const startTime = performance.now();
   try {
-    const { tipoQr } = req.params;
+    const { tipoQr } = req.params.id;
     const { start, end, logisticasElegidas } = req.body;
-
     logYellow(`GET /api/puestos: Listando puestos de tipo ${tipoQr} desde ${start} hasta ${end}...`);
-
     const grafico = await getHourlyByCompany(tipoQr, start, end, logisticasElegidas);
-
-    res
-      .status(200)
-      .json({ body: grafico, message: "Datos obtenidos correctamente" });
+    res.status(Status.ok).json({ body: grafico, message: "Datos obtenidos correctamente" });
     logGreen("GET /api/puestos: éxito al listar puestos");
   } catch (error) {
     if (error instanceof CustomException) {
@@ -44,7 +39,7 @@ router.post("/:tipoQr", async (req, res) => {
 
 
 router.get("/tiempo/:tipoQr", async (req, res) => {
-  const { tipoQr } = req.params;
+  const { tipoQr } = req.params.id;
   const startTime = performance.now();
   try {
     const grafico = await getAverageResponseTime(tipoQr);

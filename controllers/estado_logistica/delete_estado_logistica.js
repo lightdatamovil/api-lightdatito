@@ -10,7 +10,6 @@ import { Status } from '../../models/status.js';
  */
 export async function deleteEstadoLogistica(params) {
     const id = params.id;
-
     const result = await executeQuery(`UPDATE estados_logistica SET eliminado  = 1,  fecha_eliminado = NOW() WHERE id = ? AND eliminado = 0`, [id], true);
 
     if (!result || result.affectedRows === 0) {
@@ -21,6 +20,6 @@ export async function deleteEstadoLogistica(params) {
         });
     }
 
-    return { id };
+    return id;
 
 }

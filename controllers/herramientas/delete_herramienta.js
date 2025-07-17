@@ -16,6 +16,6 @@ export async function deleteHerramienta(req) {
         });
     }
 
-    return { id };
+    return id;
 
 }

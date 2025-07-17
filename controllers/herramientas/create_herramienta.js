@@ -8,8 +8,7 @@ export async function createHerramienta(req) {
     const nombreLower = nombre.trim().toLowerCase();
 
     // Verificar si ya existe herramienta
-    const [existing] = await executeQuery(
-        `SELECT id FROM herramientas WHERE LOWER(nombre) = ? and eliminado = 0 LIMIT 1`, [nombreLower]
+    const [existing] = await executeQuery(`SELECT id FROM herramientas WHERE LOWER(nombre) = ? and eliminado = 0 LIMIT 1`, [nombreLower]
     );
     if (existing) {
         throw new CustomException({
@@ -19,7 +18,6 @@ export async function createHerramienta(req) {
         });
     }
 
-    // Insertar nueva herramienta
     const result = await executeQuery(`INSERT INTO herramientas (nombre) VALUES (?)`, [nombreLower], true
     );
     const newId = result.insertId;

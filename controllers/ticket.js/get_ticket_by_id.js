@@ -4,7 +4,7 @@ import ticket from '../../models/reporte.js';
 import { Status } from '../../models/status.js';
 
 export async function getticketById(req) {
-    const id = req.params;
+    const id = req.params.id;
     const rows = await executeQuery(
         'SELECT * FROM tickets WHERE id = ? AND eliminado = 0 LIMIT 1',
         [id]
