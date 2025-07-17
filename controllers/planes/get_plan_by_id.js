@@ -6,7 +6,7 @@ import { Status } from '../../models/status.js';
 export async function getPlanById(id) {
     try {
         const rows = await executeQuery(
-            'SELECT * FROM planes WHERE id = ? AND eliminado = 0 limit 1',
+            'SELECT * FROM planes WHERE id = ? AND eliminado = 0 LIMIT 1',
             [id]
         );
 

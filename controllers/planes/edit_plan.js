@@ -1,14 +1,16 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
-import { getPlanById } from './get_plan_by_id.js';
 
-export async function updatePlan(id, data) {
+
+export async function updatePlan(params, body) {
+    const id = params;
+    const { nombre, color } = body;
     try {
         // 1) Intento directo de UPDATE de los dos campos
         //    (se asegura que id exista y no esté eliminado)
         const result = await executeQuery(
-            `UPDATE planes SET nombre = ?, color  = ?  WHERE id = ? AND eliminado = 0`, [data.nombre, data.color, id], true
+            `UPDATE planes SET nombre = ?, color  = ?  WHERE id = ? AND eliminado = 0`, [nombre.toLowerCase(), color.toLowerCase(), id], true
         );
 
         // 2) Si no afectó filas, el plan no existe o ya está eliminado
@@ -21,7 +23,7 @@ export async function updatePlan(id, data) {
         }
 
         // 3) Devolver el registro actualizado
-        return await getPlanById(id);
+        return await { id };
 
     } catch (err) {
         if (err instanceof CustomException) throw err;

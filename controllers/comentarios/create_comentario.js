@@ -1,36 +1,72 @@
 import { executeQuery } from "../../db.js";
 import CustomException from "../../models/custom_exception.js";
-import Comentario from "../../models/comentario.js";
+import { Status } from "../../models/status.js";
 
-export async function createComentario(usuario_id, ticket_id, texto) {
+export async function createComentario(body) {
+    const { usuario_id, ticket_id, texto } = body;
+
     try {
-        //insertar en comentario
-        const result = await executeQuery(
-            `INSERT INTO comentarios (usuario_id, ticket_id, contenido) VALUES (?, ?, ?)`,
-            [usuario_id, ticket_id, texto]
+        // 1) Verificar que el usuario exista y no esté eliminado
+        const userCheck = await executeQuery(
+            `SELECT 1
+         FROM usuarios
+        WHERE id = ?
+          AND eliminado = 0
+        LIMIT 1`,
+            [usuario_id],
+            true
         );
-
-        const newId = result.insertId;
-        if (!newId) {
+        if (!userCheck || userCheck.length === 0) {
             throw new CustomException({
-                title: "Error al crear comentario",
-                message: "No se obtuvo el ID del comentario insertado",
-                status: 404
+                title: 'Usuario no encontrado',
+                message: `No existe un usuario activo con id=${usuario_id}`,
+                status: Status.notFound
             });
         }
 
-        const [row] = await executeQuery(
-            `SELECT * FROM comentarios WHERE id = ?`,
-            [newId]
-
+        // 2) Verificar que el ticket exista y no esté eliminado
+        const ticketCheck = await executeQuery(
+            `SELECT 1
+         FROM tickets
+        WHERE id = ?
+          AND eliminado = 0
+        LIMIT 1`,
+            [ticket_id],
+            true
         );
-        return Comentario.fromJson(row);
+        if (!ticketCheck || ticketCheck.length === 0) {
+            throw new CustomException({
+                title: 'Ticket no encontrado',
+                message: `No existe un ticket activo con id=${ticket_id}`,
+                status: Status.notFound
+            });
+        }
+
+        // 3) Insertar el comentario
+        const result = await executeQuery(
+            `INSERT INTO comentarios (usuario_id, ticket_id, contenido)
+       VALUES (?, ?, ?)`,
+            [usuario_id, ticket_id, texto],
+            true
+        );
+        const newId = result.insertId;
+        if (!newId) {
+            throw new CustomException({
+                title: 'Error al crear comentario',
+                message: 'No se obtuvo el ID del comentario insertado',
+                status: Status.internalServerError
+            });
+        }
+
+        return { newId };
+
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: "Error al crear comentario",
+            title: 'Error al crear comentario',
             message: err.message,
-            stack: err.stack
+            stack: err.stack,
+            status: Status.internalServerError
         });
     }
 }

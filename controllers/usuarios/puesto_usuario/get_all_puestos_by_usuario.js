@@ -2,6 +2,7 @@
 import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
 import PuestoUsuario from '../../../models/puesto_usuario.js';
+import { Status } from '../../../models/status.js';
 
 
 /**
@@ -18,8 +19,8 @@ export async function getPuestosByUsuario(usuarioId) {
         if (rows.length === 0) {
             throw new CustomException({
                 title: 'Puestos no encontrados',
-                message: `No existen puestos asignados al usuario con id=${usuarioId}`,
-                status: 404
+                message: `No existen puestos asignados al usuario con id: ${usuarioId}`,
+                status: Status.notFound
             });
         }
         return rows.map(r => PuestoUsuario.fromJson(r));

@@ -8,28 +8,26 @@ import { Status } from '../../models/status.js';
  * Marca un menú como eliminado (soft delete)
  * @param {number} id
  */
-export async function deleteMenu(id) {
+export async function deleteMenu(params) {
+    const id = params.id;
     try {
-
-        const row = await executeQuery(
-            'SELECT * FROM menus WHERE id = ? AND eliminado = 0',
-            [id], true
+        const result = await executeQuery(
+            `UPDATE modulos SET eliminado  = 1, fecha_eliminado = NOW()  WHERE id = ? AND eliminado = 0`, [id]
         );
-        if (!row || row.length === 0) {
+
+        if (!result || result.affectedRows === 0) {
             throw new CustomException({
-                title: 'Menú no encontrado',
-                message: `No existe un menú con ID: ${id}`,
+                title: 'Módulo no encontrado',
+                message: `No existe un módulo activo con id=${id}`,
                 status: Status.notFound
             });
         }
-        await executeQuery('UPDATE menus SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?',
-            [id], true
-        );
 
+        return { id };
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Error eliminando menú',
+            title: 'Error al eliminar módulo',
             message: err.message,
             stack: err.stack
         });

@@ -1,5 +1,6 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 
 
 /**
@@ -7,27 +8,18 @@ import CustomException from '../../models/custom_exception.js';
  * @param {number|string} id - The ID of the estado to delete.
  * @returns {{id: number|string}} The ID of the deleted estado.
  */
-export async function deleteEstadoLogistica(id) {
+export async function deleteEstadoLogistica(params) {
+    const id = params.id;
     try {
-        // 1) Verificar que exista el registro
-        const [row] = await executeQuery(
-            `SELECT * FROM estados_logistica WHERE id = ?`,
-            [id]
-        );
-        if (!row) {
+        const result = await executeQuery(`UPDATE estados_logistica SET eliminado  = 1,  fecha_eliminado = NOW() WHERE id = ? AND eliminado = 0`, [id], true);
+
+        if (!result || result.affectedRows === 0) {
             throw new CustomException({
                 title: 'EstadoLogistica no encontrado',
-                message: `No existe un estado_logistica con id=${id}`,
-                status: 404
+                message: `No existe un estado_logistica activo con id=${id}`,
+                status: Status.notFound
             });
         }
-
-        // 2) Eliminarlo
-        await executeQuery(
-            `UPDATE estados_logistica SET eliminado = 1,
-                    fecha_eliminado = NOW() WHERE id = ?`,
-            [id]
-        );
 
         return { id };
     } catch (err) {

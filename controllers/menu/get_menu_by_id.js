@@ -9,10 +9,11 @@ import { Status } from '../../models/status.js';
  * @param {number} id
  * @returns {Promise<Menu>}
  */
-export async function getMenuById(id) {
+export async function getMenuById(params) {
+    const id = params.id;
     try {
         const [row] = await executeQuery(
-            'SELECT * FROM menus WHERE id = ? AND eliminado = 0',
+            'SELECT * FROM menus WHERE id = ? AND eliminado = 0 LIMIT 1',
             [id]
         );
         if (!row) {

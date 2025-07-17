@@ -60,10 +60,10 @@ router.get('/:id/menus', async (req, res) => {
  */
 router.post('/:id/menus', async (req, res) => {
     const start = performance.now();
-    const menu_id = req.body.menuId;
+    //  const menu_id = req.body.menuId;
     if (!verificarTodo(req, res, ['id'], ['menu_id'])) return;
     try {
-        const newRel = await addPlanMenu(req.params.id, menu_id);
+        const newRel = await addPlanMenu(req.params, req.body);
         res.status(Status.created).json({ body: newRel, message: 'Menú asignado al plan correctamente' });
         logGreen(`POST /api/planes/${req.params.id}/menus: asignado`);
     } catch (err) {
@@ -82,7 +82,7 @@ router.delete('/:id/menus/:menu_id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], ['menu_id'])) return;
     try {
-        await deletePlanMenu(+req.params.id, +req.params.menu_id);
+        await deletePlanMenu(req.params);
         res.status(Status.created).json({ message: 'Asignación de menú eliminada correctamente' });
         logGreen(
             `DELETE /api/planes/${req.params.id}/menus/${req.params.menu_id}: borrado suave`

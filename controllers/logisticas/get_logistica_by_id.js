@@ -8,8 +8,8 @@ import CustomException from '../../models/custom_exception.js';
  * @throws {CustomException} If not found or on query error.
  */
 export async function getLogisticaById(id) {
-    try {
-        const sql = `
+  try {
+    const sql = `
       SELECT
         l.id,
         l.did,
@@ -50,54 +50,54 @@ export async function getLogisticaById(id) {
             LIMIT 1;
         `;
 
-        const rows = await executeQuery(sql, [id]);
+    const rows = await executeQuery(sql, [id]);
 
-        if (rows.length === 0) {
-            throw new CustomException({
-                title: 'Logística no encontrada',
-                message: `No existe una logística con id=${id}`,
-                status: 404
-            });
-        }
-
-        const row = rows[0];
-
-        // Parseamos JSON de MySQL si viene como string
-        const plan = typeof row.plan_json === 'string'
-            ? JSON.parse(row.plan_json)
-            : row.plan_json;
-        const estado = typeof row.estado_json === 'string'
-            ? JSON.parse(row.estado_json)
-            : row.estado_json;
-        const pais = typeof row.pais_json === 'string'
-            ? JSON.parse(row.pais_json)
-            : row.pais_json;
-
-        // Creamos el objeto plain
-        const logistica = {
-            id: row.id,
-            did: row.did,
-            nombre: row.nombre,
-            url_imagen: row.url_imagen,
-            plan: plan,
-            estado_logistica: estado,
-            codigo: row.codigo,
-            password_soporte: row.password_soporte,
-            cuit: row.cuit,
-            email: row.email,
-            url_sistema: row.url_sistema,
-            pais: pais
-        };
-
-        return logistica;
-    } catch (err) {
-        if (err instanceof CustomException) {
-            throw err;
-        }
-        throw new CustomException({
-            title: 'Error al obtener logística',
-            message: err.message,
-            stack: err.stack
-        });
+    if (rows.length === 0) {
+      throw new CustomException({
+        title: 'Logística no encontrada',
+        message: `No existe una logística con id=${id}`,
+        status: 404
+      });
     }
+
+    const row = rows[0];
+
+    // Parseamos JSON de MySQL si viene como string
+    const plan = typeof row.plan_json === 'string'
+      ? JSON.parse(row.plan_json)
+      : row.plan_json;
+    const estado = typeof row.estado_json === 'string'
+      ? JSON.parse(row.estado_json)
+      : row.estado_json;
+    const pais = typeof row.pais_json === 'string'
+      ? JSON.parse(row.pais_json)
+      : row.pais_json;
+
+    // Creamos el objeto plain
+    const logistica = {
+      id: row.id,
+      did: row.did,
+      nombre: row.nombre,
+      url_imagen: row.url_imagen,
+      plan: plan,
+      estado_logistica: estado,
+      codigo: row.codigo,
+      password_soporte: row.password_soporte,
+      cuit: row.cuit,
+      email: row.email,
+      url_sistema: row.url_sistema,
+      pais: pais
+    };
+
+    return logistica;
+  } catch (err) {
+    if (err instanceof CustomException) {
+      throw err;
+    }
+    throw new CustomException({
+      title: 'Error al obtener logística',
+      message: err.message,
+      stack: err.stack
+    });
+  }
 }

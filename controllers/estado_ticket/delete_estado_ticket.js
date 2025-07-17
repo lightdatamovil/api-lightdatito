@@ -1,29 +1,29 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 
-export async function deleteEstadoticket(id) {
+export async function deleteEstadoticket(params) {
+    const { id } = params;
     try {
-        const [row] = await executeQuery(
-            `SELECT * FROM estados_ticket WHERE id = ?`,
-            [id]
-        );
+        // 1) Intento directo de soft-delete y compruebo cuántas filas afectó
+        const result = await executeQuery(`UPDATE estados_ticket SET eliminado = 1, fecha_eliminado = NOW()  WHERE id = ? AND eliminado = 0`, [id]);
 
-        if (!row) {
+        if (!result || result.affectedRows === 0) {
             throw new CustomException({
                 title: 'Estado ticket no encontrado',
-                message: `No existe un estado_ticket con id=${id}`,
+                message: `No existe un estado_ticket activo con id: ${id}`,
+                status: Status.notFound
             });
         }
-
-        await executeQuery('UPDATE estados_ticket SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?', [id]);
-
+        // 3) Devuelvo sólo el id para confirmar el soft-delete
         return { id };
-    } catch (error) {
-        if (error instanceof CustomException) throw error;
+
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
         throw new CustomException({
             title: 'Error al eliminar estado_ticket',
-            message: error.message,
-            stack: error.stack
+            message: err.message,
+            stack: err.stack
         });
     }
 }

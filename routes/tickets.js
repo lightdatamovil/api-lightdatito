@@ -13,22 +13,22 @@ import { Status } from '../models/status.js';
 
 
 const router = Router();
-
+const requiredBodyFields = [
+    'titulo',
+    'descripcion',
+    'tipo_ticket_id',
+    'observador',
+    'proyecto_id',
+    'logistica_id',];
 
 // Crear un nuevo ticket
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = [
-        'titulo',
-        'descripcion',
-        'tipo_ticket_id',
-        'observador',
-        'proyecto_id',
-        'logistica_id',];
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
+
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const { titulo, descripcion, tipo_ticket_id, observador, proyecto_id, logistica_id } = req.body;
-        const newItem = await createticket(titulo, descripcion, tipo_ticket_id, observador, proyecto_id, logistica_id);
+
+        const newItem = await createticket(req.body);
         res.status(201).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(`POST /api/tickets: éxito al crear ticket ID ${newItem.id}`);
     } catch (err) {
@@ -57,7 +57,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const item = await getticketById(req.params.id);
+        const item = await getticketById(req.params);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/tickets/${req.params.id}: éxito al obtener ticket`);
     } catch (err) {
@@ -70,9 +70,9 @@ router.get('/:id', async (req, res) => {
 // Actualizar un ticket
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
-        const updated = await updateticket(req.params.id, req.body);
+        const updated = await updateticket(req.params, req.body);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/tickets/${req.params.id}: éxito al actualizar ticket`);
     } catch (err) {
@@ -87,7 +87,7 @@ router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        await deleteTicket(req.params.id);
+        await deleteTicket(req.params);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/tickets/${req.params.id}: éxito al eliminar ticket`);
     } catch (err) {

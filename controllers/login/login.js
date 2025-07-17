@@ -25,7 +25,6 @@ export async function login(email, password) {
         });
     }
 
-
     //console.log('→ loginUser:', { email, password, userRow });
 
     // 2) Compara hash SHA-256

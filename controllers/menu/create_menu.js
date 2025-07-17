@@ -9,14 +9,13 @@ import { Status } from '../../models/status.js';
  * @param {string} nombre - Nombre del menú
  * @returns {Promise<Menu>} Menú creado
  */
-export async function createMenu(nombre) {
+export async function createMenu(body) {
     try {
+        const { nombre } = body;
         // Verificar duplicado
         const [{ count }] = await executeQuery(
             'SELECT COUNT(*) AS count FROM menus WHERE LOWER(nombre) = ? AND eliminado = 0',
             [nombre],
-            true,
-            0
         );
         if (count > 0) {
             throw new CustomException({
@@ -40,12 +39,7 @@ export async function createMenu(nombre) {
             });
         }
 
-        // Recuperar registro recién creado
-        const [row] = await executeQuery(
-            'SELECT * FROM menus WHERE id = ? AND eliminado = 0',
-            [newId]
-        );
-        return Menu.fromJson(row);
+        return Menu.fromJson({ id: newId });
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({

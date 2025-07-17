@@ -3,9 +3,10 @@ import CustomException from '../../models/custom_exception.js';
 import Herramienta from '../../models/herramienta.js';
 import { Status } from '../../models/status.js';
 
-export async function getHerramientaById(id) {
+export async function getHerramientaById(params) {
     try {
-        const [rows] = await executeQuery('SELECT * FROM herramientas WHERE id = ? AND eliminado = 0', [id], true
+        const id = params.id;
+        const [rows] = await executeQuery('SELECT * FROM herramientas WHERE id = ? AND eliminado = 0 LIMIT 1', [id]
         );
 
         if (!rows || rows.length === 0) {

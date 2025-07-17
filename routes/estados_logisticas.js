@@ -11,22 +11,17 @@ import { verificarTodo } from '../src/funciones/verificarAll.js';
 import { Status } from '../models/status.js';
 
 const router = Router();
+const requiredBodyFields = ['nombre', 'color'];
 
 // Crear estado de logística
 router.post('/', async (req, res) => {
     const start = performance.now();
-    const requiredBodyFields = ['nombre', 'color'];
     // validación de body
     if (!verificarTodo(req, res, requiredBodyFields)) return;
-
     try {
-        const { nombre, color } = req.body;
-        // suponiendo firma: createEstadoLogistica({ nombre, color })
-        const newItem = await createEstadoLogistica(nombre, color);
+        const newItem = await createEstadoLogistica(req.body);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
-        logGreen(
-            `POST /api/estados-logistica: éxito al crear estado con ID ${newItem.id}`
-        );
+        logGreen(`POST /api/estados-logistica: éxito al crear estado con ID ${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
@@ -39,7 +34,6 @@ router.post('/', async (req, res) => {
 // Listar todos los estados de logística
 router.get('/', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res)) return;
     try {
         const list = await getAllEstadosLogisticas();
         res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
@@ -56,9 +50,9 @@ router.get('/', async (req, res) => {
 // Obtener un estado de logística por ID
 router.get('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        const item = await getEstadoLogisticaById(req.params.id);
+        const item = await getEstadoLogisticaById(req.params);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/estados-logistica/${req.params.id}: éxito al obtener estado`);
     } catch (err) {
@@ -70,18 +64,16 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Actualizar estado de logística
+
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'])) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
-        const { nombre, color } = req.body;
-        const updated = await updateEstadoLogistica(req.params.id, nombre, color);
+        const updated = await updateEstadoLogistica(req.params, req.body);
         res.status(Status.ok).json({ body: updated.toJson(), message: 'Actualizado correctamente' });
         logGreen(`PUT /api/estados-logistica/${req.params.id}: éxito al actualizar estado`);
     } catch (err) {
         return handleError(req, res, err);
-
     } finally {
         logPurple(
             `PUT /api/estados-logistica/:id ejecutado en ${performance.now() - start} ms`
@@ -93,9 +85,8 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
-
     try {
-        await deleteEstadoLogistica(req.params.id);
+        await deleteEstadoLogistica(req.params);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/estados-logistica/${req.params.id}: éxito al eliminar estado`);
     } catch (err) {

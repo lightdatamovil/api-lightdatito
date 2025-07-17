@@ -1,24 +1,23 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
+import { Status } from '../../models/status.js';
 
 
-/**
- * Obtiene un tipo de particularidad por su ID
- */
 export async function getTipoParticularidadById(id) {
     try {
-        const [row] = await executeQuery(
-            'SELECT * FROM tipo_particularidad WHERE id = ? AND eliminado = 0',
-            [id], true, 0
-        );
+        const [row] = await executeQuery('SELECT * FROM tipo_particularidad WHERE id = ? AND eliminado = 0', [id],);
         if (!row) {
             throw new CustomException({
                 title: 'No encontrado',
-                message: `No existe tipo_particularidad con id ${id}`,
-                status: 404
+                message: `No existe tipo_particularidad con id: ${id}`,
+                status: Status.noContent
             });
         }
-        return row;
+        return {
+            id: row.id,
+            nombre: row.nombre,
+            descripcion: row.descripcion
+        };
     } catch (err) {
         throw new CustomException({
             title: 'Error obteniendo tipo_particularidad',

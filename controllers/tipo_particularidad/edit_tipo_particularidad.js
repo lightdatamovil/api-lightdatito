@@ -1,28 +1,22 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
-import { getTipoParticularidadById } from './get_tipo_particularidad_by_id.js';
 
-
-/**
- * Actualiza campos de un tipo de particularidad existente
- */
-export async function editTipoParticularidad(id, data) {
+export async function editTipoParticularidad(params, body) {
     try {
-        const fields = Object.keys(data);
-        if (!fields.length) {
+        const id = params;
+        const data = body;
+        const { nombre, descripcion } = data;
+        const query = `UPDATE tipo_particularidad SET nombre = ?, descripcion = ? WHERE id = ? AND eliminado = 0`;
+        const result = await executeQuery(query, [nombre, descripcion, id]);
+
+        if (!result.affectedRows) {
             throw new CustomException({
                 title: 'Sin datos',
                 message: 'No se proporcionaron campos para actualizar',
                 status: Status.badRequest
             });
         }
-        const setClause = fields.map(f => `${f} = ?`).join(', ');
-        await executeQuery(
-            `UPDATE tipo_particularidad SET ${setClause} WHERE id = ?`,
-            [...fields.map(f => data[f]), id]
-        );
-        return getTipoParticularidadById(id);
     } catch (err) {
         throw new CustomException({
             title: 'Error actualizando tipo_particularidad',

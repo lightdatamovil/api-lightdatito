@@ -1,30 +1,48 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import Estadoticket from '../../models/estado_reporte.js';
+import { Status } from '../../models/status.js';
 
-export async function updateEstadoticket(id, nombre, color) {
+export async function updateEstadoticket(params, body) {
+
+    const { id } = params;
+    const { nombre, color } = body;
     try {
-        await executeQuery(`UPDATE estados_ticket SET nombre = ?, color = ? WHERE id = ?`, [nombre, color, id], true);
-        if (!row) {
+        // 1) Ejecutar UPDATE y comprobar si se afectó alguna fila
+        const result = await executeQuery(
+            `UPDATE estados_ticket
+          SET nombre = ?,
+              color  = ?
+        WHERE id = ?
+          AND eliminado = 0`,
+            [nombre, color, id],
+            true
+        );
+
+        // 2) Si no hay filas afectadas, el registro no existe o está eliminado
+        if (!result || result.affectedRows === 0) {
             throw new CustomException({
-                title: 'Error al modificar estado_ticket',
-                message: `No se pudo recuperar el registro con id=${id} o no existe`,
-                status: 404
+                title: 'Estado de ticket no encontrado',
+                message: `No existe un estado_ticket activo con id=${id}`,
+                status: Status.notFound
             });
         }
 
+        // 3) Recuperar el registro actualizado
         const [row] = await executeQuery(
             `SELECT * FROM estados_ticket WHERE id = ?`,
-            [id], true
+            [id],
+            true
         );
 
         return Estadoticket.fromJson(row);
-    } catch (error) {
-        if (error instanceof CustomException) throw error;
+
+    } catch (err) {
+        if (err instanceof CustomException) throw err;
         throw new CustomException({
-            title: 'Error al updatear estado_ticket',
-            message: error.message,
-            stack: error.stack
+            title: 'Error actualizando estado_ticket',
+            message: err.message,
+            stack: err.stack
         });
     }
 }

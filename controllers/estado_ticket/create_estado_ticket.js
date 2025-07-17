@@ -1,10 +1,10 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import Estadoticket from '../../models/estado_reporte.js';
 import { Status } from '../../models/status.js';
 
 
-export async function createEstadoticket(nombre, color) {
+export async function createEstadoticket(body) {
+    const { nombre, color } = body;
     try {
         const nombre_limpio = nombre.trim().toLowerCase();
         const color_limpio = color.trim().toLowerCase();
@@ -21,28 +21,20 @@ export async function createEstadoticket(nombre, color) {
             });
         }
 
-
         const result = await executeQuery(
             `INSERT INTO estados_ticket (nombre, color) VALUES (?, ?)`,
             [nombre_limpio, color_limpio]
         );
 
         const newId = result.insertId;
-
         if (!newId) {
             throw new CustomException({
                 title: 'Error al crear estado_ticket',
                 message: 'No se obtuvo el ID del registro insertado',
-                status: 500
+                status: Status.internalServerError
             });
         }
-
-        const [row] = await executeQuery(
-            `SELECT * FROM estados_ticket WHERE id = ?`,
-            [newId]
-        );
-
-        return Estadoticket.fromJson(row);
+        return { newId };
     } catch (error) {
         if (error instanceof CustomException) throw error;
         throw new CustomException({

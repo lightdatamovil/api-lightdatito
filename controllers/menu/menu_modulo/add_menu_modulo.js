@@ -1,6 +1,8 @@
 import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
 
+
+// ! MENU MODULO NO EXISTE LA TABLA 
 export async function addMenuModulo(menuId, nombre) {
     // 1) Verificar que el menú exista
     const [menu] = await executeQuery(

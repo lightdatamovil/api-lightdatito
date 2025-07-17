@@ -1,24 +1,28 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import { getTipoticketById } from '../tipo_ticket.js/get_tipo_ticket_by_id.js';
+import { Status } from '../../models/status.js';
 
 
 
-export async function updateticket(id, data) {
+export async function updateticket(params, body) {
+    const { id } = params;
+    const { titulo, descripcion, tipo_ticket_id, observador, proyecto_id, logistica_id } = body;
     try {
-        const fields = Object.keys(data);
-        if (!fields.length) throw new CustomException('No data provided for updateticket');
-        const setClause = fields.map(f => `${f} = ?`).join(', ');
-        await executeQuery(
-            `UPDATE tickets SET ${setClause} WHERE id = ?`,
-            [...Object.values(data), id]
-        );
-        return getTipoticketById(id);
+        const query = `UPDATE tickets SET (titulo, descripcion, tipo_ticket_id, observador, proyecto_id, logistica_id) = (?, ?, ?, ?, ?, ?) WHERE id = ? AND ELIMINADO = 0`;
+        const params = [titulo, descripcion, tipo_ticket_id, observador, proyecto_id, logistica_id, id];
+        const result = await executeQuery(query, params);
+        if (!result || result.affectedRows === 0) {
+            throw new CustomException({
+                title: 'Ticket no encontrado',
+                message: `No existe un ticket activo con id: ${id}`,
+                status: Status.notFound,
+            });
+        }
     } catch (error) {
-        throw new CustomException(
-            'Error creating estado_logistica',
-            error.message,
-            error.stack
-        );
+        throw new CustomException({
+            title: 'Error updating ticket',
+            message: error.message,
+            status: Status.internalServerError
+        });
     }
 }
