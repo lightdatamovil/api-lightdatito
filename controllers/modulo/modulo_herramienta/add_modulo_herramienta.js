@@ -4,7 +4,7 @@ import { Status } from '../../../models/status.js';
 
 
 export async function addModuloHerramienta(req) {
-    const { moduloId } = req.params;
+    const moduloId = req.params.id;
     const { herramientaId } = req.body;
     // 1) Verificar que el módulo exista y no esté eliminado
     const existsModulo = await executeQuery(

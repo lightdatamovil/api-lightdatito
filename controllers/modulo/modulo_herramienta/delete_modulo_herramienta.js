@@ -3,19 +3,11 @@ import CustomException from '../../../models/custom_exception.js';
 import { Status } from '../../../models/status.js';
 
 export async function deleteModuloHerramienta(req) {
-    const { moduloId } = req.params;
+    const moduloId = req.params.id;
     const { herramientaId } = req.body;
 
     // 1) Intento directo de soft‐delete y compruebo cuántas filas afectó
-    const result = await executeQuery(
-        `UPDATE modulo_herramienta
-          SET eliminado      = 1,
-              fecha_eliminado = NOW()
-        WHERE modulo_id      = ?
-          AND herramienta_id = ?
-          AND eliminado      = 0`,
-        [moduloId, herramientaId],
-        true
+    const result = await executeQuery(`UPDATE modulo_herramienta SET eliminado  = 1, fecha_eliminado = NOW() WHERE modulo_id  = ? AND herramienta_id = ? AND eliminado = 0`, [moduloId, herramientaId],
     );
 
     // 2) Si no afectó ninguna fila, esa asignación no existe o ya fue eliminada

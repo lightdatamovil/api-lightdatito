@@ -9,8 +9,8 @@ import { Status } from '../../models/status.js';
  * @param {number} menu_id
  * @returns {Promise<Modulo>}
  */
-export async function createModulo(body) {
-    const { nombre, menu_id } = body;
+export async function createModulo(req) {
+    const { nombre, menu_id } = req.body;
     const nombreLimpio = nombre.trim();
 
     const existing = await executeQuery(

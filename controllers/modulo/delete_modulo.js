@@ -8,7 +8,7 @@ import { Status } from '../../models/status.js';
  */
 
 export async function deleteModulo(req) {
-    const { id } = req.params;
+    const id = req.params.id;
 
     // 1) Soft-delete y compruebo si se afectó alguna fila
     const result = await executeQuery(

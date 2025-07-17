@@ -66,9 +66,7 @@ router.post('/:id/herramientas', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], ['herramientaId'])) return;
     try {
         const rel = await addModuloHerramienta(req);
-        res
-            .status(201)
-            .json({ body: rel, message: 'Herramienta asignada correctamente' });
+        res.status(Status.ok).json({ body: rel, message: 'Herramienta asignada correctamente' });
         logGreen(`POST /api/modulos/${req.params.id}/herramientas: asignado`);
     } catch (err) {
         return handleError(req, res, err);
@@ -106,8 +104,7 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [],)) return;
     try {
-        const { nombre, menu_id } = req.body;
-        const newItem = await createModulo(nombre, menu_id);
+        const newItem = await createModulo(req);
         res.status(Status.created).json({ body: newItem, message: 'Módulo creado' });
         logGreen(`POST /api/modulo: id ${newItem.id}`);
     } catch (err) {
@@ -136,7 +133,7 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
-        const item = await getModuloById(Number(req.params.id));
+        const item = await getModuloById(req);
         res.status(Status.ok).json({ body: item, message: 'Módulo obtenido' });
         logGreen(`GET /api/modulo/${req.params.id} ok`);
     } catch (err) {

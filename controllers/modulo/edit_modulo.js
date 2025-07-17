@@ -11,7 +11,7 @@ import { Status } from '../../models/status.js';
  */
 export async function editModulo(req) {
 
-    const { id } = req.params;
+    const id = req.params.id;
     const { nombre, menu_id } = req.body;
 
     // 1) UPDATE directo de los dos campos
@@ -28,8 +28,5 @@ export async function editModulo(req) {
             status: Status.notFound
         });
     }
-
-    // 3) Devolvemos el registro ya actualizado
-    return await id;
 
 }

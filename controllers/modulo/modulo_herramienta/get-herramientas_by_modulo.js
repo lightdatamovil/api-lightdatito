@@ -1,17 +1,16 @@
 import { executeQuery } from '../../../db.js';
 import CustomException from '../../../models/custom_exception.js';
+import { Status } from '../../../models/status.js';
 
-export async function getHerramientasByModulo(moduloId) {
-    // 1) Verificar que el módulo exista
-    const [modulo] = await executeQuery(
-        `SELECT id FROM modulos WHERE id = ? AND eliminado = 0`,
-        [moduloId]
+export async function getHerramientasByModulo(req) {
+    const id = req.params.id;
+    const [modulo] = await executeQuery(`SELECT id FROM modulos WHERE id = ? AND eliminado = 0`, [id]
     );
     if (!modulo) {
         throw new CustomException({
             title: 'Módulo no encontrado',
-            message: `No existe un módulo con id=${moduloId}`,
-            status: 404
+            message: `No existe un módulo con id=${id}`,
+            status: Status.notFound
         });
     }
 
@@ -27,6 +26,6 @@ export async function getHerramientasByModulo(moduloId) {
      WHERE mh.modulo_id = ?
        AND mh.eliminado = 0
        AND h.eliminado = 0`,
-        [moduloId]
+        [id]
     );
 }

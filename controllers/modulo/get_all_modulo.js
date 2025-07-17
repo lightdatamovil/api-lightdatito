@@ -8,8 +8,7 @@ import { Status } from '../../models/status.js';
  * @returns {Promise<Modulo[]>}
  */
 export async function getAllModulos() {
-    const rows = await executeQuery(
-        'SELECT * FROM modulos WHERE eliminado = 0',
+    const rows = await executeQuery('SELECT * FROM modulos WHERE eliminado = 0',
     );
     if (!rows || rows.length === 0) {
         throw new CustomException({

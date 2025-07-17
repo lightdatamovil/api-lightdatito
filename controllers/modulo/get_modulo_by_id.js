@@ -10,10 +10,10 @@ import { Status } from '../../models/status.js';
  */
 export async function getModuloById(req) {
 
-    const { id } = req.params;
+    const id = req.params.id;
     const [row] = await executeQuery(
         'SELECT * FROM modulos WHERE id = ? AND eliminado = 0 LIMIT 1',
-        [id], true, 0
+        [id]
     );
     if (!row) {
         throw new CustomException({
