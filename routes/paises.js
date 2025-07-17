@@ -3,6 +3,7 @@ import { performance } from 'perf_hooks';
 import { logPurple, logGreen } from '../src/funciones/logsCustom.js';
 import { getAllPaises } from '../controllers/paises/get_all_paises.js';
 import { handleError } from '../src/funciones/handle_error.js';
+import { Status } from '../models/status.js';
 
 const router = Router();
 

@@ -20,7 +20,7 @@ router.post('/:logisticaId', async (req, res) => {
     if (!verificarTodo(req, res, requiredBodyFields)) return;
 
     try {
-        const newItem = await createParticularidadLogistica(req.body);
+        const newItem = await createParticularidadLogistica(req);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
         logGreen(
             `POST /api/particularidades-logistica: éxito al crear particularidad con ID ${newItem.id}`
@@ -56,7 +56,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
 
     try {
-        const item = await getParticularidadLogisticaById(req.params);
+        const item = await getParticularidadLogisticaById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(
             `GET /api/particularidad-logistica/${req.params.id}: éxito al obtener particularidad`
@@ -75,7 +75,7 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
-        const updated = await updateParticularidadLogistica(req.params, req.body);
+        const updated = await updateParticularidadLogistica(req);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(
             `PUT /api/particularidades-logistica/${req.params.id}: éxito al actualizar particularidad`
@@ -95,7 +95,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
 
     try {
-        await deleteParticularidadLogistica(req.params);
+        await deleteParticularidadLogistica(req);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/particularidad-logistica/${req.params.id}: éxito al eliminar observación`
         );
@@ -112,7 +112,7 @@ router.delete('/:id', async (req, res) => {
 router.get("/logistica_id/:id", async (req, res) => {
     const start = performance.now();
     try {
-        const list = await getAllParticularidadesForLogistica(req.params);
+        const list = await getAllParticularidadesForLogistica(req);
         if (list.length === 0) {
             res.status(Status.ok).json({ message: "No se encontraron particularidades" });
             logGreen(`GET /api/particularidades-logistica/logistica_id/${req.params.id}: sin particularidades`);

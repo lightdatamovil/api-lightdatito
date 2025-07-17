@@ -8,44 +8,35 @@ import { Status } from '../../models/status.js';
  * @param {string} nombre - El nombre de la observación
  */
 
-export async function createParticularidadLogistica(body) {
-    const { logisticaId, particularidad, es_pago, tipo_particularidad_id } = body;
-    try {
+export async function createParticularidadLogistica(req) {
+    const { logisticaId, particularidad, es_pago, tipo_particularidad_id } = req.body;
+    const ver = await executeQuery('SELECT 1 FROM particularidades WHERE logistica_id = ? AND particularidad = LOWER(?)',
+        [logisticaId, particularidad]
+    );
 
-        const ver = await executeQuery('SELECT 1 FROM particularidades WHERE logistica_id = ? AND particularidad = LOWER(?)',
-            [logisticaId, particularidad]
-        );
-
-        if (ver && ver.length > 0) {
-            throw new CustomException({
-                title: 'Particularidad duplicada',
-                message: `Ya existe una particularidad "${particularidad}" para la logística con ID ${logisticaId}`,
-                status: Status.conflict
-            });
-        }
-
-        const values = [logisticaId, particularidad, es_pago, tipo_particularidad_id];
-        const query = `INSERT INTO particularidades (logistica_id, particularidad, es_pago, tipo_particularidad_id) VALUES (?, ?, ?, ?)`;
-
-        // 1) Insertar en la tabla de particularidades
-        const result = await executeQuery(query, values);
-
-        const newId = result.insertId;
-        if (!newId) {
-            throw new CustomException({
-                title: 'Error al crear particularidad de logistica',
-                message: 'No se obtuvo el ID del registro insertado',
-                status: Status.internalServerError
-            });
-        }
-
-        return await { id: newId };
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    if (ver && ver.length > 0) {
         throw new CustomException({
-            title: 'Error al crear observacion_logistica',
-            message: err.message,
-            stack: err.stack
+            title: 'Particularidad duplicada',
+            message: `Ya existe una particularidad "${particularidad}" para la logística con ID ${logisticaId}`,
+            status: Status.conflict
         });
     }
+
+    const values = [logisticaId, particularidad, es_pago, tipo_particularidad_id];
+    const query = `INSERT INTO particularidades (logistica_id, particularidad, es_pago, tipo_particularidad_id) VALUES (?, ?, ?, ?)`;
+
+    // 1) Insertar en la tabla de particularidades
+    const result = await executeQuery(query, values);
+
+    const newId = result.insertId;
+    if (!newId) {
+        throw new CustomException({
+            title: 'Error al crear particularidad de logistica',
+            message: 'No se obtuvo el ID del registro insertado',
+            status: Status.internalServerError
+        });
+    }
+
+    return await newId;
+
 }
