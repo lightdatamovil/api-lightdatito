@@ -5,26 +5,28 @@ import { logGreen, logPurple } from '../src/funciones/logsCustom.js';
 import { verificarTodo } from '../src/funciones/verificarAllt.js';
 import { handleError } from '../src/funciones/handle_error.js'; // o ruta individual
 import { Status } from '../models/status.js';
+import { createTipoParticularidad } from '../controllers/tipo_particularidad/crear_tipo_particuaridad.js';
+import { getAllTipoParticularidad } from '../controllers/tipo_particularidad/get_all_tipo_particularidad.js';
+import { getTipoParticularidadById } from '../controllers/tipo_particularidad/get_tipo_particularidad_by_id.js';
+import { editTipoParticularidad } from '../controllers/tipo_particularidad/edit_tipo_particularidad.js';
+import { deleteTipoParticularidad } from '../controllers/tipo_particularidad/delete_tipo_particularidad.js';
 
 const router = Router();
 
 // Crear
-router.post(
-    '/',
-    async (req, res) => {
-        const start = performance.now();
-        if (!verificarTodo(req, res, [], ['nombre'])) return; // nombre es obligatorio
-
-        try {
-            const newItem = await createTipoParticularidad(req.body);
-            res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
-            logGreen(`POST /api/tipo_particularidad: creado id ${newItem.id}`);
-        } catch (err) {
-            return handleError(req, res, err);
-        } finally {
-            logPurple(`POST /api/tipo_particularidad ejecutado en ${performance.now() - start} ms`);
-        }
+router.post('/', async (req, res) => {
+    const start = performance.now();
+    if (!verificarTodo(req, res, [], ['nombre'])) return;
+    try {
+        const newItem = await createTipoParticularidad(req.body);
+        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
+        logGreen(`POST /api/tipo_particularidad: creado id ${newItem.id}`);
+    } catch (err) {
+        return handleError(req, res, err);
+    } finally {
+        logPurple(`POST /api/tipo_particularidad ejecutado en ${performance.now() - start} ms`);
     }
+}
 );
 
 // Listar todos
@@ -45,9 +47,8 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
-
     try {
-        const item = await getTipoParticularidadById(req.params.id);
+        const item = await getTipoParticularidadById(req.params);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`GET /api/tipo_particularidad/${req.params.id}: éxito`);
     } catch (err) {
@@ -61,9 +62,8 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
-
     try {
-        const updated = await editTipoParticularidad(req.params.id, req.body);
+        const updated = await editTipoParticularidad(req.params, req.body);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/tipo_particularidad/${req.params.id}: éxito`);
     } catch (err) {
@@ -79,7 +79,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
 
     try {
-        await deleteTipoParticularidad(req.params.id);
+        await deleteTipoParticularidad(req.params);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });
         logGreen(`DELETE /api/tipo_particularidad/${req.params.id}: eliminado`);
     } catch (err) {

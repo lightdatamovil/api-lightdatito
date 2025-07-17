@@ -11,11 +11,11 @@ export async function createTipoParticularidad({ body }) {
     const { nombre, descripcion } = body;
     try {
         // Evitar duplicados por nombre
-        const [{ count }] = await executeQuery(
-            'SELECT COUNT(*) AS count FROM tipo_particularidad WHERE LOWER(nombre) = LOWER(?) AND eliminado = 0',
-            [nombre], true, 0
+        const [{ verify }] = await executeQuery(
+            'SELECT id FROM tipo_particularidad WHERE LOWER(nombre) = LOWER(?) AND eliminado = 0 LIMIT 1',
+            [nombre],
         );
-        if (count > 0) {
+        if (verify) {
             throw new CustomException({
                 title: 'Tipo de particularidad duplicada',
                 message: `Ya existe un tipo de particularidad con nombre '${nombre}'`,
@@ -23,18 +23,21 @@ export async function createTipoParticularidad({ body }) {
             });
         }
 
-        // Inserción
         const result = await executeQuery(
             'INSERT INTO tipo_particularidad (nombre, descripcion) VALUES (?, ?)',
-            [nombre, descripcion || null], true
+            [nombre, descripcion]
         );
 
-        // Devolver recién creado
-        const [row] = await executeQuery(
-            'SELECT * FROM tipo_particularidad WHERE id = ? AND eliminado = 0 limit 1',
-            [result.insertId], true, 0
-        );
-        return row;
+        if (!result || result.affectedRows === 0) {
+            throw new CustomException({
+                title: 'Error al crear tipo_particularidad',
+                message: `No se pudo crear el tipo de particularidad con nombre '${nombre}'`,
+                status: Status.internalServerError
+            });
+        }
+        return { id: result.insertId };
+
+
     } catch (err) {
         if (err instanceof CustomException) throw err;
         throw new CustomException({
