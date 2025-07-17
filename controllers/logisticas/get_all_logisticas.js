@@ -1,14 +1,7 @@
 import { executeQuery } from '../../db.js';
-import CustomException from '../../models/custom_exception.js';
 
-/**
- * Retrieve all logística records that are not deleted.
- * @returns {Array<Object>} List of plain logística objects.
- * @throws {CustomException} On query error.
- */
 export async function getAllLogisticas() {
-  try {
-    const sql = `
+  const sql = `
      SELECT
         l.id,
         l.did,
@@ -60,35 +53,28 @@ export async function getAllLogisticas() {
       LEFT JOIN paises            p  ON l.pais_id             = p.id
     `;
 
-    const rows = await executeQuery(sql);
+  const rows = await executeQuery(sql);
 
-    return rows.map(row => {
-      const plan = JSON.parse(row.plan_json);
-      const estado = JSON.parse(row.estado_json);
-      const pais = JSON.parse(row.pais_json);
-      const historial_nombres = JSON.parse(row.historial_nombres_json);
+  return rows.map(row => {
+    const plan = JSON.parse(row.plan_json);
+    const estado = JSON.parse(row.estado_json);
+    const pais = JSON.parse(row.pais_json);
+    const historial_nombres = JSON.parse(row.historial_nombres_json);
 
-      return {
-        id: row.id,
-        did: row.did,
-        nombre: row.nombre,
-        historial_nombres: historial_nombres,
-        url_imagen: row.url_imagen,
-        plan_id: plan,
-        estado_logistica_id: estado,
-        codigo: row.codigo,
-        password_soporte: row.password_soporte,
-        cuit: row.cuit,
-        email: row.email,
-        url_sistema: row.url_sistema,
-        pais: pais
-      };
-    });
-  } catch (err) {
-    throw new CustomException({
-      title: 'Error al obtener logísticas',
-      message: err.message,
-      stack: err.stack
-    });
-  }
+    return {
+      id: row.id,
+      did: row.did,
+      nombre: row.nombre,
+      historial_nombres: historial_nombres,
+      url_imagen: row.url_imagen,
+      plan_id: plan,
+      estado_logistica_id: estado,
+      codigo: row.codigo,
+      password_soporte: row.password_soporte,
+      cuit: row.cuit,
+      email: row.email,
+      url_sistema: row.url_sistema,
+      pais: pais
+    };
+  });
 }

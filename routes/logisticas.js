@@ -8,9 +8,7 @@ import { updateLogistica } from '../controllers/logisticas/edit_logistica.js';
 import { deleteLogistica } from '../controllers/logisticas/delete_logistica.js';
 import { handleError } from '../src/funciones/handle_error.js';
 import { verificarTodo } from '../src/funciones/verificarAll.js';
-import { getHistorialPlanes } from '../controllers/logisticas/logistica_plan/get_historial_planes.js';
-import { asignarPlanALogistica } from '../controllers/logisticas/logistica_plan/asignar_plan_a_logistica.js';
-import { deleteLogisticaPlan } from '../controllers/logisticas/logistica_plan/desasignar_plan_a_logistica.js';
+import { cambiarPlan } from '../controllers/logisticas/logistica_plan/cambiar_plan.js';
 import { Status } from '../models/status.js';
 
 const router = Router();
@@ -31,9 +29,11 @@ const requiredBodyFields = [
 
 router.post('/', async (req, res) => {
     const start = performance.now();
+
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
+
     try {
-        const newId = await createLogistica(req.body);
+        const newId = await createLogistica(req);
         res.status(Status.created).json({ body: newId, message: 'Creado correctamente' });
         logGreen(`${req.method} ${req.originalUrl}: éxito al crear logística con ID ${newId.id}`);
     } catch (err) {
@@ -59,7 +59,9 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const start = performance.now();
+
     if (!verificarTodo(req, res, ['id'])) return;
+
     try {
         const item = await getLogisticaById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
@@ -89,6 +91,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     const start = performance.now();
+
     if (!verificarTodo(req, res, ['id'])) return;
 
     try {
@@ -102,47 +105,20 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-router.get('/:logisticaId/planes', async (req, res) => {
+router.put('/:logisticaId/planes', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['logisticaId'], [])) return;
+
+    if (!verificarTodo(req, res, ['logisticaId'], ['planId'])) return;
+
     try {
-        const planes = await getHistorialPlanes(req);
-        res.status(Status.ok).json({ body: planes, message: 'Planes obtenidos' });
-        logGreen(`GET /api/logistica/${req.params.logisticaId}/planes`);
+        await cambiarPlan(req);
+        res.status(Status.created).json({ message: 'Plan cambiado correctamente' });
+        logGreen(`${req.method} ${req.originalUrl}: éxito al cambiar plan de logística`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
         logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
-
-router.post('/:logisticaId/planes', async (req, res) => {
-    const start = performance.now();
-    if (!verificarTodo(req, res, ['logisticaId'], ['planId'])) return;
-    try {
-        await asignarPlanALogistica(req);
-        res.status(201).json({ message: 'Plan asignado a logística' });
-        logGreen(`POST /api/logistica/${req.params.logisticaId}/planes`);
-    } catch (err) {
-        return handleError(req, res, err);
-    } finally {
-        logPurple(`POST /api/logistica/:logisticaId/planes ejecutado en ${performance.now() - start} ms`);
-    }
-});
-
-router.delete('/:logisticaId/planes/:planId', async (req, res) => {
-    const start = performance.now();
-    if (!verificarTodo(req, res, ['logisticaId', 'planId'], [])) return;
-    try {
-        await deleteLogisticaPlan(+req.params.logisticaId, +req.params.planId);
-        res.status(Status.ok).json({ message: 'Plan desasignado de logística' });
-        logGreen(`DELETE /api/logistica/${req.params.logisticaId}/planes/${req.params.planId}`);
-    } catch (err) {
-        return handleError(req, res, err);
-    } finally {
-        logPurple(`DELETE /api/logistica/:logisticaId/planes/:planId ejecutado en ${performance.now() - start} ms`);
-    }
-});
-
 
 export default router;
