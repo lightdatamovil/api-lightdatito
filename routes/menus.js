@@ -84,7 +84,7 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-        const newItem = await createMenu(req.body);
+        const newItem = await createMenu(req);
         res.status(Status.created).json({ body: newItem, message: 'Menú creado' });
         logGreen(`POST /api/menus id=${newItem.id}`);
     } catch (err) {
