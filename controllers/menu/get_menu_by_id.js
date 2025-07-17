@@ -11,25 +11,17 @@ import { Status } from '../../models/status.js';
  */
 export async function getMenuById(params) {
     const id = params.id;
-    try {
-        const [row] = await executeQuery(
-            'SELECT * FROM menus WHERE id = ? AND eliminado = 0 LIMIT 1',
-            [id]
-        );
-        if (!row) {
-            throw new CustomException({
-                title: 'No encontrado',
-                message: `No existe menú con id ${id}`,
-                status: Status.notFound
-            });
-        }
-        return Menu.fromJson(row);
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    const [row] = await executeQuery(
+        'SELECT * FROM menus WHERE id = ? AND eliminado = 0 LIMIT 1',
+        [id]
+    );
+    if (!row) {
         throw new CustomException({
-            title: 'Error obteniendo menú',
-            message: err.message,
-            stack: err.stack
+            title: 'No encontrado',
+            message: `No existe menú con id ${id}`,
+            status: Status.notFound
         });
     }
+    return Menu.fromJson(row);
+
 }

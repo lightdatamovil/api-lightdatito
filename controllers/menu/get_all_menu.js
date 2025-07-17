@@ -9,25 +9,17 @@ import { Status } from '../../models/status.js';
  * @returns {Promise<Menu[]>}
  */
 export async function getAllMenu() {
-    try {
-        const rows = await executeQuery(
-            'SELECT * FROM menus WHERE eliminado = 0', [], true
-        );
 
-        if (!rows || rows.length === 0) {
-            throw new CustomException({
-                title: 'No se encontraron menús',
-                message: 'No hay menús activos',
-                status: Status.noContent
-            });
-        }
-        return rows.map(r => Menu.fromJson(r));
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    const rows = await executeQuery(
+        'SELECT * FROM menus WHERE eliminado = 0',
+    );
+
+    if (!rows || rows.length === 0) {
         throw new CustomException({
-            title: 'Error listando menús',
-            message: err.message,
-            stack: err.stack
+            title: 'No se encontraron menús',
+            message: 'No hay menús activos',
+            status: Status.noContent
         });
     }
+    return rows.map(r => Menu.fromJson(r));
 }
