@@ -8,7 +8,8 @@ import { Status } from '../../models/status.js';
  * @returns {Object} The plain logística object.
  * @throws {CustomException} If not found or on query error.
  */
-export async function getLogisticaById(id) {
+export async function getLogisticaById(req) {
+  const { id } = req.params;
   try {
     const sql = `
         SELECT
@@ -16,35 +17,30 @@ export async function getLogisticaById(id) {
         l.did,
         l.nombre,
         l.url_imagen,
-
-        -- Objeto PLAN
-        JSON_OBJECT(
-          'id',     pl.id,
-          'nombre', pl.nombre,
-          'color',  pl.color
-        ) AS plan_json,
-
-        -- Objeto ESTADO
-        JSON_OBJECT(
-          'id',     el.id,
-          'nombre', el.nombre,
-          'color',  el.color
-        ) AS estado_json,
-
         l.codigo,
         l.password_soporte,
         l.cuit,
         l.email,
         l.url_sistema,
 
-        -- Objeto PAÍS
+        JSON_OBJECT(
+          'id',     pl.id,
+          'nombre', pl.nombre,
+          'color',  pl.color
+        ) AS plan_json,
+
+        JSON_OBJECT(
+          'id',     el.id,
+          'nombre', el.nombre,
+          'color',  el.color
+        ) AS estado_json,
+
         JSON_OBJECT(
           'id',        p.id,
           'nombre',    p.nombre,
           'codigo_iso',p.codigo_iso
         ) AS pais_json,
 
-        -- Array JSON con nombres anteriores del historial (compatibilidad MariaDB)
         (
           SELECT CONCAT(
             '[',
@@ -84,8 +80,8 @@ export async function getLogisticaById(id) {
     const plan = JSON.parse(row.plan_json);
     const estado = JSON.parse(row.estado_json);
     const pais = JSON.parse(row.pais_json);
-
     const historial_nombres = JSON.parse(row.historial_nombres_json);
+
     const logistica = {
       id: row.id,
       did: row.did,

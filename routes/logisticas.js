@@ -61,15 +61,13 @@ router.get('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'])) return;
     try {
-        const item = await getLogisticaById(req.params.id);
+        const item = await getLogisticaById(req);
         res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
         logGreen(`${req.method} ${req.originalUrl}: éxito al obtener logística`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(
-            `${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`
-        );
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -79,16 +77,13 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
 
     try {
-        const idLogistica = req.params.id;
-        await updateLogistica(idLogistica, req.body);
+        await updateLogistica(req);
         res.status(Status.ok).json({ message: 'Actualizado correctamente' });
         logGreen(`${req.method} ${req.originalUrl}: éxito al actualizar logística`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(
-            `${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`
-        );
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
@@ -103,9 +98,7 @@ router.delete('/:id', async (req, res) => {
     } catch (err) {
         return handleError(req, res, err);
     } finally {
-        logPurple(
-            `${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`
-        );
+        logPurple(`${req.method} ${req.originalUrl} ejecutado en ${performance.now() - start} ms`);
     }
 });
 
