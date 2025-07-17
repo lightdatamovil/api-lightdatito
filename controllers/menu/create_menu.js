@@ -13,11 +13,11 @@ export async function createMenu(req) {
 
     const { nombre } = req.body;
     // Verificar duplicado
-    const [{ count }] = await executeQuery(
-        'SELECT COUNT(*) AS count FROM menus WHERE LOWER(nombre) = ? AND eliminado = 0',
+    const [existing] = await executeQuery(
+        'SELECT id FROM menus WHERE LOWER(nombre) = ? AND eliminado = 0',
         [nombre],
     );
-    if (count > 0) {
+    if (existing) {
         throw new CustomException({
             title: 'Menú duplicado',
             message: `Ya existe un menú con nombre "${nombre}"`,
