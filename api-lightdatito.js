@@ -26,7 +26,6 @@ app.post('/api/testapi', async (req, res) => {
 
 (async () => {
     try {
-
         app.use('/api', allRoutes);
         app.listen(PORT, () => {
             logBlue(`Worker ${process.pid} escuchando en el puerto ${PORT}`);
@@ -34,4 +33,4 @@ app.post('/api/testapi', async (req, res) => {
     } catch (err) {
         logRed('Error al iniciar el servidor:', err);
     }
-})
+})();  
