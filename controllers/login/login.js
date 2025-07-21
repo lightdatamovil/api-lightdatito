@@ -20,8 +20,8 @@ export async function login(email, password) {
     if (!userRow) {
         throw new CustomException({
             title: 'Credenciales inválidas',
-            message: 'Email o contraseña incorrectos',
-            status: Status.unauthorized
+            message: 'El usuario no existe o ha sido eliminado',
+            status: Status.notFound
         });
     }
 
@@ -33,7 +33,7 @@ export async function login(email, password) {
     if (incomingHash !== userRow.password) {
         throw new CustomException({
             title: 'Credenciales inválidas',
-            message: 'Email o contraseña incorrectos',
+            message: 'Contraseña incorrecta',
             status: Status.unauthorized
         });
     }
