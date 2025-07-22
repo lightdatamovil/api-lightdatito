@@ -64,6 +64,19 @@ CREATE TABLE IF NOT EXISTS `tipo_ticket` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-------------------------------------------------------
+-- Table `prioridades`
+-------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `prioridades` (
+  `id`     INT(11)     NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `color`  VARCHAR(7)  NOT NULL,
+  `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `eliminado`     TINYINT(1)  NOT NULL DEFAULT 0,
+  `fecha_eliminado` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- -----------------------------------------------------
 -- Table `estados_logistica`
 -- -----------------------------------------------------
@@ -284,33 +297,36 @@ CREATE TABLE IF NOT EXISTS `estados_ticket` (
 -- -----------------------------------------------------
 -- Table `tickets`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `tickets` (
-  `id`               INT(11)      NOT NULL AUTO_INCREMENT,
-  `titulo`           VARCHAR(45)  NULL,
-  `descripcion`      VARCHAR(45)  NULL,
-  `fecha_creacion`   TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP(),
-  `fecha_limite`     TIMESTAMP    NULL,
-  `tipo_ticket_id`  INT(11)      NOT NULL,
-  `observador`       INT(11)      NOT NULL,
-  `proyecto_id`      INT(11)      NOT NULL,
-  `logistica_id`     INT(11)      NOT NULL,
-  `eliminado`        TINYINT(1)   NOT NULL DEFAULT 0,
-  `fecha_eliminado` DATETIME DEFAULT NULL,
-  `estado_ticket_id` INT(11)     NOT NULL DEFAULT 1,
-  `usuario_asignado_id`    INT(11)     NOT NULL,
+CREATE TABLE `tickets` (
+  `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
+  `titulo`               VARCHAR(45)  NULL,
+  `descripcion`          VARCHAR(45)  NULL,
+  `fecha_creacion`       TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP(),
+  `fecha_limite`         TIMESTAMP    NULL,
+  `tipo_ticket_id`       INT(11)      NOT NULL,
+  `observador`           INT(11)      NOT NULL,
+  `proyecto_id`          INT(11)      NOT NULL,
+  `logistica_id`         INT(11)      NOT NULL,
+  `eliminado`            TINYINT(1)   NOT NULL DEFAULT 0,
+  `fecha_eliminado`      DATETIME     DEFAULT NULL,
+  `estado_ticket_id`     INT(11)      NOT NULL DEFAULT 1,
+  `prioridad_ticket_id`  INT(11)      NOT NULL DEFAULT 1,
+  `usuario_asignado_id`  INT(11)      NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `idx_asig_responsable`(`usuario_asignado_id`),
   INDEX `idx_rep_tipo`    (`tipo_ticket_id`),
   INDEX `idx_rep_obs`     (`observador`),
   INDEX `idx_rep_proj`    (`proyecto_id`),
   INDEX `idx_rep_log`     (`logistica_id`),
   INDEX `idx_rep_estado`  (`estado_ticket_id`),
-  CONSTRAINT `fk_rep_tipo` FOREIGN KEY (`tipo_ticket_id`) REFERENCES `tipo_ticket` (`id`),
-  CONSTRAINT `fk_rep_obs` FOREIGN KEY (`observador`) REFERENCES `usuarios` (`id`),
-  CONSTRAINT `fk_rep_proj` FOREIGN KEY (`proyecto_id`) REFERENCES `proyectos` (`id`),
-  CONSTRAINT `fk_rep_log` FOREIGN KEY (`logistica_id`) REFERENCES `logisticas` (`id`),
-  CONSTRAINT `fk_rep_estado` FOREIGN KEY (`estado_ticket_id`) REFERENCES `estados_ticket` (`id`),
-  CONSTRAINT `fk_asig_responsable` FOREIGN KEY (`usuario_asignado_id`) REFERENCES `usuarios` (`id`)
+  INDEX `idx_rep_prio`    (`prioridad_ticket_id`),
+  INDEX `idx_asig_resp`   (`usuario_asignado_id`),
+  CONSTRAINT `fk_rep_tipo`     FOREIGN KEY (`tipo_ticket_id`)       REFERENCES `tipo_ticket`    (`id`),
+  CONSTRAINT `fk_rep_obs`      FOREIGN KEY (`observador`)           REFERENCES `usuarios`        (`id`),
+  CONSTRAINT `fk_rep_proj`     FOREIGN KEY (`proyecto_id`)          REFERENCES `proyectos`       (`id`),
+  CONSTRAINT `fk_rep_log`      FOREIGN KEY (`logistica_id`)         REFERENCES `logisticas`      (`id`),
+  CONSTRAINT `fk_rep_estado`   FOREIGN KEY (`estado_ticket_id`)     REFERENCES `estados_ticket`   (`id`),
+  CONSTRAINT `fk_rep_prio`     FOREIGN KEY (`prioridad_ticket_id`)  REFERENCES `prioridades`      (`id`),
+  CONSTRAINT `fk_asig_resp`    FOREIGN KEY (`usuario_asignado_id`)   REFERENCES `usuarios`        (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --------------------------------------------------------
@@ -455,6 +471,22 @@ CREATE TABLE IF NOT EXISTS `historial_estados_ticket` (
     FOREIGN KEY (`estado_ticket_anterior_id`) REFERENCES `estados_ticket` (`id`),
   CONSTRAINT `fk_herp_enew`
     FOREIGN KEY (`estado_ticket_nuevo_id`) REFERENCES `estados_ticket` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- historial_prioridades
+CREATE TABLE IF NOT EXISTS `historial_prioridades` (
+  `id`                         INT(11)     NOT NULL AUTO_INCREMENT,
+  `ticket_id`                 INT(11)     NOT NULL,
+  `fecha_cambio`               DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `prioridad_ticket_anterior_id` INT(11)     NULL,
+  `prioridad_ticket_nuevo_id`    INT(11)     NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_herp_rep`           (`ticket_id`),
+  INDEX `idx_herp_eant`          (`prioridad_ticket_anterior_id`),
+  INDEX `idx_herp_enew`          (`prioridad_ticket_nuevo_id`),
+  CONSTRAINT `fk_hprio_ticket`      FOREIGN KEY (`ticket_id`)                           REFERENCES `tickets`            (`id`),
+  CONSTRAINT `fk_hprio_old_prio`    FOREIGN KEY (`prioridad_ticket_anterior_id`)       REFERENCES `prioridades`        (`id`),
+  CONSTRAINT `fk_hprio_new_prio`    FOREIGN KEY (`prioridad_ticket_nuevo_id`)          REFERENCES `prioridades`        (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -3420,7 +3452,6 @@ BEGIN
      NEW.estado_ticket_id, now());  -- que por defecto será 1
 END$$
 
-
 CREATE TRIGGER `trg_tickets_estado_au`
 AFTER UPDATE ON `lightdatito`.`tickets`
 FOR EACH ROW
@@ -3432,6 +3463,41 @@ BEGIN
       (NEW.id,
        OLD.estado_ticket_id,
        NEW.estado_ticket_id, now());
+  END IF;
+END$$
+
+---- TRIGGER HISTORIAL PRIORIDAD TICKETS
+CREATE TRIGGER `trg_tickets_prioridades_ai`
+AFTER INSERT ON `tickets`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `historial_prioridades`
+    (`ticket_id`,
+     `prioridad_ticket_anterior_id`,
+     `prioridad_ticket_nuevo_id`,
+     `fecha_cambio`)
+  VALUES
+    (NEW.`id`,
+     NULL,                       -- no había prioridad anterior
+     NEW.`prioridad_ticket_id`,
+     NOW());
+END$$
+
+CREATE TRIGGER `trg_tickets_prioridades_au`
+AFTER UPDATE ON `tickets`
+FOR EACH ROW
+BEGIN
+  IF OLD.`prioridad_ticket_id` <> NEW.`prioridad_ticket_id` THEN
+    INSERT INTO `historial_prioridades`
+      (`ticket_id`,
+       `prioridad_ticket_anterior_id`,
+       `prioridad_ticket_nuevo_id`,
+       `fecha_cambio`)
+    VALUES
+      (NEW.`id`,
+       OLD.`prioridad_ticket_id`,
+       NEW.`prioridad_ticket_id`,
+       NOW());
   END IF;
 END$$
 
@@ -3522,6 +3588,7 @@ TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `historial_plan_logistica`;
   TRUNCATE TABLE `historial_estados_ticket`;
   TRUNCATE TABLE `historial_particularidades`;
+  TRUNCATE TABLE `historial_prioridades`;
 
   TRUNCATE TABLE `logisticas_observaciones`;
   TRUNCATE TABLE `observaciones_logistica`;
@@ -3537,6 +3604,7 @@ TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `tickets`;
   TRUNCATE TABLE `estados_ticket`;
   TRUNCATE TABLE `logisticas`;
+  TRUNCATE TABLE `prioridades`;
 
   TRUNCATE TABLE `plan`;
   TRUNCATE TABLE `paises`;
@@ -3548,6 +3616,7 @@ TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `puestos`;
 
   TRUNCATE TABLE `usuarios`;
+  
   
   SET
     FOREIGN_KEY_CHECKS = 1;
