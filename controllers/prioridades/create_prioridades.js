@@ -2,26 +2,26 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
 
-export async function createTipoTicket(req) {
+export async function createPrioridades(req) {
 
     const { nombre, color } = req.body;
     const clean_name = nombre.trim().toLowerCase();
-    //verificar si ya existe tipo_ticket
-    const [{ id }] = await executeQuery(
-        `SELECT id FROM tipo_ticket WHERE nombre = ? LIMIT 1`,
+    //verificar si ya existe prioridades
+    const id = await executeQuery(
+        `SELECT id FROM prioridades WHERE nombre = ? LIMIT 1`,
         [clean_name],
-        true, 0
+        true
     );
     if (id) {
         throw new CustomException({
-            title: 'Tipo de tipo_ticket duplicado',
-            message: `Ya existe un tipo_ticket con nombre "${nombre}"`,
+            title: 'Tipo de prioridades duplicado',
+            message: `Ya existe un prioridades con nombre "${nombre}"`,
             status: Status.conflict
         });
     }
 
     const result = await executeQuery(
-        `INSERT INTO tipo_ticket (nombre, color) VALUES (?, ?)`,
+        `INSERT INTO prioridades (nombre, color) VALUES (?, ?)`,
         [nombre, color]
     );
 
@@ -29,7 +29,7 @@ export async function createTipoTicket(req) {
     const newId = result.insertId;
     if (!newId) {
         throw new CustomException({
-            title: 'Error al crear tipo_ticket',
+            title: 'Error al crear prioridades',
             message: 'No se obtuvo el ID del registro insertado',
             status: Status.internalServerError
         });
