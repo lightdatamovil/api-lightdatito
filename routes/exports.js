@@ -16,7 +16,8 @@ import paisesRouter from "./paises.js";
 import herramientasRouter from "./herramientas.js";
 import modulosRouter from "./modulos.js";
 import menusRouter from "./menus.js";
-import authRouter from "./auth.js"
+import authRouter from "./auth.js";
+import prioridades from "./prioridades.js";
 
 const router = express.Router();
 
@@ -37,5 +38,6 @@ router.use("/herramientas", herramientasRouter);
 router.use("/modulos", modulosRouter);
 router.use("/menus", menusRouter);
 router.use('/auth', authRouter);
+router.use("/prioridades", prioridades);
 
 export default router;

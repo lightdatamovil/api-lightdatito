@@ -10,8 +10,8 @@ export async function getPrioridadesById(req) {
 
     if (!rows || rows.length === 0) {
         throw new CustomException({
-            title: 'Tipo ticket no encontrado',
-            message: `No existe un prioridades con id=${id}`,
+            title: 'Prioridad no encontrada',
+            message: `No existe una prioridad con id=${id}`,
             status: Status.notFound
         });
     }

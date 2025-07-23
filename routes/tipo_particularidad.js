@@ -77,7 +77,6 @@ router.put('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], [])) return;
-
     try {
         await deleteTipoParticularidad(req);
         res.status(Status.ok).json({ message: 'Eliminado correctamente' });

@@ -1,17 +1,19 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import prioridades from '../../models/prioridades.js';
+import Prioridad from '../../models/prioridades.js';
+import { Status } from '../../models/status.js';
 
 export async function getAllPrioridades() {
-    try {
-        const rows = await executeQuery('SELECT * FROM prioridades where eliminado = 0',);
-        return rows.map(r => prioridades.fromJson(r));
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    const rows = await executeQuery('SELECT * FROM prioridades where eliminado = 0',);
+
+    if (rows.length === 0) {
         throw new CustomException({
-            title: 'Error al obtener tipos de ticket',
-            message: err.message,
-            stack: err.stack
+            title: 'No hay prioridades',
+            message: 'No se encontraron prioridades activas',
+            status: Status.noContent
         });
     }
+
+    return rows.map(r => Prioridad.fromJson(r));
+
 }

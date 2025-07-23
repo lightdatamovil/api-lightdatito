@@ -9,8 +9,8 @@ export async function deletePrioridades(req) {
 
     if (!result || result.affectedRows === 0) {
         throw new CustomException({
-            title: 'Tipo ticket no encontrado',
-            message: `No existe un prioridades con id: ${id} o ya fue eliminado`,
+            title: 'prioridad no encontrada',
+            message: `No existe una prioridad con id: ${id} o ya fue eliminada`,
             status: Status.notFound
         });
     }

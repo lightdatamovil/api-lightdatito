@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const newItem = await createHerramienta(req);
-        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente', success: true });
         logGreen(`POST /api/herramientas: éxito al crear herramienta con ID ${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllHerramientas();
-        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente', success: true });
         logGreen('GET /api/herramientas: éxito al listar herramientas');
     } catch (err) {
         return handleError(req, res, err);
@@ -48,7 +48,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         const item = await getHerramientaById(req);
-        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido', success: true });
         logGreen(`GET /api/herramientas/${req.params.id}: éxito al obtener herramienta`);
     } catch (err) {
         return handleError(req, res, err);
@@ -63,7 +63,7 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
         const updated = await updateHerramienta(req);
-        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente', success: true });
         logGreen(`PUT /api/herramientas/${req.params.id}: éxito al actualizar herramienta`);
     } catch (err) {
         return handleError(req, res, err);
@@ -78,7 +78,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         await deleteHerramienta(req);
-        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente', success: true });
         logGreen(`DELETE /api/herramientas/${req.params.id}: éxito al eliminar herramienta`);
     } catch (err) {
         return handleError(req, res, err);

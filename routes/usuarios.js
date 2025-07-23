@@ -148,7 +148,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const item = await getUsuarioById(req);
-        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido', success: true });
         logGreen(`GET /api/usuarios/${req.params.id}: éxito al obtener usuario`);
     } catch (err) {
         return handleError(req, res, err);

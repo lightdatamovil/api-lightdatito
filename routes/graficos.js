@@ -18,7 +18,7 @@ router.post("/:tipoQr", async (req, res) => {
     const { start, end, logisticasElegidas } = req.body;
     logYellow(`GET /api/puestos: Listando puestos de tipo ${tipoQr} desde ${start} hasta ${end}...`);
     const grafico = await getHourlyByCompany(tipoQr, start, end, logisticasElegidas);
-    res.status(Status.ok).json({ body: grafico, message: "Datos obtenidos correctamente" });
+    res.status(Status.ok).json({ body: grafico, message: "Datos obtenidos correctamente", success: true });
     logGreen("GET /api/puestos: éxito al listar puestos");
   } catch (error) {
     if (error instanceof CustomException) {
@@ -46,7 +46,7 @@ router.get("/tiempo/:tipoQr", async (req, res) => {
 
     res
       .status(200)
-      .json({ body: grafico, message: "Datos obtenidos correctamente" });
+      .json({ body: grafico, message: "Datos obtenidos correctamente", success: true });
     logGreen("GET /api/puestos: éxito al listar puestos");
   } catch (error) {
     if (error instanceof CustomException) {

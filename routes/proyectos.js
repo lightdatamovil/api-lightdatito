@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllProyectos();
-        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente', success: true });
         logGreen('GET /api/proyectos: éxito al listar proyectos');
     } catch (err) {
         return handleError(req, res, err);

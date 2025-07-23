@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAlltickets();
-        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente' });
+        res.status(Status.ok).json({ body: list, message: 'Datos obtenidos correctamente', success: true });
         logGreen('GET /api/tickets: éxito al listar tickets');
     } catch (err) {
         return handleError(req, res, err);

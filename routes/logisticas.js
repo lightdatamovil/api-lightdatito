@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
 
     try {
         const newId = await createLogistica(req);
-        res.status(Status.created).json({ body: newId, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newId, message: 'Creado correctamente', success: true });
         logGreen(`${req.method} ${req.originalUrl}: éxito al crear logística con ID ${newId.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -63,7 +63,7 @@ router.get('/:id', async (req, res) => {
 
     try {
         const item = await getLogisticaById(req);
-        res.status(Status.ok).json({ body: item, message: 'Registro obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Registro obtenido', success: true });
         logGreen(`${req.method} ${req.originalUrl}: éxito al obtener logística`);
     } catch (err) {
         return handleError(req, res, err);
@@ -79,7 +79,7 @@ router.put('/:id', async (req, res) => {
 
     try {
         await updateLogistica(req);
-        res.status(Status.ok).json({ message: 'Actualizado correctamente' });
+        res.status(Status.ok).json({ message: 'Actualizado correctamente', success: true });
         logGreen(`${req.method} ${req.originalUrl}: éxito al actualizar logística`);
     } catch (err) {
         return handleError(req, res, err);
@@ -95,7 +95,7 @@ router.delete('/:id', async (req, res) => {
 
     try {
         await deleteLogistica(req.params);
-        res.status(Status.ok).json({ message: 'Eliminado correctamente' });
+        res.status(Status.ok).json({ message: 'Eliminado correctamente', success: true });
         logGreen(`${req.method} ${req.originalUrl}: éxito al eliminar logística`);
     } catch (err) {
         return handleError(req, res, err);
@@ -111,7 +111,7 @@ router.put('/:logisticaId/planes', async (req, res) => {
 
     try {
         await cambiarPlan(req);
-        res.status(Status.created).json({ message: 'Plan cambiado correctamente' });
+        res.status(Status.created).json({ message: 'Plan cambiado correctamente', success: true });
         logGreen(`${req.method} ${req.originalUrl}: éxito al cambiar plan de logística`);
     } catch (err) {
         return handleError(req, res, err);

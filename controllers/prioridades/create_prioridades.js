@@ -12,7 +12,7 @@ export async function createPrioridades(req) {
         [clean_name],
         true
     );
-    if (id) {
+    if (id.length > 0) {
         throw new CustomException({
             title: 'Tipo de prioridades duplicado',
             message: `Ya existe un prioridades con nombre "${nombre}"`,

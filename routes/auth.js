@@ -11,7 +11,7 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const result = await login(email, password);
-        return res.status(Status.ok).json({ body: result, message: 'Autenticación exitosa' });
+        return res.status(Status.ok).json({ body: result, message: 'Autenticación exitosa', success: true });
     } catch (err) {
         if (err instanceof CustomException) {
             return res.status(err.status).json({ title: err.title, message: err.message });

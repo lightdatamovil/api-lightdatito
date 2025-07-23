@@ -12,8 +12,8 @@ export async function updatePrioridades(req) {
 
     if (!result.affectedRows) {
         throw new CustomException({
-            title: 'Tipo ticket no encontrado',
-            message: `No existe un prioridades con id: ${id} o ya fue eliminado`,
+            title: 'Prioridad no encontrada',
+            message: `No existe una prioridad con id: ${id} o ya fue eliminada`,
             status: Status.notFound
         });
     }

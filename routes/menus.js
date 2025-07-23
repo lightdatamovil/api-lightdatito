@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const newItem = await createMenu(req);
-        res.status(Status.created).json({ body: newItem, message: 'Menú creado' });
+        res.status(Status.created).json({ body: newItem, message: 'Menú creado', success: true });
         logGreen(`POST /api/menus id=${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllMenu();
-        res.status(Status.ok).json({ body: list, message: 'Listado de menús' });
+        res.status(Status.ok).json({ body: list, message: 'Listado de menús', success: true });
         logGreen('GET /api/menus');
     } catch (err) {
         return handleError(req, res, err);
@@ -49,7 +49,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         const item = await getMenuById(req);
-        res.status(Status.ok).json({ body: item, message: 'Menú obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Menú obtenido', success: true });
         logGreen(`GET /api/menus/${req.params.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -64,7 +64,7 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
         const updated = await editMenu(req);
-        res.status(Status.ok).json({ body: updated, message: 'Menú actualizado' });
+        res.status(Status.ok).json({ body: updated, message: 'Menú actualizado', success: true });
         logGreen(`PUT /api/menus/${req.params.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -79,7 +79,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         await deleteMenu(req);
-        res.sendStatus(Status.noContent);
+        res.status(Status.ok).json({ message: 'Módulo eliminado', success: true });
         logGreen(`DELETE /api/menus/${req.params.id}`);
     } catch (err) {
         return handleError(req, res, err);

@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
   if (!verificarTodo(req, res, requiredBodyFields)) return;
   try {
     const newItem = await createComentario(req);
-    res.status(Status.created).json({ body: newItem, message: "Creado correctamente" });
+    res.status(Status.created).json({ body: newItem, message: "Creado correctamente", success: true });
     logGreen(
       `POST /api/comentarios: éxito al crear comentario ID ${newItem.id}`);
   } catch (err) {
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const list = await getAllComentarios();
-    res.status(Status.ok).json({ body: list, message: "Comentarios obtenidos" });
+    res.status(Status.ok).json({ body: list, message: "Comentarios obtenidos", success: true });
     logGreen("GET /api/comentarios: éxito al listar comentarios");
   } catch (err) {
     return handleError(req, res, err);
@@ -45,7 +45,7 @@ router.get("/ticket_id/:id", async (req, res) => {
   try {
     const list = await getAllComentariosForTicket(req);
     if (list.length === 0) {
-      res.status(Status.notFound).json({ message: "No se encontraron comentarios" });
+      res.status(Status.notFound).json({ message: "No se encontraron comentarios", success: true });
       logGreen(`GET /api/comentarios/ticket_id/${req.params.id}: sin comentarios`);
       return;
     }
@@ -66,7 +66,7 @@ router.get("/:id", async (req, res) => {
   if (!verificarTodo(req, res, ['id'], [])) return;
   try {
     const item = await getComentarioById(req);
-    res.status(Status.ok).json({ body: item, message: "Comentario obtenido" });
+    res.status(Status.ok).json({ body: item, message: "Comentario obtenido", success: true });
     logGreen(`GET /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
     return handleError(req, res, err);
@@ -83,7 +83,7 @@ router.put("/:id", async (req, res) => {
   if (!verificarTodo(req, res, ['id'])) return;
   try {
     const updated = await updateComentario(req);
-    res.status(Status.ok).json({ body: updated, message: "Actualizado correctamente" });
+    res.status(Status.ok).json({ body: updated, message: "Actualizado correctamente", success: true });
     logGreen(`PUT /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
     return handleError(req, res, err);
@@ -100,7 +100,7 @@ router.delete("/:id", async (req, res) => {
   if (!verificarTodo(req, res, ['id'])) return;
   try {
     await deleteComentario(req);
-    res.status(Status.ok).json({ message: "Eliminado correctamente" });
+    res.status(Status.ok).json({ message: "Eliminado correctamente", success: true });
     logGreen(`DELETE /api/comentarios/${req.params.id}: éxito`);
   } catch (err) {
     return handleError(req, res, err);

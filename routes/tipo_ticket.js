@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const newItem = await createTipoTicket(req);
-        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente' });
+        res.status(Status.created).json({ body: newItem, message: 'Creado correctamente', success: true });
         logGreen(`POST /api/tipo-ticket: éxito al crear tipo de ticket con ID ${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);

@@ -26,7 +26,7 @@ router.get('/modulo-herramienta', async (req, res) => {
     const start = performance.now();
     try {
         const rows = await getAllModuloHerramienta();
-        res.status(Status.ok).json({ body: rows, message: 'Asignaciones obtenidas' });
+        res.status(Status.ok).json({ body: rows, message: 'Asignaciones obtenidas', success: true });
         logGreen('GET /api/modulos/modulo-herramienta: listado completo');
     } catch (err) {
         return handleError(req, res, err);
@@ -46,7 +46,7 @@ router.get('/:id/herramientas', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
     try {
         const list = await getHerramientasByModulo(req);
-        res.status(Status.ok).json({ body: list, message: 'Herramientas obtenidas' });
+        res.status(Status.ok).json({ body: list, message: 'Herramientas obtenidas', success: true });
         logGreen(`GET /api/modulos/${req.params.id}/herramientas: éxito`);
     } catch (err) {
         return handleError(req, res, err);
@@ -66,7 +66,7 @@ router.post('/:id/herramientas', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], ['herramientaId'])) return;
     try {
         const rel = await addModuloHerramienta(req);
-        res.status(Status.ok).json({ body: rel, message: 'Herramienta asignada correctamente' });
+        res.status(Status.ok).json({ body: rel, message: 'Herramienta asignada correctamente', success: true });
         logGreen(`POST /api/modulos/${req.params.id}/herramientas: asignado`);
     } catch (err) {
         return handleError(req, res, err);
@@ -86,7 +86,7 @@ router.delete('/:id/herramientas/:herramientaId', async (req, res) => {
     if (!verificarTodo(req, res, ['id', 'herramientaId'], [])) return;
     try {
         await deleteModuloHerramienta(req);
-        res.status(Status.ok).json({ message: 'Asignación eliminada correctamente' });
+        res.status(Status.ok).json({ message: 'Asignación eliminada correctamente', success: true });
         logGreen(`DELETE /api/modulos/${req.params.id}/herramientas/${req.params.herramientaId}: borrado suave`
         );
     } catch (err) {
@@ -105,7 +105,7 @@ router.post('/', async (req, res) => {
     if (!verificarTodo(req, res, [],)) return;
     try {
         const newItem = await createModulo(req);
-        res.status(Status.created).json({ body: newItem, message: 'Módulo creado' });
+        res.status(Status.created).json({ body: newItem, message: 'Módulo creado', success: true });
         logGreen(`POST /api/modulo: id ${newItem.id}`);
     } catch (err) {
         return handleError(req, res, err);
@@ -119,7 +119,7 @@ router.get('/', async (req, res) => {
     const start = performance.now();
     try {
         const list = await getAllModulos();
-        res.status(Status.ok).json({ body: list, message: 'Listado de módulos' });
+        res.status(Status.ok).json({ body: list, message: 'Listado de módulos', success: true });
         logGreen('GET /api/modulo listado');
     } catch (err) {
         return handleError(req, res, err);
@@ -134,7 +134,7 @@ router.get('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         const item = await getModuloById(req);
-        res.status(Status.ok).json({ body: item, message: 'Módulo obtenido' });
+        res.status(Status.ok).json({ body: item, message: 'Módulo obtenido', success: true });
         logGreen(`GET /api/modulo/${req.params.id} ok`);
     } catch (err) {
         return handleError(req, res, err);
@@ -150,7 +150,7 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], bodyFields)) return;
     try {
         const updated = await editModulo(req);
-        res.status(Status.ok).json({ body: updated, message: 'Módulo actualizado' });
+        res.status(Status.ok).json({ body: updated, message: 'Módulo actualizado', success: true });
         logGreen(`PUT /api/modulo/${req.params.id} ok`);
     } catch (err) {
         return handleError(req, res, err);
@@ -165,7 +165,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], [])) return;
     try {
         await deleteModulo(req);
-        res.status(Status.ok).json({ message: 'Módulo eliminado' });
+        res.status(Status.ok).json({ message: 'Módulo eliminado', success: true });
         logGreen(`DELETE /api/modulo/${req.params.id} ok`);
     } catch (err) {
         return handleError(req, res, err);
