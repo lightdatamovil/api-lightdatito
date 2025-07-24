@@ -3607,8 +3607,6 @@ BEGIN
 END$$
 
 
-
-
 CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1) Desactivar temporalmente las FKs
 SET
     FOREIGN_KEY_CHECKS = 0;
