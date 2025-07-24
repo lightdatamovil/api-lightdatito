@@ -65,9 +65,7 @@ export async function createLogistica(req) {
     const result = await executeQuery(queryInsertLogistica, valuesQueryInsertLogistica);
 
     const newId = result.insertId;
-    if (newId) {
-        await executeQuery('UPDATE paises SET existe_logistica = 1 WHERE id = ?', [pais_id]);
-    }
+
     if (!newId) {
         throw new CustomException({
             title: 'Error al crear logística',

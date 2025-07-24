@@ -3386,42 +3386,60 @@ END $$
 -- AGREGAR TRIGGERS DE METADATA
 
 -- TRIGGER PAIS
-CREATE TRIGGER trg_logistica_after_insert
-AFTER INSERT ON logisticas
-FOR EACH ROW
-BEGIN
-  UPDATE paises
-    SET existe_en_sistema = 1
-  WHERE id = NEW.pais_id;
-END$$
-
-
--- TRIGGER HISTORIAL ESTADOS LOGISTICA
-CREATE TRIGGER `trg_logisticas_ai`
+-- TRIGGER AL INSERTAR: sólo pone a 1 si antes estaba a 0
+CREATE TRIGGER `trg_logistica_after_insert`
 AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
-  INSERT INTO `lightdatito`.`historial_estado_logistica`
-    (`logisticas_id`, `estado_anterior_id`, `estado_nuevo_id`,`fecha_cambio`)
-  VALUES
-    (NEW.id,
-     NULL,
-     NEW.estado_logistica_id, now());
+  UPDATE `lightdatito`.`paises`
+     SET existe_en_sistema = 1
+   WHERE id = NEW.pais_id
+     AND existe_en_sistema = 0;
 END$$
 
-CREATE TRIGGER `trg_logisticas_au`
-AFTER UPDATE ON `lightdatito`.`logisticas`
+-- TRIGGER AL BORRAR: sólo pone a 0 si ya no hay logística y antes estaba a 1
+CREATE TRIGGER `trg_logistica_after_delete`
+AFTER DELETE ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
-  IF OLD.estado_logistica_id <> NEW.estado_logistica_id THEN
-    INSERT INTO `lightdatito`.`historial_estado_logistica`
-      (`logisticas_id`, `estado_anterior_id`, `estado_nuevo_id`,`fecha_cambio`)
-    VALUES
-      (NEW.id,
-       OLD.estado_logistica_id,
-       NEW.estado_logistica_id,
-       now());
-  END IF;
+  UPDATE `lightdatito`.`paises`
+     SET existe_en_sistema = 0
+   WHERE id = OLD.pais_id
+     AND existe_en_sistema = 1
+     AND NOT EXISTS (
+       SELECT 1
+         FROM `lightdatito`.`logisticas`
+        WHERE pais_id = OLD.pais_id
+     );
+END$$
+
+
+
+-- TRIGGER HISTORIAL ESTADOS LOGISTICA
+CREATE TRIGGER `trg_logistica_after_insert`
+AFTER INSERT ON `lightdatito`.`logisticas`
+FOR EACH ROW
+BEGIN
+  UPDATE `lightdatito`.`paises`
+     SET existe_en_sistema = 1
+   WHERE id = NEW.pais_id
+     AND existe_en_sistema = 0;
+END$$
+
+-- TRIGGER AL BORRAR: sólo pone a 0 si ya no hay logística y antes estaba a 1
+CREATE TRIGGER `trg_logistica_after_delete`
+AFTER DELETE ON `lightdatito`.`logisticas`
+FOR EACH ROW
+BEGIN
+  UPDATE `lightdatito`.`paises`
+     SET existe_en_sistema = 0
+   WHERE id = OLD.pais_id
+     AND existe_en_sistema = 1
+     AND NOT EXISTS (
+       SELECT 1
+         FROM `lightdatito`.`logisticas`
+        WHERE pais_id = OLD.pais_id
+     );
 END$$
 
 
