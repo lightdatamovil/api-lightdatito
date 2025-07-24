@@ -97,6 +97,8 @@ CREATE TABLE IF NOT EXISTS `paises` (
   `id`        INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre`    VARCHAR(45) NOT NULL,
   `codigo_iso` VARCHAR(45)NOT NULL,
+  `existe_en_sistema` TINYINT(1)  NOT NULL DEFAULT 0,
+  `eliminado`     TINYINT(1)  NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -3382,6 +3384,18 @@ END $$
 
 
 -- AGREGAR TRIGGERS DE METADATA
+
+-- TRIGGER PAIS
+CREATE TRIGGER trg_logistica_after_insert
+AFTER INSERT ON logisticas
+FOR EACH ROW
+BEGIN
+  UPDATE paises
+    SET existe_en_sistema = 1
+  WHERE id = NEW.pais_id;
+END$$
+
+
 -- TRIGGER HISTORIAL ESTADOS LOGISTICA
 CREATE TRIGGER `trg_logisticas_ai`
 AFTER INSERT ON `lightdatito`.`logisticas`
@@ -3583,7 +3597,7 @@ SET
 
 TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `historial_asignaciones`;
-  TRUNCATE TABLE `historial_estados_logistica`;
+  TRUNCATE TABLE `historial_estado_logistica`;
   TRUNCATE TABLE `historial_nombres_logistica`;
   TRUNCATE TABLE `historial_plan_logistica`;
   TRUNCATE TABLE `historial_estados_ticket`;

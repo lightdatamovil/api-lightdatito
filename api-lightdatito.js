@@ -33,4 +33,7 @@ app.post('/api/testapi', async (req, res) => {
     } catch (err) {
         logRed('Error al iniciar el servidor:', err);
     }
-})();  
+})();
+
+
+// todo cambiar la tabla paises con un update por lta de logistica en un pais
