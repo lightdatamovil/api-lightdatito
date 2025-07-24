@@ -3387,7 +3387,7 @@ END $$
 
 -- TRIGGER PAIS
 -- TRIGGER AL INSERTAR: sólo pone a 1 si antes estaba a 0
-CREATE TRIGGER `trg_logistica_after_insert`
+CREATE TRIGGER `trg_logistica_insert_pais`
 AFTER INSERT ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
@@ -3398,7 +3398,7 @@ BEGIN
 END$$
 
 -- TRIGGER AL BORRAR: sólo pone a 0 si ya no hay logística y antes estaba a 1
-CREATE TRIGGER `trg_logistica_after_delete`
+CREATE TRIGGER `trg_logistica_after_delete_pais`
 AFTER DELETE ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
@@ -3412,8 +3412,6 @@ BEGIN
         WHERE pais_id = OLD.pais_id
      );
 END$$
-
-
 
 -- TRIGGER HISTORIAL ESTADOS LOGISTICA
 CREATE TRIGGER `trg_logistica_after_insert`
@@ -3427,19 +3425,24 @@ BEGIN
 END$$
 
 -- TRIGGER AL BORRAR: sólo pone a 0 si ya no hay logística y antes estaba a 1
-CREATE TRIGGER `trg_logistica_after_delete`
-AFTER DELETE ON `lightdatito`.`logisticas`
+CREATE TRIGGER `trg_logistica_after_soft_delete`
+AFTER UPDATE ON `lightdatito`.`logisticas`
 FOR EACH ROW
 BEGIN
-  UPDATE `lightdatito`.`paises`
-     SET existe_en_sistema = 0
-   WHERE id = OLD.pais_id
-     AND existe_en_sistema = 1
-     AND NOT EXISTS (
-       SELECT 1
-         FROM `lightdatito`.`logisticas`
-        WHERE pais_id = OLD.pais_id
-     );
+  IF OLD.eliminado = 0 
+     AND NEW.eliminado = 1 
+  THEN
+    UPDATE `lightdatito`.`paises`
+       SET existe_en_sistema = 0
+     WHERE id = OLD.pais_id
+       AND existe_en_sistema = 1
+       AND NOT EXISTS (
+         SELECT 1
+           FROM `lightdatito`.`logisticas`
+          WHERE pais_id = OLD.pais_id
+            AND eliminado = 0
+       );
+  END IF;
 END$$
 
 
@@ -3605,6 +3608,8 @@ BEGIN
        NEW.tipo_particularidad_id);
   END IF;
 END$$
+
+
 
 
 CREATE DEFINER = `root`@`localhost` PROCEDURE `truncate_all_tables`() BEGIN -- 1) Desactivar temporalmente las FKs
