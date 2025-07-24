@@ -2,7 +2,7 @@ import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 
 export async function updateLogistica(req) {
-    const { id } = req.params.id;
+    const id = req.params.id;
     const data = req.body;
 
     const fields = Object.keys(data).filter(key => key !== 'id');

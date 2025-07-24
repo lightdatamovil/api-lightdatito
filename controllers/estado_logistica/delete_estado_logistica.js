@@ -8,8 +8,8 @@ import { Status } from '../../models/status.js';
  * @param {number|string} id - The ID of the estado to delete.
  * @returns {{id: number|string}} The ID of the deleted estado.
  */
-export async function deleteEstadoLogistica(params) {
-    const id = params.id;
+export async function deleteEstadoLogistica(req) {
+    const id = req.params.id;
     const result = await executeQuery(`UPDATE estados_logistica SET eliminado  = 1,  fecha_eliminado = NOW() WHERE id = ? AND eliminado = 0`, [id], true);
 
     if (!result || result.affectedRows === 0) {

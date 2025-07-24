@@ -3,7 +3,8 @@ import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
 
 
-export async function getTipoParticularidadById(id) {
+export async function getTipoParticularidadById(req) {
+    const id = req.params.id;
     const [row] = await executeQuery('SELECT * FROM tipo_particularidad WHERE id = ? AND eliminado = 0', [id],);
     if (!row) {
         throw new CustomException({

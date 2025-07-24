@@ -8,23 +8,21 @@ import { getUsuarioById } from './get_user_by_id.js';
  * @param {Object} data - fields to update
  * @returns {Usuario|null}
  */
-export async function updateUsuario(id, data) {
-    try {
-        const fields = Object.keys(data);
-        if (!fields.length) throw new CustomException('No data provided for updateUsuario');
-        const setClause = fields.map(f => `${f} = ?`).join(', ');
-        await executeQuery(
-            `UPDATE usuarios SET ${setClause} WHERE id = ?`,
-            [...Object.values(data), id], true
-        );
-        return getUsuarioById(id);
-    } catch (error) {
-        throw new CustomException(
-            'Error updating usuario',
-            error.message,
-            error.stack
-        );
-    }
+
+// todo revisar aca 
+export async function updateUsuario(req) {
+    const id = req.params.id;
+    const data = req.body;
+
+    const fields = Object.keys(data);
+    if (!fields.length) throw new CustomException('No data provided for updateUsuario');
+    const setClause = fields.map(f => `${f} = ?`).join(', ');
+    await executeQuery(
+        `UPDATE usuarios SET ${setClause} WHERE id = ?`,
+        [...Object.values(data), id], true
+    );
+    return getUsuarioById(id);
+
 }
 
 

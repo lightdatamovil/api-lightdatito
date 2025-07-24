@@ -9,8 +9,8 @@ import { Status } from '../../models/status.js';
  * @returns {EstadoLogistica|null} The EstadoLogistica instance, or null if not found.
  */
 
-export async function getEstadoLogisticaById(params) {
-    const id = params.id;
+export async function getEstadoLogisticaById(req) {
+    const id = req.params.id;
     const rows = await executeQuery(
         'SELECT * FROM estados_logistica WHERE id = ? AND ELIMINADO = 0 LIMIT 1',
         [id]

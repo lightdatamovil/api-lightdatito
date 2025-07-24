@@ -4,8 +4,8 @@ import Estadoticket from '../../models/estado_ticket.js';
 import { Status } from '../../models/status.js';
 import { getEstadoLogisticaById } from './get_estado_logistica_by_id.js';
 
-export async function createEstadoticket(body) {
-    const { nombre, color } = body;
+export async function createEstadoticket(req) {
+    const { nombre, color } = req.body;
     try {
         const nombre_limpio = nombre.trim().toLowerCase();
         const color_limpio = color.trim().toLowerCase();

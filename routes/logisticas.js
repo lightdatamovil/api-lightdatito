@@ -94,7 +94,7 @@ router.delete('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'])) return;
 
     try {
-        await deleteLogistica(req.params);
+        await deleteLogistica(req);
         res.status(Status.ok).json({ message: 'Eliminado correctamente', success: true });
         logGreen(`${req.method} ${req.originalUrl}: éxito al eliminar logística`);
     } catch (err) {

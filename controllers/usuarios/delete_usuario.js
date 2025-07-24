@@ -9,23 +9,14 @@ import { Status } from '../../models/status.js';
  */
 export async function deleteUsuario(req) {
     const id = req.params.id;
-    try {
-        const result = await executeQuery('UPDATE usuarios SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?', [id]
-        );
-        if (result.affectedRows === 0) {
-            throw new CustomException({
-                title: 'Usuario no encontrado',
-                message: `No existe un usuario con id: ${id}`,
-                status: Status.notFound
-            });
-        }
-
-    } catch (error) {
-        if (error instanceof CustomException) throw error;
+    const result = await executeQuery('UPDATE usuarios SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?', [id]
+    );
+    if (result.affectedRows === 0) {
         throw new CustomException({
-            title: 'Error al eliminar usuario',
-            message: error.message,
-            stack: error.stack
+            title: 'Usuario no encontrado',
+            message: `No existe un usuario con id: ${id}`,
+            status: Status.notFound
         });
     }
+
 } 

@@ -12,7 +12,7 @@ export async function createProyecto(req) {
     const verify = await executeQuery(
         `SELECT ID FROM proyectos WHERE nombre = LOWER(?) AND ELIMINADO = 0 LIMIT 1`, [cleanName],
     );
-    // TODO : TEMINAR ACA  -- AGREGAR A TODOS LOS SELEECT LOWER() -- A LOS DELETE SACAR LOS RETURN
+    // TODO : TEMINAR ACA  -- AGREGAR A TODOS LOS SELECT LOWER() -- A LOS DELETE SACAR LOS RETURN
     if (verify) {
         throw new CustomException({
             title: 'Proyecto duplicado',

@@ -3,7 +3,7 @@ import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
 
 export async function deleteLogistica(req) {
-    const { id } = req.params.id;
+    const id = req.params.id;
     const queryUpdateLogistica = `UPDATE logisticas SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?`;
     const result = await executeQuery(queryUpdateLogistica, [id]);
 

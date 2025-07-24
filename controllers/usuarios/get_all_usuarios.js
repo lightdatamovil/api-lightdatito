@@ -8,25 +8,18 @@ import Usuario from '../../models/usuario.js';
  * @returns {Usuario[]}
  */
 export async function getAllUsuarios() {
-    try {
-        const rows = await executeQuery(
-            'SELECT * FROM usuarios WHERE eliminado = 0'
-        );
 
-        if (!rows || rows.length === 0) {
-            throw new CustomException({
-                title: 'No hay usuarios',
-                message: 'No se encontraron usuarios',
-                status: Status.noContent
-            });
-        }
-        return rows.map(r => Usuario.fromJson(r));
-    } catch (error) {
-        if (error instanceof CustomException) throw error;
-        throw new CustomException(
-            'Error retrieving usuarios',
-            error.message,
-            error.stack
-        );
+    const rows = await executeQuery(
+        'SELECT * FROM usuarios WHERE eliminado = 0'
+    );
+
+    if (!rows || rows.length === 0) {
+        throw new CustomException({
+            title: 'No hay usuarios',
+            message: 'No se encontraron usuarios',
+            status: Status.noContent
+        });
     }
+    return rows.map(r => Usuario.fromJson(r));
+
 }
