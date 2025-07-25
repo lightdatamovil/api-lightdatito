@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `menu_plan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Tabla `modulo`
+-- Tabla `modulos`
 -- Cada módulo pertenece a un único menú (1–N)
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `modulos` (
@@ -250,17 +250,17 @@ CREATE TABLE IF NOT EXISTS `historial_particularidades` (
 -- Table `logisticas`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `logisticas` (
-  `id`                 INT(11)     NOT NULL AUTO_INCREMENT,
-  `did`                INT(11)     NULL,
-  `nombre`             VARCHAR(45) NULL,
-  `url_imagen`         VARCHAR(256)NULL,
-  `plan_id`            INT(11)     NOT NULL,
+  `id`                  INT(11)     NOT NULL AUTO_INCREMENT,
+  `did`                 INT(11)     NULL,
+  `nombre`              VARCHAR(45) NULL,
+  `url_imagen`          VARCHAR(256)NULL,
+  `plan_id`             INT(11)     NOT NULL,
   `estado_logistica_id` INT(11)    NOT NULL,
-  `codigo`             VARCHAR(6)  NULL,
-  `password_soporte`   VARCHAR(45) NULL,
-  `cuit`               VARCHAR(45) NULL,
-  `email`              VARCHAR(45) NULL,
-  `url_sistema`        VARCHAR(256)NULL,
+  `codigo`              VARCHAR(6)  NULL,
+  `password_soporte`    VARCHAR(45) NULL,
+  `cuit`                VARCHAR(45) NULL,
+  `email`               VARCHAR(45) NULL,
+  `url_sistema`                VARCHAR(256)NULL,
   `fecha_creacion` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `eliminado`          TINYINT(1)  NOT NULL DEFAULT 0,
   `fecha_eliminado` DATETIME DEFAULT NULL,
@@ -273,7 +273,7 @@ CREATE TABLE IF NOT EXISTS `logisticas` (
   INDEX `idx_log_particularidad`  (`tipo_particularidad_id`),
   CONSTRAINT `fk_log_plan`
     FOREIGN KEY (`plan_id`) REFERENCES `planes` (`id`),
-  CONSTRAINT `fk_log_estado`
+  CONSTRAINT `fk_log_estado` 
     FOREIGN KEY (`estado_logistica_id`) REFERENCES `estados_logistica` (`id`),
   CONSTRAINT `fk_log_pais`
     FOREIGN KEY (`pais_id`) REFERENCES `paises` (`id`),
@@ -296,9 +296,9 @@ CREATE TABLE IF NOT EXISTS `estados_ticket` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
+-- ----------------------------------------------------- 
 -- Table `tickets`
--- -----------------------------------------------------
+-- ----------------------------------------------------- 
 CREATE TABLE `tickets` (
   `id`                   INT(11)      NOT NULL AUTO_INCREMENT,
   `titulo`               VARCHAR(45)  NULL,
@@ -314,6 +314,7 @@ CREATE TABLE `tickets` (
   `estado_ticket_id`     INT(11)      NOT NULL DEFAULT 1,
   `prioridad_ticket_id`  INT(11)      NOT NULL DEFAULT 1,
   `usuario_asignado_id`  INT(11)      NOT NULL,
+  `modulo_id`            INT(11)      NULL,
   PRIMARY KEY (`id`),
   INDEX `idx_rep_tipo`    (`tipo_ticket_id`),
   INDEX `idx_rep_obs`     (`observador`),
@@ -322,13 +323,15 @@ CREATE TABLE `tickets` (
   INDEX `idx_rep_estado`  (`estado_ticket_id`),
   INDEX `idx_rep_prio`    (`prioridad_ticket_id`),
   INDEX `idx_asig_resp`   (`usuario_asignado_id`),
+  INDEX `idx_ticket_modulo` (`modulo_id`),
   CONSTRAINT `fk_rep_tipo`     FOREIGN KEY (`tipo_ticket_id`)       REFERENCES `tipo_ticket`    (`id`),
   CONSTRAINT `fk_rep_obs`      FOREIGN KEY (`observador`)           REFERENCES `usuarios`        (`id`),
   CONSTRAINT `fk_rep_proj`     FOREIGN KEY (`proyecto_id`)          REFERENCES `proyectos`       (`id`),
   CONSTRAINT `fk_rep_log`      FOREIGN KEY (`logistica_id`)         REFERENCES `logisticas`      (`id`),
   CONSTRAINT `fk_rep_estado`   FOREIGN KEY (`estado_ticket_id`)     REFERENCES `estados_ticket`   (`id`),
   CONSTRAINT `fk_rep_prio`     FOREIGN KEY (`prioridad_ticket_id`)  REFERENCES `prioridades`      (`id`),
-  CONSTRAINT `fk_asig_resp`    FOREIGN KEY (`usuario_asignado_id`)   REFERENCES `usuarios`        (`id`)
+  CONSTRAINT `fk_asig_resp`    FOREIGN KEY (`usuario_asignado_id`)  REFERENCES `usuarios`        (`id`),
+  CONSTRAINT `fk_ticket_modulo` FOREIGN KEY (`modulo_id`)           REFERENCES `modulos`         (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --------------------------------------------------------

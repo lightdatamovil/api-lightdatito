@@ -27,4 +27,4 @@ export default class CustomException extends Error {
       stack: this.stack,
     });
   }
-}
+} 

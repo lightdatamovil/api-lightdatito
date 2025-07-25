@@ -105,3 +105,76 @@ export async function executeQuery(
   });
   return result;
 }
+
+
+// ! esto no tengo idea si esta bien 
+const accountList = {};
+
+// Configuración de base de datos de producción
+const hostProductionDb = process.env.PRODUCTION_DB_HOST;
+const portProductionDb = process.env.PRODUCTION_DB_PORT;
+
+// Crea una conexión personalizada a MySQL
+export function createCustomConnection(config) {
+  const connection = mysql2.createConnection(config);
+  connection.connect(err => {
+    if (err) {
+      logRed(`Error al conectar: ${err.message}`);
+    } else {
+      logYellow('Conexión establecida correctamente');
+    }
+  });
+  return connection;
+}
+
+// Devuelve la configuración de conexión para una empresa
+export function getProdDbConfig(company) {
+  return {
+    host: hostProductionDb,
+    user: company.dbuser,
+    password: company.dbpass,
+    database: company.dbname,
+    port: portProductionDb,
+  };
+}
+
+/**
+ * Carga y cachea las cuentas de clientes para una empresa y sender.
+ * @param {object} dbConnection - Conexión MySQL.
+ * @param {string|number} companyId - ID de la empresa.
+ * @param {string|number} senderId - ID del sender.
+ * @returns {Promise<object|null>} - Datos de la cuenta o null.
+ */
+export async function loadAccountList(dbConnection, companyId, senderId) {
+  try {
+    const query = `
+      SELECT did, didCliente, ML_id_vendedor 
+      FROM clientes_cuentas 
+      WHERE superado = 0 AND elim = 0 AND tipoCuenta = 1 AND ML_id_vendedor != ''
+    `;
+    // Usar executeQuery con el pool adecuado si es necesario
+    const result = await new Promise((resolve, reject) => {
+      dbConnection.query(query, (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+
+    if (!accountList[companyId]) {
+      accountList[companyId] = {};
+    }
+
+    result.forEach(row => {
+      const keySender = row.ML_id_vendedor;
+      accountList[companyId][keySender] = {
+        didCliente: row.didCliente,
+        didCuenta: row.did,
+      };
+    });
+
+    return accountList[companyId][senderId] || null;
+  } catch (error) {
+    logRed(`Error en loadAccountList: ${error.stack}`);
+    throw error;
+  }
+}
