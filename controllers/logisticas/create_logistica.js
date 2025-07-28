@@ -3,7 +3,7 @@ import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
 
 export async function createLogistica(req) {
-    const { did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, password_soporte, cuit, email, url_sistema, pais_id } = req.body;
+    const { did, nombre, url_imagen, plan_id, estado_logistica_id, codigo, password_soporte, cuit, email, url_sistema, pais_id, modulo_id } = req.body;
 
     const queryVerificarSiExiste = `SELECT id AS count FROM logisticas WHERE cuit=? OR did =? OR email =? AND eliminado = 0 LIMIT 1`;
     const logistica = await executeQuery(queryVerificarSiExiste, [cuit, did, email]);
@@ -44,11 +44,25 @@ export async function createLogistica(req) {
             status: Status.notFound
         });
     }
+    if (modulo_id && modulo_id !== 0 && !Number.isNaN(modulo_id)) {
+        const queryVerificarModulo = `SELECT id FROM modulos WHERE id = ? LIMIT 1`;
+        const [modulo] = await executeQuery(queryVerificarModulo, [modulo_id]);
+        if (!modulo) {
+            throw new CustomException({
+                title: 'Módulo inválido',
+                message: `No existe un módulo con id: ${modulo_id}`,
+                status: Status.notFound
+            });
+        }
+    } else {
+        modulo_id = null;
+    }
+    // preguntar: es necesario que se vuelvan a hacer las verrificaacones si existe los emtodos, e problema es qu los metodoos reciben body, como los reutilizo  
 
     const queryInsertLogistica = `INSERT INTO logisticas
            (did, nombre, url_imagen, plan_id, estado_logistica_id,
-            codigo, password_soporte, cuit, email, url_sistema, pais_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            codigo, password_soporte, cuit, email, url_sistema, pais_id, modulo_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const valuesQueryInsertLogistica = [
         did,
         nombre,
@@ -60,7 +74,8 @@ export async function createLogistica(req) {
         cuit,
         email,
         url_sistema,
-        pais_id
+        pais_id,
+        modulo_id
     ];
     const result = await executeQuery(queryInsertLogistica, valuesQueryInsertLogistica);
 
@@ -73,7 +88,5 @@ export async function createLogistica(req) {
             status: Status.internalServerError
         });
     }
-
     return newId;
-
 }
