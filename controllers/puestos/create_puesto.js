@@ -4,7 +4,7 @@ import PuestoUsuario from '../../models/puesto_usuario.js';
 import { Status } from '../../models/status.js';
 
 export async function createPuesto(req) {
-    const nombre = req.body;
+    const nombre = req.body.nombre;
     const id = await executeQuery(
         `SELECT id FROM puestos WHERE nombre = ? and eliminado = 0 LIMIT 1`, [nombre],
     );

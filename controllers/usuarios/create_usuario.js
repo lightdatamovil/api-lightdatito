@@ -13,10 +13,10 @@ import { hash256 } from '../../src/funciones/hash.js';
 export async function createUsuario(req) {
     const { nombre, email, password, url_imagen } = req.body;
 
-    const [{ id }] = await executeQuery(
+    const id = await executeQuery(
         `SELECT id FROM usuarios WHERE LOWER(email) = LOWER(?)`, (email),
     );
-    if (id) {
+    if (id.length === 1) {
         throw new CustomException({
             title: 'usuario duplicado',
             message: `Ya existe un usuario con email ${email}`,

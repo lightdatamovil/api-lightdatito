@@ -116,7 +116,6 @@ router.post('/', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
-
         const newUser = await createUsuario(req);
         res.status(Status.created).json({ body: newUser, message: 'Creado correctamente' });
         logGreen(`POST /api/usuarios: éxito al crear usuario con ID ${newUser.id}`);
@@ -218,23 +217,10 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], Campos.usuarios)) return;
     try {
-        const usuarioId = req.params.id;
 
-
-        // 2) Separar tipoPuestoId del resto de los campos
-        const { ...userFields } = req.body;
-        let updated;
-
-        // 3) Actualizar campos de usuario si existen
-        if (Object.keys(userFields).length) {
-            updated = await updateUsuario(usuarioId, userFields);
-        }
-        // 5) Si no se actualizó nada, devolver el usuario igualmente
-        if (!updated) {
-            updated = await getUsuarioById(usuarioId);
-        }
+        const updated = await updateUsuario(req);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
-        logGreen(`PUT /api/usuarios/${usuarioId}: éxito al actualizar usuario`);
+        logGreen(`PUT /api/usuarios/${updated}: éxito al actualizar usuario`);
     } catch (err) {
         return handleError(req, res, err);
     } finally {

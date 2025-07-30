@@ -1,6 +1,7 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
-import { getUsuarioById } from './get_user_by_id.js';
+import { Status } from '../../models/status.js';
+
 
 /**
  * Update an existing usuario by ID.
@@ -12,16 +13,18 @@ import { getUsuarioById } from './get_user_by_id.js';
 // todo revisar aca 
 export async function updateUsuario(req) {
     const id = req.params.id;
-    const data = req.body;
+    const { nombre, email, password, url_imagen } = req.body;
 
-    const fields = Object.keys(data);
-    if (!fields.length) throw new CustomException('No data provided for updateUsuario');
-    const setClause = fields.map(f => `${f} = ?`).join(', ');
-    await executeQuery(
-        `UPDATE usuarios SET ${setClause} WHERE id = ?`,
-        [...Object.values(data), id], true
-    );
-    return getUsuarioById(id);
+    const query = `UPDATE usuarios SET nombre = ?, email = ?, password = ?, url_imagen = ? WHERE id = ? AND eliminado = 0`;
+    const result = await executeQuery(query, [nombre, email, password, url_imagen, id]);
+
+    if (!result || result.affectedRows === 0) {
+        throw new CustomException({
+            title: 'Usuario no encontrado',
+            message: `No existe un usuario activo con id: ${id}`,
+            status: Status.notFound
+        });
+    }
 
 }
 

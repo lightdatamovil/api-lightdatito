@@ -37,6 +37,20 @@ export async function asignarPuestoAUsuario(usuarioId, tipoPuestoId) {
         });
     }
 
+    // verificar si ya existe una asignación activa
+    const existe = await executeQuery(
+        'SELECT fecha_creacion FROM puestos_usuario WHERE usuario_id = ? AND puesto_id = ? AND eliminado = 0 LIMIT 1',
+        [usuarioId, tipoPuestoId],
+        true, 0
+    );
+    if (existe.length > 0) {
+        throw new CustomException({
+            title: 'Asignación duplicada',
+            message: `El usuario ya tiene asignado el puesto con id ${tipoPuestoId}`,
+            status: Status.conflict
+        });
+    }
+
     // 3) Insertar la nueva asignación en la tabla intermedia
     await executeQuery(
         'INSERT INTO puestos_usuario (usuario_id, puesto_id) VALUES (?, ?)',
