@@ -13,6 +13,15 @@ export async function createModulo(req) {
     const { nombre, menu_id } = req.body;
     const nombreLimpio = nombre.trim();
 
+    const rew = await executeQuery('SELECT id FROM menus WHERE id = ? AND eliminado = 0', [menu_id]);
+    if (rew.length === 0) {
+        throw new CustomException({
+            title: 'Menú no encontrado',
+            message: `No existe un menú con id: ${menu_id}`,
+            status: Status.notFound
+        });
+    }
+
     const existing = await executeQuery(
         'SELECT 1 FROM modulos WHERE LOWER(nombre)=? AND eliminado=0 LIMIT 1',
         [nombreLimpio.toLowerCase()],

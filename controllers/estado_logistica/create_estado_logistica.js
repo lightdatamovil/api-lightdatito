@@ -13,9 +13,9 @@ export async function createEstadoLogistica(req) {
     const { nombre, color } = req.body;
     // TERMINAR ACA
     //verificar si ya existe estadoLogistica -- agregarle toLowerCase() en consulta
-    const [{ count }] = await executeQuery(`SELECT id FROM estados_logistica WHERE LOWER(nombre) = LOWER(?) LIMIT 1`, [nombre]
+    const res = await executeQuery(`SELECT id FROM estados_logistica WHERE LOWER(nombre) = LOWER(?) LIMIT 1`, [nombre]
     );
-    if (count > 0) {
+    if (res.length === 1) {
         throw new CustomException({
             title: 'Estado logistica duplicado',
             message: `Ya existe un estado logistica con nombre "${nombre}" `,
@@ -37,15 +37,5 @@ export async function createEstadoLogistica(req) {
         });
     }
 
-    // 3) Recuperar el registro completo
-    const [row] = getEstadoLogisticaById({ id: newId });
-    if (!row) {
-        throw new CustomException({
-            title: 'Error al crear estado_logistica',
-            message: `No se pudo recuperar el registro con id: ${newId}`,
-            status: Status.internalServerError
-        });
-    }
-
-    return EstadoLogistica.fromJson(row);
+    return newId
 }

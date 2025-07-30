@@ -78,9 +78,11 @@ router.post('/:id/menus', async (req, res) => {
 /**
  * ELIMINAR un menú de un plan (soft-delete)
  */
+
+// todo preguntar a gonzalo como va el router 
 router.delete('/:id/menus/:menu_id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], ['menu_id'])) return;
+    if (!verificarTodo(req, res, ['id', 'menu_id'], [])) return;
     try {
         await deletePlanMenu(req);
         res.status(Status.created).json({ message: 'Asignación de menú eliminada correctamente', success: true });
@@ -95,6 +97,8 @@ router.delete('/:id/menus/:menu_id', async (req, res) => {
         );
     }
 });
+
+
 const requiredBodyFields = ['nombre', 'color'];
 
 // Crear un nuevo plan

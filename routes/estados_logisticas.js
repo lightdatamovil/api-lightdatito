@@ -17,7 +17,7 @@ const requiredBodyFields = ['nombre', 'color'];
 router.post('/', async (req, res) => {
     const start = performance.now();
     // validación de body
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const newItem = await createEstadoLogistica(req);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente', success: true });
@@ -70,7 +70,7 @@ router.put('/:id', async (req, res) => {
     if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
         const updated = await updateEstadoLogistica(req);
-        res.status(Status.ok).json({ body: updated.toJson(), message: 'Actualizado correctamente', success: true });
+        res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente', success: true });
         logGreen(`PUT /api/estados-logistica/${req.params.id}: éxito al actualizar estado`);
     } catch (err) {
         return handleError(req, res, err);

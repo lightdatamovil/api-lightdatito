@@ -17,7 +17,7 @@ import { Status } from '../models/status.js';
 
 const router = Router();
 
-const bodyFields = ['nombre', 'menu_id'];
+const requiredBodyFields = ['nombre', 'menu_id'];
 
 /**
  * LISTAR todas las asignaciones módulo→herramienta
@@ -102,7 +102,7 @@ router.delete('/:id/herramientas/:herramientaId', async (req, res) => {
 // Crear módulo
 router.post('/', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, [],)) return;
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const newItem = await createModulo(req);
         res.status(Status.created).json({ body: newItem, message: 'Módulo creado', success: true });
@@ -147,7 +147,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     console.log('Entrando a PUT /api/modulo/:id');
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], bodyFields)) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
         const updated = await editModulo(req);
         res.status(Status.ok).json({ body: updated, message: 'Módulo actualizado', success: true });

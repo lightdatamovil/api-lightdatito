@@ -4,12 +4,13 @@ import CustomException from '../../../models/custom_exception.js';
 import { Status } from '../../../models/status.js';
 
 
-export async function getMenusByPlan(planId) {
-    const [plan] = await executeQuery(
-        `SELECT id FROM planes WHERE id = ? AND eliminado = 0`,
+export async function getMenusByPlan(req) {
+    const planId = req.params.id;
+    const plan = await executeQuery(
+        `SELECT id FROM planes WHERE id = ? AND eliminado = 0 LIMIT 1`,
         [planId]
     );
-    if (!plan) {
+    if (plan.length === 0) {
         throw new CustomException({
             title: 'Plan no encontrado',
             message: `No existe un plan con id: ${planId}`,

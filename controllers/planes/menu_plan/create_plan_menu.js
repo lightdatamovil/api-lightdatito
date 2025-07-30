@@ -3,15 +3,18 @@ import CustomException from '../../../models/custom_exception.js';
 import { Status } from '../../../models/status.js';
 
 // todo : modificar todas las versiones para que reciban body
-export async function addPlanMenu(planId, body) {
-    const { menu_id } = body;
-    console.log({ planId, menu_id });
+export async function addPlanMenu(req) {
+    console.log('llegue 1')
+    const planId = req.params.id;
+    const menu_id = req.body.menu_id;
+    console.log(planId, menu_id);
 
     // 1) Verificar que el plan exista y no esté eliminado
     const existePlan = await executeQuery(
         `SELECT id FROM planes  WHERE id = ? AND eliminado = 0 LIMIT 1`, [planId],
     );
     if (!existePlan || existePlan.length === 0) {
+        console.log('error 1')
         throw new CustomException({
             title: 'Plan no encontrado',
             message: `No existe un plan con id: ${planId}`,
@@ -19,10 +22,11 @@ export async function addPlanMenu(planId, body) {
         });
     }
 
-    // 2) Verificar que el plan exista y no esté eliminada
+    // 2) Verificar que el menu exista y no esté eliminada
     const existeMenu = await executeQuery(`SELECT 1  FROM menus WHERE id = ? AND eliminado = 0 LIMIT 1`, [menu_id],
     );
     if (!existeMenu || existeMenu.length === 0) {
+        console.log('error 2')
         throw new CustomException({
             title: 'Menu no encontrado',
             message: `No existe un menu con id: ${menu_id}`,
