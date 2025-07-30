@@ -44,8 +44,7 @@ router.get('/:id', async (req, res) => {
 // Crear (POST)
 router.post('/', async (req, res) => {
     const start = performance.now();
-
-    if (!verificarTodo(req, res, requiredBodyFields)) return;
+    if (!verificarTodo(req, res, [], requiredBodyFields)) return;
     try {
         const newItem = await createEstadoticket(req);
         res.status(Status.created).json({ body: newItem, message: 'Creado correctamente', success: true });
@@ -61,7 +60,7 @@ router.post('/', async (req, res) => {
 // Actualizar (PUT)
 router.put('/:id', async (req, res) => {
     const start = performance.now();
-    if (!verificarTodo(req, res, ['id'], req)) return;
+    if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
     try {
         const updatedItem = await updateEstadoticket(req);
         res.status(Status.ok).json({ body: updatedItem, message: 'Actualizado correctamente', success: true });

@@ -7,7 +7,7 @@ export async function getProyectoById(req) {
     const id = req.params.id;
 
     const rows = await executeQuery(
-        'SELECT * FROM proyectos WHERE id = ? AND ELIMIDADO = 0 LIMIT 1',
+        'SELECT * FROM proyectos WHERE id = ? AND ELIMINADO = 0 LIMIT 1',
         [id]
     );
 

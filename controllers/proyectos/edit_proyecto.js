@@ -10,7 +10,7 @@ export async function updateProyecto(req) {
         const id = req.params.id;
         const { nombre, descripcion, fecha_inicio, fecha_fin } = req.body;
 
-        const query = `UPDATE proyectos SET nombre  = LOWER(?), descripcion  = LOWER(?), fecha_inicio = ?, fecha_fin  = ?  WHERE id = ? AND eliminado = 0`;
+        const query = `UPDATE proyectos SET nombre  = ?, descripcion  = ?, fecha_creacion = ?, fecha_finalizado  = ?  WHERE id = ? AND eliminado = 0`;
         const values = [
             nombre,
             descripcion,

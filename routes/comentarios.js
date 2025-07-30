@@ -80,7 +80,7 @@ router.get("/:id", async (req, res) => {
 // Actualizar comentario
 router.put("/:id", async (req, res) => {
   const start = performance.now();
-  if (!verificarTodo(req, res, ['id'])) return;
+  if (!verificarTodo(req, res, ['id'], requiredBodyFields)) return;
   try {
     const updated = await updateComentario(req);
     res.status(Status.ok).json({ body: updated, message: "Actualizado correctamente", success: true });

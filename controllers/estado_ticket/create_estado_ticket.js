@@ -7,10 +7,10 @@ export async function createEstadoticket(req) {
     const { nombre, color } = req.body;
     const nombre_limpio = nombre.trim().toLowerCase();
 
-    const [{ verify }] = await executeQuery(`SELECT id FROM estados_ticket WHERE nombre = LOWER(?) LIMIT 1`,
+    const verify = await executeQuery(`SELECT id FROM estados_ticket WHERE nombre = LOWER(?) LIMIT 1`,
         [nombre_limpio],
     );
-    if (verify) {
+    if (verify.length === 1) {
         throw new CustomException({
             title: 'Estado ticket duplicado',
             message: `Ya existe un estado con nombre "${nombre_limpio}" `,

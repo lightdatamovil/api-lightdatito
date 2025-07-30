@@ -9,7 +9,7 @@ import { Status } from '../../models/status.js';
  * @throws {CustomException} If not found or on query error.
  */
 export async function getLogisticaById(req) {
-  const { id } = req.params.id;
+  const id = req.params.id;
   const sql = `
       SELECT
         l.id,

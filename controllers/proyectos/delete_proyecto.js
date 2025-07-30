@@ -6,7 +6,7 @@ import { Status } from '../../models/status.js';
 export async function deleteProyecto(req) {
     const id = req.params.id;
     const result = await executeQuery(
-        `UPDATE proyectos SET eliminado  = 1,  fecha_eliminado = NOW() WHERE id = ?   AND eliminado = 0`, [id]
+        `UPDATE proyectos SET eliminado = 1, fecha_eliminado = NOW() WHERE id = ?  AND eliminado = 0`, [id]
     );
 
     if (!result || result.affectedRows === 0) {

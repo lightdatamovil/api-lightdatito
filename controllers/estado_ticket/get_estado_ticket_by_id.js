@@ -4,8 +4,8 @@ import Estadoticket from '../../models/estado_reporte.js';
 import { Status } from '../../models/status.js';
 
 // services/estado_ticket.js
-export async function getEstadoticketById(params) {
-    const { id } = params;
+export async function getEstadoticketById(req) {
+    const id = req.params.id;
     const rows = await executeQuery('SELECT * FROM estados_ticket WHERE id = ? and eliminado = 0 LIMIT 1', [id]
     );
     if (rows.length === 0) {
