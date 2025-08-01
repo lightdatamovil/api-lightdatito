@@ -14,7 +14,7 @@ export async function createUsuario(req) {
     const { nombre, email, password, url_imagen } = req.body;
 
     const id = await executeQuery(
-        `SELECT id FROM usuarios WHERE LOWER(email) = LOWER(?)`, (email),
+        `SELECT id FROM usuarios WHERE LOWER(email) = LOWER(?) LIMIT 1`, (email),
     );
     if (id.length === 1) {
         throw new CustomException({
