@@ -18,6 +18,7 @@ import modulosRouter from "./modulos.js";
 import menusRouter from "./menus.js";
 import authRouter from "./auth.js";
 import prioridades from "./prioridades.js";
+import avisos from "./avisos.js";
 
 const router = express.Router();
 
@@ -39,5 +40,6 @@ router.use("/modulos", modulosRouter);
 router.use("/menus", menusRouter);
 router.use('/auth', authRouter);
 router.use("/prioridades", prioridades);
+router.use("/avisos", avisos);
 
 export default router;

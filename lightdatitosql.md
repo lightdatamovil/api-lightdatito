@@ -353,6 +353,21 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE IF NOT EXISTS `avisos` (
+  `id`               INT(11)      NOT NULL AUTO_INCREMENT,
+  `usuario_id`       INT(11)      NOT NULL,
+  `titulo`           VARCHAR(100) NOT NULL,
+  `fecha`            DATE         NOT NULL,
+  `fecha_creacion`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `descripcion`      VARCHAR(255) NOT NULL,
+  `eliminado`        TINYINT(1)   NOT NULL DEFAULT 0,
+  `fecha_eliminado`  DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_avi_usuario` (`usuario_id`),
+  CONSTRAINT `fk_avi_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 -- -----------------------------------------------------
 -- Tables historial_asignaciones
 -- -----------------------------------------------------
