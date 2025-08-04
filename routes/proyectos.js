@@ -12,7 +12,7 @@ import { Status } from '../models/status.js';
 
 
 const router = Router();
-const requiredBodyFields = ['nombre', 'fecha_inicio', 'fecha_fin', 'descripcion'];
+const requiredBodyFields = ['nombre', 'fecha_inicio', 'fecha_finalizado', 'descripcion'];
 
 // Crear un nuevo proyecto
 router.post('/', async (req, res) => {

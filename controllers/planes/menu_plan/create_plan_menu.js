@@ -4,10 +4,8 @@ import { Status } from '../../../models/status.js';
 
 // todo : modificar todas las versiones para que reciban body
 export async function addPlanMenu(req) {
-    console.log('llegue 1')
     const planId = req.params.id;
     const menu_id = req.body.menu_id;
-    console.log(planId, menu_id);
 
     // 1) Verificar que el plan exista y no esté eliminado
     const existePlan = await executeQuery(
@@ -35,7 +33,7 @@ export async function addPlanMenu(req) {
     }
 
     // 3) Insertar la relación módulo–menú
-    const result = await executeQuery(`INSERT INTO menu_plan (menu_id, plan_id) VALUES (?, ?)`, [menu_id, planId],
+    const result = await executeQuery(`INSERT INTO menu_plan (menu_id, plan_id) VALUES (?, ?)`, [menu_id, planId], true
     );
     return result.insertId;
 

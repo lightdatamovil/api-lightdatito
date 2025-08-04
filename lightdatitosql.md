@@ -44,8 +44,9 @@ CREATE TABLE IF NOT EXISTS `proyectos` (
   `id`     INT(11)     NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `descripcion` VARCHAR(45) NOT NULL,
+  `fecha_inicio` date,
   `fecha_creacion`  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  `fecha_finalizado` datetime,
+  `fecha_finalizado` date,
   `eliminado`     TINYINT(1)  NOT NULL DEFAULT 0,
   `fecha_eliminado` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -141,8 +142,8 @@ CREATE TABLE IF NOT EXISTS `menu_plan` (
   PRIMARY KEY (`id`),
   INDEX `idx_mp_plan` (`plan_id`),
   INDEX `idx_mp_menu` (`menu_id`),
-  CONSTRAINT `fk_mp_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_mp_plan` FOREIGN KEY (`plan_id`) REFERENCES `plan` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `fk_mp_menu` FOREIGN KEY (`menu_id`) REFERENCES `menus` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `fk_mp_plan` FOREIGN KEY (`plan_id`) REFERENCES `planes` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
@@ -174,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `herramientas` (
   `fecha_eliminado` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `idx_her_mod` (`modulo_principal`),
-  CONSTRAINT `fk_mod_herramienta` FOREIGN KEY (`modulo_principal`) REFERENCES `modulo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_mod_herramienta` FOREIGN KEY (`modulo_principal`) REFERENCES `modulos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------

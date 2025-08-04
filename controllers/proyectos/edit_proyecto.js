@@ -2,40 +2,29 @@
 import { executeQuery } from '../../db.js';
 import CustomException from '../../models/custom_exception.js';
 import { Status } from '../../models/status.js';
-import { getProyectoById } from './get_proyecto_by_id.js';
 
 
 export async function updateProyecto(req) {
-    try {
-        const id = req.params.id;
-        const { nombre, descripcion, fecha_inicio, fecha_fin } = req.body;
+    const id = req.params.id;
+    const { nombre, descripcion, fecha_inicio, fecha_fin } = req.body;
 
-        const query = `UPDATE proyectos SET nombre  = ?, descripcion  = ?, fecha_creacion = ?, fecha_finalizado  = ?  WHERE id = ? AND eliminado = 0`;
-        const values = [
-            nombre,
-            descripcion,
-            fecha_inicio,
-            fecha_fin,
-            id
-        ];
-        const result = await executeQuery(query, values);
+    const query = `UPDATE proyectos SET nombre  = ?, descripcion  = ?, fecha_creacion = ?, fecha_finalizado  = ?  WHERE id = ? AND eliminado = 0`;
+    const values = [
+        nombre,
+        descripcion,
+        fecha_inicio,
+        fecha_fin,
+        id
+    ];
+    const result = await executeQuery(query, values);
 
-        if (!result || result.affectedRows === 0) {
-            throw new CustomException({
-                title: 'Proyecto no encontrado',
-                message: `No existe un proyecto con id=${id}`,
-                status: Status.notFound
-            });
-        }
-
-        return await getProyectoById(id);
-
-    } catch (err) {
-        if (err instanceof CustomException) throw err;
+    if (!result || result.affectedRows === 0) {
         throw new CustomException({
-            title: 'Error actualizando proyecto',
-            message: err.message,
-            stack: err.stack
+            title: 'Proyecto no encontrado',
+            message: `No existe un proyecto con id=${id}`,
+            status: Status.notFound
         });
     }
+
+
 }

@@ -7,12 +7,12 @@ export async function createTipoTicket(req) {
     const { nombre, color } = req.body;
     const clean_name = nombre.trim().toLowerCase();
     //verificar si ya existe tipo_ticket
-    const [{ id }] = await executeQuery(
+    const verify = await executeQuery(
         `SELECT id FROM tipo_ticket WHERE nombre = ? LIMIT 1`,
         [clean_name],
         true, 0
     );
-    if (id) {
+    if (verify.length > 0) {
         throw new CustomException({
             title: 'Tipo de tipo_ticket duplicado',
             message: `Ya existe un tipo_ticket con nombre "${nombre}"`,

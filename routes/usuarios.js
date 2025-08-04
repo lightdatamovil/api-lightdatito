@@ -166,13 +166,6 @@ router.get('/:id/informe-dashboard', async (req, res) => {
         logGreen(`GET /api/usuarios/${req.params.id}/informe-dashboard: éxito al obtener informe`);
     } catch (error) {
         return handleError(req, res, error);
-        // if (error instanceof CustomException) {
-        //     logRed(`Error Status.badRequest en usuarios GET/:id/informe-dashboard: ${error}`);
-        //     return res.status(Status.badRequest).json(error);
-        // }
-        // const customError = new CustomException('Internal Error', error.message, error.stack);
-        // logRed(`Error 500 en usuarios GET/:id/informe-dashboard: ${error}`);
-        // return res.status(500).json(customError);
     } finally {
         logPurple(`GET /api/usuarios/:id ejecutado en ${performance.now() - start} ms`);
     }
@@ -217,7 +210,6 @@ router.put('/:id', async (req, res) => {
     const start = performance.now();
     if (!verificarTodo(req, res, ['id'], Campos.usuarios)) return;
     try {
-
         const updated = await updateUsuario(req);
         res.status(Status.ok).json({ body: updated, message: 'Actualizado correctamente' });
         logGreen(`PUT /api/usuarios/${updated}: éxito al actualizar usuario`);

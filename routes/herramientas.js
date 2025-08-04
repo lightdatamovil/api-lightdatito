@@ -11,7 +11,7 @@ import { handleError } from '../src/funciones/handle_error.js';
 import { Status } from '../models/status.js';
 
 const router = Router();
-const requiredBodyFields = ['nombre', 'modulo_prncipal'];
+const requiredBodyFields = ['nombre', 'modulo_principal'];
 
 // Crear nueva herramienta
 router.post('/', async (req, res) => {
