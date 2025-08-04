@@ -735,11 +735,11 @@ DROP PROCEDURE IF EXISTS poblar_planes$$
 CREATE PROCEDURE poblar_planes()
 BEGIN
   INSERT INTO planes (nombre, color, eliminado) VALUES
-    ('BASICO',        'E4D1FF', 0),
-    ('PLUS',          'C093FF', 0),
+    ('BASICO',        'D99BDFF', 0),
+    ('PLUS',          'FF9D00', 0),
     ('ESTANDAR',      '7B2CEB', 0),
-    ('PREMIUM',       '5003BD', 0),
-    ('GRAN LOGISTICA','2F0073', 0);
+    ('PREMIUM',       '7117EB', 0),
+    ('GRAN LOGISTICA','FFE100', 0);
 END$$
 
 DROP PROCEDURE IF EXISTS poblar_estados_ticket$$
