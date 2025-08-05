@@ -726,9 +726,9 @@ DROP PROCEDURE IF EXISTS poblar_estados_logistica$$
 CREATE PROCEDURE poblar_estados_logistica()
 BEGIN
   INSERT INTO estados_logistica (nombre, color) VALUES
-    ('BAJA',       'E4D1FF'),
-    ('BLOQUEADO',  'C093FF'),
-    ('ALTA',       '44A900');
+    ('Baja',       'E4D1FF'),
+    ('Bloqueado',  'C093FF'),
+    ('Alta',       '44A900');
 END$$
 
 DROP PROCEDURE IF EXISTS poblar_planes$$
