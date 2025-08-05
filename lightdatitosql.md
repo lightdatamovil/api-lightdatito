@@ -3644,23 +3644,21 @@ TRUNCATE TABLE `comentarios`;
   TRUNCATE TABLE `historial_particularidades`;
   TRUNCATE TABLE `historial_prioridades`;
 
-  TRUNCATE TABLE `logisticas_observaciones`;
-  TRUNCATE TABLE `observaciones_logistica`;
   TRUNCATE TABLE `particularidades`;
   TRUNCATE TABLE `tipo_particularidad`;
 
   TRUNCATE TABLE `modulo_herramienta`;
-  TRUNCATE TABLE `herramienta`;
-  TRUNCATE TABLE `modulo`;
+  TRUNCATE TABLE `herramientas`;
+  TRUNCATE TABLE `modulos`;
   TRUNCATE TABLE `menu_plan`;
-  TRUNCATE TABLE `menu`;
+  TRUNCATE TABLE `menus`;
 
   TRUNCATE TABLE `tickets`;
   TRUNCATE TABLE `estados_ticket`;
   TRUNCATE TABLE `logisticas`;
   TRUNCATE TABLE `prioridades`;
 
-  TRUNCATE TABLE `plan`;
+  TRUNCATE TABLE `planes`;
   TRUNCATE TABLE `paises`;
   TRUNCATE TABLE `estados_logistica`;
   TRUNCATE TABLE `tipo_ticket`;
